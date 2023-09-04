@@ -1,8 +1,12 @@
 # SendaServices
 
-Senda Servicios de Limpieza GOLDEN HAMMER
+Aplicación Django para gestión de servicios de Limpieza 
 
-INTEGRANTES: 
+# Equipo de desarrollo 
+
+** GOLDEN HAMMER
+
+** INTEGRANTES: 
 - Pazos Sebastian 
 - Cretton Victor 
 - Gimenez Gabriel 

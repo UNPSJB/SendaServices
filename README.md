@@ -4,9 +4,9 @@ Aplicación Django para gestión de servicios de Limpieza
 
 # Equipo de desarrollo 
 
-** GOLDEN HAMMER
+**GOLDEN HAMMER**
 
-** INTEGRANTES: 
+**INTEGRANTES:**
 - Pazos Sebastian 
 - Cretton Victor 
 - Gimenez Gabriel 

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'clientes'
 ]
 
 MIDDLEWARE = [
@@ -75,8 +76,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sendaGoldenDB',   # Nombre de la base de datos
+        'USER': 'root',   # Usuario de MySQL
+        'PASSWORD': 'elAlambre1',   # Contraseña del usuario
+        'HOST': 'localhost',   # Host de la base de datos (puede ser 'localhost' o la dirección IP)
+        'PORT': '3306',   # Puerto de MySQL
     }
 }
 

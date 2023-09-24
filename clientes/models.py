@@ -9,5 +9,9 @@ class Cliente(models.Model):
     habitual= models.BooleanField(default=False)
     gubernamental=models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.apellido_y_nombre
+    
+
 
 

@@ -32,24 +32,59 @@
 
 </head>
 
-
-
-
-
 <body class="bg-secondary-subtle">
   {% block body %}
   <div class="container-fluid text-center">
     <!-- Aside -->
     <div class="row align-items-start">
       <div class="col-2 bg-success vh-100">
-        {% block aside %}{% include "aside.html"%}{% endblock %}
+        <a href="" class="sidebar-brand">Senda</a>
+        <!--
+        <div class="logo">
+
+          <img src="{% static 'img/senda.png' %}" alt="" width="100px" class="img-fluid rounded mx-auto d-block">
+
+        </div>
+        -->
+        <div class="menu">
+          {% block aside %}
+          <!--Menu Aside-->
+          <ul class="sidebar-nav">
+            <li class="sidebar-header">Menu</li>
+          </ul>
+
+          {% endblock %}
+
+        </div>
       </div>
       <!-- Nav y Body -->
       <div class="col-10 p-0">
 
-        {% block nav %}{% include "nav.html" %}{% endblock %}
 
-        {% block section %} {% endblock %}
+
+        <nav class="navbar navbar-expand-lg bg-body-tertiary borde-nav">
+
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+              aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+              <!--Boton Hamburguesa-->
+              <button class="btn btn-danger p-2 m-2"></button>
+              {% block nav %}
+              <!--Menu Nav-->
+              {% endblock %}
+            </div>
+          </div>
+        </nav>
+
+
+        {% block section %}
+
+
+
+        {% endblock %}
 
       </div>
     </div>

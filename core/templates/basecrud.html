@@ -8,12 +8,15 @@
 <div class="container-fluid text-center">
     <div class="row align-items-start">
         <div class="col-4 vh-100 pt-2">
-            {% block formulario %}
-            <h1 class=" h3 title">Titulo</h1>
+
+
+
+            <h1 class=" h3 title"> {% block tform %} Titulo {% endblock%}</h1>
+
             <div class="card">
                 <div class="card-body">
 
-
+                    {% block label %}
                     <label for="inputPassword" class="">Nombre</label>
                     <br>
 
@@ -28,9 +31,10 @@
                     <div class="d-grid gap-2">
                         <button class="btn btn-success mt-3">Ingresar</button>
                     </div>
+                    {% endblock %}
                 </div>
             </div>
-            {% endblock %}
+
         </div>
         <!-- Nav y Body -->
         <div class="col-8 vh-100 pt-2 justify-content-center d-flex">

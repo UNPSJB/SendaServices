@@ -2,7 +2,6 @@
     --primary: #111854;
     --light: #ffffff;
     --grey: #efefef;
-
 }
 
 body {
@@ -10,25 +9,10 @@ body {
     font-family: 'Mali', sans-serif;
 }
 
-a {
-    text-decoration: none;
-}
-
-a:hover {
-    color: var(--grey);
-    /* Cambia a tu color gris deseado */
-    text-decoration: underline;
-    /* Subraya el enlace */
-}
-
-#asidebar-container {
-    min-height: 100vh;
-}
-
-#asidebar-container .logo {
-    padding: .875rem 1.25rem;
-}
-
-#asidebar-container {
-    width: 13rem;
+.sidebar-brand {
+    color: #f8f9fa;
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 600;
+    padding: 1.15rem 1.5rem;
 }

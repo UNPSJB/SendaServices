@@ -1,0 +1,15 @@
+.background {
+    background-image: url('../img/login.jpg');
+    background-size: cover;
+    /* Escala la imagen para cubrir todo el fondo */
+    /* Centra la imagen en el fondo */
+    background-repeat: no-repeat;
+    /* Evita que la imagen se repita */
+    height: 100vh;
+    /* Altura del fondo igual al 100% de la ventana */
+}
+
+.borde-nav {
+    border-bottom: 1px solid #bbb8b8;
+    /* Cambia #000 al color que desees para el borde inferior */
+}

@@ -2,10 +2,26 @@
 from django.views.generic import View
 from django.shortcuts import render
 
-class HomeView(View):
+class LoginView(View):
     #pide informacion para ver get()
     def get(self,request,*args,**kwargs):
         context={
 
         }
-        return render(request,'index.html',context)
+        return render(request,'login.html',context)
+    
+class Home(View):
+    #pide informacion para ver get()
+    def get(self,request,*args,**kwargs):
+        context={
+
+        }
+        return render(request,'home.html',context)
+    
+class Cliente(View):
+    #pide informacion para ver get()
+    def get(self,request,*args,**kwargs):
+        context={
+
+        }
+        return render(request,'basecrud.html',context)

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Senda {% endblock %}
+
+
+{% block section %}
+<div class="container-fluid text-center">
+    <div class="row align-items-start">
+        <div class="col-4 vh-100 pt-2">
+            {% block formulario %}
+            <h1 class=" h3 title">Titulo</h1>
+            <div class="card">
+                <div class="card-body">
+
+
+                    <label for="inputPassword" class="">Nombre</label>
+                    <br>
+
+                    <input type="text" class="form-control" id="inputPassword">
+
+
+                    <label for="inputPassword" class="mt-2">Password</label>
+                    <br>
+
+                    <input type="password" class="form-control" id="inputPassword">
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success mt-3">Ingresar</button>
+                    </div>
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+        <!-- Nav y Body -->
+        <div class="col-8 vh-100 pt-2 justify-content-center d-flex">
+
+            <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                <h2>Listado de Lenguajes</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="centrado">#</th>
+                            <th class="centrado">Lenguaje</th>
+                            <th class="centrado">Cantidad de programadores</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="centrado">1</td>
+                            <td class="centrado">JavaScript</td>
+                            <td class="centrado">21</td>
+                        </tr>
+                        <tr>
+                            <td class="centrado">2</td>
+                            <td class="centrado">Python</td>
+                            <td class="centrado">212</td>
+                        </tr>
+                        <tr>
+                            <td class="centrado">3</td>
+                            <td class="centrado">C#</td>
+                            <td class="centrado">245</td>
+                        </tr>
+                        <tr>
+                            <td class="centrado">4</td>
+                            <td class="centrado">Java</td>
+                            <td class="centrado">20</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

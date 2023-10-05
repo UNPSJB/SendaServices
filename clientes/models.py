@@ -11,6 +11,15 @@ class Cliente(models.Model):
 
     def __str__(self):
         return self.apellido_y_nombre
+
+
+class TipoServicio(models.model):
+    codigo= models.CharField(max_length=30,primary_key=True)
+    descripcion= models.CharField( max_length=250)
+    costo= models.DecimalField()
+    unidadDeMedida= models.CharField()
+
+
     
 
 

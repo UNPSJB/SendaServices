@@ -1,0 +1,14 @@
+<form method="POST">
+    {% csrf_token %}
+    cuil_cuit{{form.cuil_cuit}}
+    <br>
+    apellido_y_nombre{{form.apellido_y_nombre}}
+    <br>
+    correo{{form.correo}}
+    <br>
+    gubernamental{{form.gubernamental}}
+    <br>
+    habitual{{form.habitual}}
+    <br>
+    <button type="submit"> Update</button>
+    </form>

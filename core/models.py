@@ -3,7 +3,7 @@ from django.db import models
 class Cliente(models.Model):
     cuil_cuit= models.CharField(max_length=30,primary_key=True)
     apellido_y_nombre= models.CharField(max_length=90)
-    correo= models.CharField(max_length=90)
+    correo= models.EmailField(max_length=90)
     habitual= models.BooleanField(default=False)
     gubernamental=models.BooleanField(default=False)
 
@@ -35,7 +35,7 @@ class Producto(models.Model):
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, primary_key=True)
     nombreYapellido= models.CharField(max_length=90)
-    correo= models.CharField(max_length=90)
+    correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)
 
     def __str__(self):

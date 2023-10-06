@@ -11,6 +11,7 @@ class Servicio(models.Model):
     importeTotalEstimado= models.DecimalField(decimal_places=2)
     importeTotal= models.DecimalField(decimal_places=2)
     metrosCuadrados= models.IntegerField()
+
     
 
     def __str__(self):
@@ -21,6 +22,7 @@ class TipoServicio(models.Model):
     descripcion= models.CharField( max_length=250)
     costo= models.DecimalField(decimal_places=2)
     unidadDeMedida= models.CharField(max_length=30)
+    productos= models.ManyToManyField(Producto,through='TipoServicioProducto')
 
     def __str__(self):
         return self.descripcion
@@ -28,7 +30,7 @@ class TipoServicio(models.Model):
 class Estado(models.Model):
     descripcion= models.CharField(max_length=30, primary_key=True)
     fechaInicio= models.DateField()
-    fechaVigencia= models.DateField
+    fechaVigencia= models.DateField()
 
     def __str__(self):
         return self.descripcion
@@ -41,6 +43,13 @@ class DetalleServicio(models.Model):
 
     def __str__(self):
         return self.precio
+    
+class TipoServicioProducto(models.Model):
+    tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE)
+    producto= models.ForeignKey(Producto,on_delete=models.CASCADE)
+    cantidad= models.PositiveIntegerField()
+
+
 
 
 

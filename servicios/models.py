@@ -8,8 +8,8 @@ class Servicio(models.Model):
     fechaEstimadaComienzo= models.DateField()
     fechaEstimadaFinalizacion= models.DateField()
     cantidadEstimadaEmpleados= models.IntegerField()
-    importeTotalEstimado= models.DecimalField(decimal_places=2)
-    importeTotal= models.DecimalField(decimal_places=2)
+    importeTotalEstimado= models.DecimalField(decimal_places=2,max_digits=10)
+    importeTotal= models.DecimalField(decimal_places=2,max_digits=10)
     metrosCuadrados= models.IntegerField()
 
     
@@ -20,7 +20,7 @@ class Servicio(models.Model):
 class TipoServicio(models.Model):
     codigo= models.CharField(max_length=30,primary_key=True)
     descripcion= models.CharField( max_length=250)
-    costo= models.DecimalField(decimal_places=2)
+    costo= models.DecimalField(decimal_places=2,max_digits=10)
     unidadDeMedida= models.CharField(max_length=30)
     productos= models.ManyToManyField(Producto,through='TipoServicioProducto')
 
@@ -36,7 +36,7 @@ class Estado(models.Model):
         return self.descripcion
     
 class DetalleServicio(models.Model):
-    costoServicio= models.DecimalField(decimal_places=2)
+    costoServicio= models.DecimalField(decimal_places=2,max_digits=10)
     cantidad= models.IntegerField()
     servicio= models.ForeignKey(Servicio,on_delete=models.CASCADE)
     tipoServicio= models.ForeignKey(TipoServicio, on_delete=models.CASCADE)

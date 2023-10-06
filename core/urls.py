@@ -22,7 +22,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', Home.as_view()),
     path('', LoginView.as_view(),name="login"),
-    path('clientes/',include('clientes.urls',namespace='clientes')),
-    path('clientesT/', Cliente.as_view())
-
 ]

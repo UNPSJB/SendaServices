@@ -142,3 +142,129 @@ a.sidebar-link {
 #sidebar.collapsed {
     margin-left: -264px;
 }
+
+.swtich-container {
+    position: relative;
+    display: inline-block;
+    width: 65px;
+    /* Anoche del contenedor */
+    height: 30px;
+    /* Alto del contenedor */
+    border-radius: 20px;
+    border: 3px solid rgba(2, 137, 155, 0.050);
+    /* Bordeado fuera del switch */
+}
+
+.swtich-container input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #979797;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    /* Alto de la bola */
+    width: 24px;
+    /* Ancho de la bola */
+    left: 4px;
+    /* Ubicacion Izquierda de la bola */
+    bottom: 3.5px;
+    /* Ubicacion Arriba-Abajo de la bola */
+    background-color: white;
+    /* Color de la bola */
+    -webkit-transition: .2s;
+    /* Velicidad de transición */
+    transition: .2s;
+    /* Velicidad de transición de Webkit*/
+}
+
+input:checked+.slider {
+    background-color: #02889B;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(32px);
+    /* Desplazamiento Webkit*/
+    -ms-transform: translateX(32px);
+    /* Desplazamiento */
+    transform: translateX(32px);
+    /* Desplazamiento */
+}
+
+
+/*------ Cambio ON y OFF ---------*/
+
+.on {
+    display: none;
+}
+
+.on,
+.off {
+    color: white;
+    /* Color ON-OFF */
+    position: absolute;
+    /* Posicion */
+    transform: translate(-50%, -50%);
+    top: 25%;
+    left: 25%;
+    font-size: 11px;
+    /* Tamaño de letra */
+    font-family: Verdana, sans-serif;
+    /* Fuente de letra */
+}
+
+.on {
+    top: 14px;
+    /* Ubicacion Arriba-Abajo de la palabra ON */
+}
+
+.off {
+    left: auto;
+    right: -3px;
+    /* Ubicacion Derecha de la palabra OFF */
+    top: 14px;
+    /* Ubicacion Arriba-Abajo de la palabra OFF */
+}
+
+input:checked+.slider .on {
+    display: block;
+}
+
+input:checked+.slider .off {
+    display: none;
+}
+
+
+/* Slider */
+
+.slider {
+    border-radius: 17px;
+}
+
+.slider:before {
+    border-radius: 50%;
+}
+
+.form-control {
+    margin: 10px 0px;
+}
+
+.checkbox {
+    margin: 10px 0px;
+}

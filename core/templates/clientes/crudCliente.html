@@ -1,0 +1,108 @@
+{% extends "../base.html" %}
+{% load static %}
+
+{% block volver %}
+<a class="" href="../home"><i class="bi bi-arrow-left"></i></a>
+{% endblock %}
+
+{% block tmain %}
+<h4 class="mx-3">CRUD Cliente</h4>
+{% endblock %}
+
+{% block cmain %}
+
+<div class="col-12 col-md-4">
+    <div class="card flex-fill border-0">
+        <div class="card-body py-4">
+            <h4>Crear Cliente</h4>
+            <div class="card">
+                <div class="card-body">
+                    <form action="/crearCliente/" method="POST"> {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="txtCuitCuil">Cuit-Cuil</label>
+                            <input type="text" id="txtCuitCuil" name="txtCuitCuil" class="form-control"
+                                placeholder="Cuit-Cuil" maxlength="30" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="txtApellido">Apellido</label>
+                            <input type="text" id="txtApellido" name="txtApellido" class="form-control"
+                                placeholder="Apellido" maxlength="45" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="txtNombre">Nombre</label>
+                            <input type="text" id="txtNombre" name="txtNombre" class="form-control" placeholder="Nombre"
+                                maxlength="45" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="emailCorreo">Correo</label>
+                            <input type="email" id="emailCorreo" name="emailCorreo" class="form-control"
+                                placeholder="Correo" maxlength="45" required>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="cpHabitual">
+                                <label class="form-check-label" for="cpHabitual">Habitual</label>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="cpGubernamental">
+                                <label class="form-check-label" for="cpGubernamental">Gubernamental</label>
+                            </div>
+
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-block text-white">Crear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-12 col-md-8 d-flex">
+    <div class="card flex-fill border-0">
+        <div class="card-body py-4">
+
+
+            <div class="d-flex">
+                <div class="d-grid gap-1">
+                    <h4>Listado de Clientes</h4>
+
+                </div>
+            </div>
+
+
+            <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="table-primary">
+                                <th>#</th>
+                                <th>Cuit-Cuil</th>
+                                <th>Apellido</th>
+                                <th>Nombre</th>
+                                <th colspan="">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in clientes %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{c.cuil_cuit}}</td>
+                                <td>{{c.apellido}}</td>
+                                <td>{{c.nombre}}</td>
+
+                                <td><a href="/infoCliente/{{c.cuil_cuit}}" class="btn btn-sm btn-primary">+Info</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

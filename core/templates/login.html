@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="container-fluid login">
+    <!-- Contenido de tu página -->
+
+    <div class="m-0 vh-100 row justify-content-center align-items-center">
+        <div class="col-auto px-5 pb-5 pt-3"
+            style="background-color: rgba(255, 255, 255, 0.7); border: 1px solid #ccc; border-radius: 10px;">
+            <div class="row">
+                <div class="col">
+                    <img src="{% static 'img/senda.png' %}" alt="Senda" class="img-fluid mx-auto d-block">
+                </div>
+
+            </div>
+            <form action="" method=" get">
+                <div class="form-group mb-3">
+                    <label for="txtUsuario">Usuario</label>
+                    <input type="text" id="txtUsuario" name="txtUsuario" class="form-control" placeholder="Usuario"
+                        maxlength="30" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="passContraseña">Contraseña</label>
+                    <input type="password" id="passContraseña" name="passContraseña" class="form-control"
+                        placeholder="Contraseña" maxlength="45" required>
+                </div>
+                <input type="button" class="btn btn-success w-100 mt-2" value="Ingresar">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

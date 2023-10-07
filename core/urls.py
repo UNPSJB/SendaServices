@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import LoginView, Home, CrudCliente, crearCliente, infoCliente
+from .views import LoginView, Home, CrudCliente, crearCliente, infoCliente, modificacionCliente
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +24,6 @@ urlpatterns = [
     path('cliente/', CrudCliente.as_view()),
     path('', LoginView.as_view(),name="login"),
     path('crearCliente/', crearCliente),
-    path('infoCliente/<cuil_cuit>', infoCliente)
+    path('infoCliente/<cuil_cuit>', infoCliente),
+    path('modificacionCliente/', modificacionCliente)
 ]

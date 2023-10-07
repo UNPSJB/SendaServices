@@ -2,6 +2,9 @@
 
 :root {
     --color-letra: #e9ecef;
+    --color-prueba: #111;
+    --color-amarillo: #ffec00;
+    --color-verdeOscuro: #105736;
 }
 
 *,
@@ -32,6 +35,29 @@ h4 {
     font-family: 'Poppins', sans-serif;
     font-size: 1.275rem;
     color: var(--bs-emphasis-color);
+}
+
+.login {
+    background-image: url('../img/login.jpg');
+    background-size: cover;
+    /* Escala la imagen para cubrir todo el fondo */
+    /* Centra la imagen en el fondo */
+    background-repeat: no-repeat;
+    /* Evita que la imagen se repita */
+    height: 100vh;
+    /* Altura del fondo igual al 100% de la ventana */
+}
+
+/* Clase personalizada para elementos readonly */
+.readonly {
+    background-color: #f2f2f2;
+    /* Color de fondo gris */
+    pointer-events: none;
+    /* Deshabilita las interacciones del usuario */
+    cursor: not-allowed;
+    /* Cambia el cursor a "no permitido" */
+    color: #888;
+    /* Color de texto gris claro */
 }
 
 .wrapper {
@@ -92,7 +118,11 @@ a.sidebar-link {
     font-size: 0.875rem;
 }
 
-.sidebar-link[data-bs-toggle="collapse"]::after {
+a.sidebar-link:hover {
+    background-color: var(--color-verdeOscuro);
+}
+
+a.sidebar-link[data-bs-toggle="collapse"]::after {
     border: solid;
     border-width: 0 .075rem .075rem 0;
     content: "";
@@ -143,7 +173,7 @@ a.sidebar-link {
     margin-left: -264px;
 }
 
-.swtich-container {
+.switch-container {
     position: relative;
     display: inline-block;
     width: 65px;
@@ -205,49 +235,6 @@ input:checked+.slider:before {
     /* Desplazamiento */
     transform: translateX(32px);
     /* Desplazamiento */
-}
-
-
-/*------ Cambio ON y OFF ---------*/
-
-.on {
-    display: none;
-}
-
-.on,
-.off {
-    color: white;
-    /* Color ON-OFF */
-    position: absolute;
-    /* Posicion */
-    transform: translate(-50%, -50%);
-    top: 25%;
-    left: 25%;
-    font-size: 11px;
-    /* Tamaño de letra */
-    font-family: Verdana, sans-serif;
-    /* Fuente de letra */
-}
-
-.on {
-    top: 14px;
-    /* Ubicacion Arriba-Abajo de la palabra ON */
-}
-
-.off {
-    left: auto;
-    right: -3px;
-    /* Ubicacion Derecha de la palabra OFF */
-    top: 14px;
-    /* Ubicacion Arriba-Abajo de la palabra OFF */
-}
-
-input:checked+.slider .on {
-    display: block;
-}
-
-input:checked+.slider .off {
-    display: none;
 }
 
 

@@ -1,8 +1,12 @@
 {% extends "../base.html" %}
 {% load static %}
 
+{% block volver %}
+<a class="" href="../cliente"><i class="bi bi-arrow-left"></i></a>
+{% endblock %}
+
 {% block tmain %}
-<h4>Informacion de {{cliente.apellido}} {{cliente.nombre}} </h4>
+<h4 class="mx-3">Información de {{cliente.apellido}} {{cliente.nombre}}</h4>
 {% endblock %}
 
 {% block cmain %}
@@ -13,22 +17,27 @@
             <h4>Modificacion de Cliente</h4>
             <div class="card">
                 <div class="card-body">
-                    <form action="/modificarCliente/" method="POST"> {% csrf_token %}
-                        <fieldset disabled>
-                            <div class="form-group mb-3">
-                                <input type="text" id="txtCuitCuil" value="{{cliente.cuil_cuit}}" name="txtCuitCuil"
-                                    class="form-control" placeholder="Cuit-Cuil" maxlength="30" readonly>
-                            </div>
-                        </fieldset>
+                    <!--Modificacion-->
+                    <form action="../modificacionCliente/" method="POST"> {% csrf_token %}
+
                         <div class="form-group mb-3">
+                            <label>Cuit-Cuil</label>
+                            <input type="text" id="txtCuitCuil" value="{{cliente.cuil_cuit}}" name="txtCuitCuil"
+                                class="form-control readonly" placeholder="Cuit-Cuil" maxlength="30" readonly>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="txtApellido">Apellido</label>
                             <input type="text" id="txtApellido" value="{{cliente.apellido}}" name="txtApellido"
                                 class="form-control" placeholder="Apellido" maxlength="45" required>
                         </div>
                         <div class="form-group mb-3">
+                            <label for="txtNombre">Nombre</label>
                             <input type="text" id="txtNombre" value="{{cliente.nombre}}" name="txtNombre"
                                 class="form-control" placeholder="Nombre" maxlength="45" required>
                         </div>
                         <div class="form-group mb-3">
+                            <label for="emailCorreo">Correo</label>
                             <input type="email" id="emailCorreo" value="{{cliente.correo}}" name="emailCorreo"
                                 class="form-control" placeholder="Correo" maxlength="45" required>
                         </div>

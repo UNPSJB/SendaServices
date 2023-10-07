@@ -17,7 +17,7 @@ class Home(View):
         context={
 
         }
-        return render(request,'base.html',context)
+        return render(request,'home.html',context)
     
 class CrudCliente(View):
     #pide informacion para ver get()
@@ -51,3 +51,27 @@ def crearCliente(request):
 def infoCliente(request, cuil_cuit):
     cliente = Cliente.objects.get(cuil_cuit = cuil_cuit)
     return render(request, "clientes/infoCliente.html", {"cliente": cliente})
+
+def modificacionCliente(request):
+    cuil_cuit= request.POST['txtCuitCuil']
+    apellido= request.POST['txtApellido']
+    nombre= request.POST['txtNombre']
+    correo= request.POST['emailCorreo']
+    habitual = request.POST.get('cbHabitual', False)
+    gubernamental = request.POST.get('cbGubernamental', False)
+    if habitual == 'on':
+        habitual = True
+
+    if gubernamental == 'on':
+        gubernamental = True
+
+    cliente = Cliente.objects.get(cuil_cuit = cuil_cuit)
+
+    cliente.cuil_cuit = cuil_cuit
+    cliente.apellido = apellido
+    cliente.nombre = nombre
+    cliente.correo = correo
+    cliente.habitual = habitual
+    cliente.gubernamental = gubernamental
+    cliente.save()
+    return infoCliente(request, cuil_cuit)

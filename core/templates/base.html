@@ -33,7 +33,6 @@
         <div class="sidebar-logo p-0 m-0">
           <a href="#">
 
-
             <div class="d-flex justify-content-center align-items-center" style="width: 264px; height: 64.4px;">
               <img src="{% static 'img/senda.png' %}" class="p-0">
 
@@ -46,7 +45,7 @@
             Opciones Generales
           </li>
           <li class="sidebar-item">
-            <a href="/" class="sidebar-link">
+            <a href="{% url 'home' %}" class="sidebar-link">
               <i class="bi bi-house-fill"></i>
               Home
             </a>

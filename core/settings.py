@@ -76,6 +76,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+# View de error
+
+ERROR_HANDLER = {
+    '404': 'core.views.error_404_view',
+}
+
+# Redireccion de login
 LOGIN_REDIRECT_URL = '/'
 
 

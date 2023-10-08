@@ -5,6 +5,9 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .models import Cliente
 
+def error_404_view(request, exception):
+    return render(request, 'errors/error_404.html', status=404)
+
 @login_required
 def index(request):
     return render(request, 'home.html')
@@ -12,15 +15,6 @@ def index(request):
 def salir(request):
     logout(request)
     return redirect('/')
-
-class Home(View):
-    @login_required
-    #pide informacion para ver get()
-    def get(self,request,*args,**kwargs):
-        context={
-
-        }
-        return render(request,'home.html',context)
 
 @method_decorator(login_required, name='dispatch')
 class CrudCliente(View):
@@ -30,7 +24,8 @@ class CrudCliente(View):
             "clientes": clientes,
         }
         return render(request, 'clientes/crudCliente.html', context)
-    
+
+
 def crearCliente(request):
     cuil_cuit= request.POST['txtCuitCuil']
     apellido= request.POST['txtApellido']
@@ -51,6 +46,7 @@ def crearCliente(request):
         correo=correo, habitual=habitual, gubernamental=gubernamental)
     return redirect('/cliente')
 
+@login_required
 def infoCliente(request, cuil_cuit):
     cliente = Cliente.objects.get(cuil_cuit = cuil_cuit)
     return render(request, "clientes/infoCliente.html", {"cliente": cliente})

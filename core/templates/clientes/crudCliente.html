@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block volver %}
-<a class="" href="../home"><i class="bi bi-arrow-left"></i></a>
+<a class="" href="../"><i class="bi bi-arrow-left"></i></a>
 {% endblock %}
 
 {% block tmain %}
@@ -17,7 +17,7 @@
             <h4>Crear Cliente</h4>
             <div class="card">
                 <div class="card-body">
-                    <form action="/crearCliente/" method="POST"> {% csrf_token %}
+                    <form action="cliente/" method="POST"> {% csrf_token %}
                         <div class="form-group mb-3">
                             <label for="txtCuitCuil">Cuit-Cuil</label>
                             <input type="text" id="txtCuitCuil" name="txtCuitCuil" class="form-control"

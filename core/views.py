@@ -1,32 +1,35 @@
-
-from django.views.generic import View
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect
+from django.views import View
 from .models import Cliente
 
-class LoginView(View):
-    #pide informacion para ver get()
-    def get(self,request,*args,**kwargs):
-        context={
+@login_required
+def index(request):
+    return render(request, 'home.html')
 
-        }
-        return render(request,'login.html',context)
-    
+def salir(request):
+    logout(request)
+    return redirect('/')
+
 class Home(View):
+    @login_required
     #pide informacion para ver get()
     def get(self,request,*args,**kwargs):
         context={
 
         }
         return render(request,'home.html',context)
-    
-class CrudCliente(View):
-    #pide informacion para ver get()
-    def get(self,request,*args,**kwargs):
-        clientes = Cliente.objects.all()
-        context={
 
+@method_decorator(login_required, name='dispatch')
+class CrudCliente(View):
+    def get(self, request, *args, **kwargs):
+        clientes = Cliente.objects.all()
+        context = {
+            "clientes": clientes,
         }
-        return render(request,'clientes/crudCliente.html', {"clientes": clientes})
+        return render(request, 'clientes/crudCliente.html', context)
     
 def crearCliente(request):
     cuil_cuit= request.POST['txtCuitCuil']

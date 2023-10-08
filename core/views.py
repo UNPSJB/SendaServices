@@ -1,7 +1,10 @@
 
 from django.views.generic import View
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
-from .models import Cliente
+from django.urls import reverse_lazy
+from .models import Cliente, Producto
+from .forms import ProductoForm
 
 class LoginView(View):
     #pide informacion para ver get()
@@ -75,3 +78,16 @@ def modificacionCliente(request):
     cliente.gubernamental = gubernamental
     cliente.save()
     return infoCliente(request, cuil_cuit)
+
+
+class ProductoCreateView(CreateView):
+    model = Producto
+    form_class = ProductoForm
+    success_url = reverse_lazy('home')
+    #template_name = "core/producto_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Registrar Producto"
+        print(self.template_name)
+        return context

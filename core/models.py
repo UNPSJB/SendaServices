@@ -35,7 +35,8 @@ class Producto(models.Model):
     
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, primary_key=True)
-    nombreYapellido= models.CharField(max_length=90)
+    nombre= models.CharField(max_length=45)
+    apellido= models.CharField(max_length=45)
     correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)
 

@@ -1,7 +1,17 @@
 
 from django.views.generic import View
 from django.shortcuts import render, redirect
-from .models import Cliente
+from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth.decorators import login_required
+from .models import Cliente,Empleado
+
+@login_required
+def index (request):
+    return render(request,'home.html')
+
+def salir(request):
+    logout(request)
+    return redirect('/')
 
 class LoginView(View):
     #pide informacion para ver get()
@@ -11,6 +21,7 @@ class LoginView(View):
         }
         return render(request,'login.html',context)
     
+    
 class Home(View):
     #pide informacion para ver get()
     def get(self,request,*args,**kwargs):
@@ -18,7 +29,7 @@ class Home(View):
 
         }
         return render(request,'home.html',context)
-    
+
 class CrudCliente(View):
     #pide informacion para ver get()
     def get(self,request,*args,**kwargs):
@@ -75,3 +86,22 @@ def modificacionCliente(request):
     cliente.gubernamental = gubernamental
     cliente.save()
     return infoCliente(request, cuil_cuit)
+
+class CrudInmueble(View):
+    #pide informacion para ver get()
+    def get(self,request,*args,**kwargs):
+        clientes = Cliente.objects.all()
+        context={
+
+        }
+        return render(request,'clientes/crudCliente.html', {"clientes": clientes})
+   
+    
+class CrudEmpleado(View):
+    #pide informacion para ver get()
+    def get(self,request,*args,**kwargs):
+        empleado = Empleado.objects.all()
+        context={
+
+        }
+        return render(request,'empleado/crudEmpleado.html', {"empleado": empleado})

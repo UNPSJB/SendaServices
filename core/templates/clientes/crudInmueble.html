@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block tmain %}
-<h4 class="mx-3">Gestion Cliente</h4>
+<h4 class="mx-3">Gestion Inmueble</h4>
 {% endblock %}
 
 {% block cmain %}
@@ -14,29 +14,32 @@
 <div class="col-12 col-md-4">
     <div class="card flex-fill border-0">
         <div class="card-body py-4">
-            <h4>Crear Cliente</h4>
+            <h4>Crear Inmueble</h4>
             <div class="card">
                 <div class="card-body">
-                    <form action="/crearCliente/" method="POST"> {% csrf_token %}
+                    <form action="/crearInmueble/" method="POST"> {% csrf_token %}
                         <div class="form-group mb-3">
-                            <label for="txtCuitCuil">Cuit-Cuil</label>
-                            <input type="text" id="txtCuitCuil" name="txtCuitCuil" class="form-control"
-                                placeholder="Cuit-Cuil" maxlength="30" required>
+                            <label for="txtDomicilio">Domicilio</label>
+                            <input type="text" id="txtDomicilio" name="txtDomicilio" class="form-control"
+                                placeholder="Domicilio" maxlength="90" required>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="txtApellido">Apellido</label>
-                            <input type="text" id="txtApellido" name="txtApellido" class="form-control"
-                                placeholder="Apellido" maxlength="45" required>
+                            <label for="numMetrosCuadrados">Metros Cuadrados</label>
+                            <input type="number" id="numMetrosCuadrados" name="numMetrosCuadrados" class="form-control"
+                                placeholder="MetrosCuadrados" required>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="txtNombre">Nombre</label>
-                            <input type="text" id="txtNombre" name="txtNombre" class="form-control" placeholder="Nombre"
-                                maxlength="45" required>
+                            <label for="numAmbientes">Ambientes</label>
+                            <input type="number" id="numAmbientes" name="numAmbientes" class="form-control" placeholder="Nombre"
+                                 required>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="emailCorreo">Correo</label>
-                            <input type="email" id="emailCorreo" name="emailCorreo" class="form-control"
-                                placeholder="Correo" maxlength="45" required>
+                            <select class="form-select" aria-label="Disabled select example" disabled>
+                                <option selected>Tipo de Inmueble</option>
+                                <option value="1">Casa</option>
+                                <option value="2">Salon</option>
+                                <option value="3">Oficina</option>
+                              </select>
                         </div>
                         <div class="form-group">
 

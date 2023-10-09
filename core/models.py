@@ -41,7 +41,7 @@ class Empleado(models.Model):
     cuil= models.CharField(max_length=30)
 
     def __str__(self):
-        return self.apellido_y_nombre
+        return f"{self.apellido}{self.nombre}"
     
 class Categoria(models.Model):
     nombre= models.CharField(max_length=30)

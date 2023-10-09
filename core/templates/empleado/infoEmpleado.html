@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block volver %}
-<a class="" href="../home"><i class="bi bi-arrow-left"></i></a>
+<a class="" href="../empleado"><i class="bi bi-arrow-left"></i></a>
 {% endblock %}
 
 {% block tmain %}
-<h4 class="mx-3">Gestion Empleado</h4>
+<h4 class="mx-3">Información de {{empleado.apellido}} {{empleado.nombre}}</h4>
 {% endblock %}
 
 {% block cmain %}
@@ -14,10 +14,10 @@
 <div class="col-12 col-md-4">
     <div class="card flex-fill border-0">
         <div class="card-body py-4">
-            <h4>Crear Empleado</h4>
+            <h4>Modificar Empleado</h4>
             <div class="card">
                 <div class="card-body">
-                    <form action="/crearEmpleado/" method="POST"> {% csrf_token %}
+                    <form action="/infoEmpleado/" method="POST"> {% csrf_token %}
                         <div class="form-group mb-3">
                             <label for="numLegajo">Legajo</label>
                             <input type="number" id="numLegajo" name="numLegajo" class="form-control"
@@ -44,52 +44,10 @@
                                 placeholder="Correo" maxlength="45" required>
                         </div>
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-block text-white">Crear</button>
+                            <button type="submit" class="btn btn-primary btn-block text-white">Modificar</button>
+                            <button type="submit" class="btn btn-danger btn-block text-white">Eliminar</button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="col-12 col-md-8 d-flex">
-    <div class="card flex-fill border-0">
-        <div class="card-body py-4">
-
-            <div class="d-flex">
-                <div class="d-grid gap-1">
-                    <h4>Listado de Empleados</h4>
-
-                </div>
-            </div>
-
-
-            <div class="d-flex align-items-start">
-                <div class="flex-grow-1">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr class="table-primary">
-                                <th>#</th>
-                                <th>Legajo</th>
-                                <th>Apellido</th>
-                                <th>Nombre</th>
-                                <th colspan="">Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for c in Empleado %}
-                            <tr>
-                                <td>{{forloop.counter}}</td>
-                                <td>{{c.cuil}}</td>
-                                <td>{{c.apellido}}</td>
-                                <td>{{c.nombre}}</td>
-
-                                <td><a href="/infoEmpleado/{{c.cuil}}" class="btn btn-sm btn-primary">+Info</a></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>

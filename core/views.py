@@ -105,3 +105,36 @@ class CrudEmpleado(View):
 
         }
         return render(request,'empleado/crudEmpleado.html', {"empleado": empleado})
+    
+def crearEmpleado(request):
+    legajo= request.POST['numLegajo']
+    apellido= request.POST['txtApellido']
+    nombre= request.POST['txtNombre']
+    correo= request.POST['emailCorreo']
+    cuil=request.POST['txtCuil']
+   
+    empleado=Empleado.objects.create(
+        legajo = legajo, apellido=apellido, nombre=nombre,
+        correo=correo, cuil=cuil)
+    return redirect('/empleado')
+
+def infoEmpleado(request, legajo):
+    empleado = Empleado.objects.get(legajo = legajo)
+    return render(request, "empleado/infoEmpleado.html", {"empleado": empleado})
+
+def modificacionEmpleado(request):
+    legajo= request.POST['numLegajo']
+    apellido= request.POST['txtApellido']
+    nombre= request.POST['txtNombre']
+    correo= request.POST['emailCorreo']
+    cuil=request.POST['txtCuil']
+
+    empleado = Empleado.objects.get(legajo = legajo)
+
+    empleado.legajo = legajo
+    empleado.apellido = apellido
+    empleado.nombre = nombre
+    empleado.correo = correo
+    empleado.cuil = cuil
+    empleado.save()
+    return infoEmpleado(request, legajo)

@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from .views import LoginView, Home, CrudCliente, crearCliente, infoCliente, modificacionCliente,index,salir,CrudEmpleado
+from .views import LoginView, Home, CrudCliente, crearCliente, infoCliente, modificacionCliente,index,salir,CrudEmpleado,crearEmpleado,modificacionEmpleado,infoEmpleado
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +30,8 @@ urlpatterns = [
     path('modificacionCliente/', modificacionCliente),
     path('accounts/', include('django.contrib.auth.urls')),
     path('empleado/',CrudEmpleado.as_view()),
+    path('crearEmpleado/', crearEmpleado),
+    path('infoEmpleado/<legajo>', infoEmpleado),
+    path('modificacionEmpleado/', modificacionEmpleado),
+ 
 ]

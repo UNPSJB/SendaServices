@@ -1,4 +1,59 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block volver %}
 {% endblock volver %}
+
+{% block cmain %}
+
+<div class="col-12 col-md-6 d-flex">
+    <div class="card flex-fill border-0 illustration">
+      <div class="card-body p-0 d-flex flex-fill">
+        <div class="row g-0 w-100">
+          <div class="col-6">
+            <div class="p-3 m-1">
+              <h4>Bienvenido de nuevo, Admin</h4>
+              <p class="mb-0">Panel admin, senda</p>
+            </div>
+            <div class="col-6 align-self-end text-end">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-6 d-flex">
+    <div class="card flex-fill border-0">
+      <div class="card-body py-4">
+        <div class="d-flex align-items-start">
+          <div class="flex-grow-1">
+            <h4 class="mb-2">
+              Empleados sin asignar:             
+            </h4>
+            <p class="text-danger">
+                2
+            </p>
+            <button class="btn btn-primary">Ver</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-12 col-md-6 w-100">
+    <div class="card flex-fill border-0">
+      <div class="card-body py-4">
+        <div class="d-flex align-items-start">
+          <div class="flex-grow-1">
+                <img src="{% static 'img/calendario.png' %}"  class="img-fluid" alt="Responsive image">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

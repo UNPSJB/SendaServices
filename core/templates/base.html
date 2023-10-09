@@ -41,28 +41,62 @@
         </div>
         <!--Menu sidebar-->
         <ul class="sidebar-nav">
-          <li class="sidebar-header">
-            Opciones Generales
-          </li>
           <li class="sidebar-item">
+            <li class="sidebar-header">
+              Opciones Generales
+            </li>
             <a href="{% url 'home' %}" class="sidebar-link">
               <i class="bi bi-house-fill"></i>
               Home
             </a>
           </li>
-
+          <!-- Menu clientes -->
           <li class="sidebar-item">
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#cliente" data-bs-toggle="collapse"
+
+            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestioncliente" data-bs-toggle="collapse"
               aria-expanded="false">
-              <i class="bi bi-person-fill-gear"></i> Gestion Clientes</a>
-            <ul id="cliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-              <li class="sidebar-item">
-                <a href="/cliente" class="sidebar-link">CRUD Cliente</a>
-              </li>
-              <li class="sidebar-item">
-                <a href="/inmuebles" class="sidebar-link">CRUD Inmueble</a>
-              </li>
+              <i class="bi bi-person-lines-fill"></i> Gestion Clientes
+            </a>
+
+            <!--Clientes-->
+            <ul id="gestioncliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#cliente" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-person-fill"></i>
+                Cliente
+              </a>
+
+              <ul id="cliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'cliente' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                <li class="sidebar-item">
+                  <a href="#" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
             </ul>
+
+            
+            <!--Inmuebles-->
+            <ul id="gestioncliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#inmueble" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-house-fill"></i>
+                Inmueble
+              </a>
+
+              <ul id="inmueble" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="#" class="sidebar-link mx-4"><i class="bi bi-plus"></i> Crear</a>
+                </li>
+                <li class="sidebar-item">
+                  <a href="#" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
+            </ul>
+
           </li>
 
           <!--Menu con caida cascada-->

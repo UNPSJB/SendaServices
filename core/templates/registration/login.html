@@ -15,7 +15,18 @@
                 </div>
 
             </div>
-            <form action="{% url 'login' %}" method="post">
+
+            {% if messages %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="post" action="">
                 {% csrf_token %}
                 <div class="form-group mb-3">
                     <label for="txtUsuario">Usuario</label>

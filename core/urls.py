@@ -16,18 +16,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import CrudCliente, crearCliente, infoCliente, modificacionCliente, salir, index, error_404_view
+from .views import CrudCliente, Inmuebles, salir, index, login_view ,crearCliente, infoCliente, modificacionCliente, crearInmueble
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('error-404/', error_404_view, name='error_404'),
+
+    # Login
     path('', index, name="home"),
+    path('login/', login_view, name='login'),
     path('salir/', salir, name="salir"),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('cliente/', CrudCliente.as_view(), name="cliente"),
 
-    path('crearCliente/', crearCliente),
+    # Gestion Cliente
+    path('cliente/', CrudCliente.as_view(), name="cliente"),
+    path('crearCliente/', crearCliente, name="crearCliente"),
     path('infoCliente/<cuil_cuit>', infoCliente),
     path('modificacionCliente/', modificacionCliente),
+
+    # Gestion Inmuebles
+    path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
+    path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
 
 ]

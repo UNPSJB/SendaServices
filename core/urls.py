@@ -15,23 +15,33 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
-from .views import LoginView, Home, CrudCliente, crearCliente, infoCliente, modificacionCliente,index,salir,CrudEmpleado,crearEmpleado,modificacionEmpleado,infoEmpleado
+
+from django.urls import path, include
+from .views import CrudCliente, Inmuebles, salir, index, login_view ,crearCliente, infoCliente, modificacionCliente, crearInmueble,CrudEmpleado,infoEmpleado, crearEmpleado,modificacionEmpleado
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', Home.as_view(),name="home"),
-    path('', index, name="login"),
+
+    # Login
+    path('', index, name="home"),
+    path('login/', login_view, name='login'),
     path('salir/', salir, name="salir"),
-    path('cliente/', CrudCliente.as_view()),
-    path('', LoginView.as_view(),name="login"),
-    path('crearCliente/', crearCliente),
+    path('accounts/', include('django.contrib.auth.urls')),
+
+    # Gestion Cliente
+    path('cliente/', CrudCliente.as_view(), name="cliente"),
+    path('crearCliente/', crearCliente, name="crearCliente"),
     path('infoCliente/<cuil_cuit>', infoCliente),
     path('modificacionCliente/', modificacionCliente),
-    path('accounts/', include('django.contrib.auth.urls')),
+
+    # Gestion Inmuebles
+    path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
+    path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
+
+    #Gestion Empleados
     path('empleado/',CrudEmpleado.as_view()),
     path('crearEmpleado/', crearEmpleado),
     path('infoEmpleado/<legajo>', infoEmpleado),
     path('modificacionEmpleado/', modificacionEmpleado),
- 
 ]
+

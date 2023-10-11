@@ -1,12 +1,10 @@
 {% extends "../base.html" %}
 {% load static %}
 
-{% block volver %}
-<a class="" href="../home"><i class="bi bi-arrow-left"></i></a>
-{% endblock %}
-
 {% block tmain %}
-<h4 class="mx-3">Gestion Cliente</h4>
+
+<h4 class="mx-3">Gestion Clientes</h4>
+
 {% endblock %}
 
 {% block cmain %}
@@ -14,10 +12,19 @@
 <div class="col-12 col-md-4">
     <div class="card flex-fill border-0">
         <div class="card-body py-4">
+            
+            {% for msg in messages %}
+
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Hey!</strong> {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+                
+            {% endfor %}
             <h4>Crear Cliente</h4>
             <div class="card">
                 <div class="card-body">
-                    <form action="/crearCliente/" method="POST"> {% csrf_token %}
+                    <form action="{% url 'crearCliente' %}" method="POST"> {% csrf_token %}
                         <div class="form-group mb-3">
                             <label for="txtCuitCuil">Cuit-Cuil</label>
                             <input type="text" id="txtCuitCuil" name="txtCuitCuil" class="form-control"

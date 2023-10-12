@@ -50,6 +50,7 @@ class ClienteCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Cliente"
+        context['boton1'] = "Crear Cliente"
         print(self.template_name)
         return context
     

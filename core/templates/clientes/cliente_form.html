@@ -19,7 +19,7 @@
             </div>
                 
             {% endfor %}
-            <h4>Crear Cliente</h4>
+            <h4>{{ titulo }}</h4>
             <div class="card">
                 <div class="card-body">
                     <form action="{% url 'crearCliente' %}" method="POST"> {% csrf_token %}
@@ -53,7 +53,7 @@
 
                         </div>
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-block text-white">Crear</button>
+                            <button type="submit" class="btn btn-primary btn-block text-white">{{ boton1 }}</button>
                         </div>
                     </form>
                 </div>

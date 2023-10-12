@@ -36,6 +36,7 @@ class ClienteForm(ModelForm):
                 attrs = {
                     'class': 'form-control',
                     'placeholder':'Ingrese el nombre del cliente',
+
                 }
             ),
             'correo': forms.EmailInput(

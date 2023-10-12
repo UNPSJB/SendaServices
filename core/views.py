@@ -2,9 +2,14 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.decorators import method_decorator
+from django.views.generic import View, ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
-from django.views import View
-from .models import Cliente, Inmueble,Empleado
+
+from django.urls import reverse_lazy
+from .models import Cliente, Producto, Inmueble,Empleado
+from .forms import ProductoForm, ClienteForm,EmpleadoForm
+
 
 # Login
 
@@ -31,78 +36,45 @@ def login_view(request):
 
 # Gestion Empleado
 
-@method_decorator(login_required, name='dispatch')
 
-class CrudCliente(View):
-    def get(self, request, *args, **kwargs):
-        clientes = Cliente.objects.all()
-        context = {
-            "clientes": clientes,
-        }
-        return render(request, 'clientes/crudCliente.html', context)
+class ClienteListView(ListView):
+    model = Cliente #Nombre del modelo
+    template_name = "clientes/cliente_list.html" #Ruta del template
+    context_object_name = 'clientes' #Nombre de la lista usar ''
+    queryset = Cliente.objects.all()
 
 
-def crearCliente(request):
-    cuil_cuit= request.POST['txtCuitCuil']
-    apellido= request.POST['txtApellido']
-    nombre= request.POST['txtNombre']
-    correo= request.POST['emailCorreo']
+class ClienteCreateView(CreateView):
+    model = Cliente
+    form_class = ClienteForm
+    success_url = reverse_lazy('listarCliente')
+    template_name = "clientes/cliente_form.html"
 
-    habitual = request.POST.get('cbHabitual', False)
-    gubernamental = request.POST.get('cbGubernamental', False)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Registrar Cliente"
+        context['boton1'] = "Crear Cliente"
+        print(self.template_name)
+        return context
+    
+class ClienteUpdateView(UpdateView):
+    model = Cliente
+    form_class = ClienteForm
+    success_url = reverse_lazy('listarCliente')
+    template_name = "clientes/cliente_modal.html"
 
-    if habitual == 'on':
-        habitual = True
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Cliente"
+        print(self.template_name)
+        return context
+    
+    
 
-    if gubernamental == 'on':
-        gubernamental = True
-
-    cliente=Cliente.objects.create(
-        cuil_cuit = cuil_cuit, apellido=apellido, nombre=nombre,
-        correo=correo, habitual=habitual, gubernamental=gubernamental)
-    messages.success(request, "Cliente creado con exito")
-    return redirect('/cliente')
-
-@login_required
-def infoCliente(request, cuil_cuit):
-    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-    inmuebles = Inmueble.objects.filter(cliente=cliente)
-    context = {
-        "cliente": cliente,  # Agrega el objeto cliente al contexto
-        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-    }
-    return render(request, "clientes/infoCliente.html", context)
-
-
-def modificacionCliente(request):
-    cuil_cuit= request.POST['txtCuitCuil']
-    apellido= request.POST['txtApellido']
-    nombre= request.POST['txtNombre']
-    correo= request.POST['emailCorreo']
-    habitual = request.POST.get('cbHabitual', False)
-    gubernamental = request.POST.get('cbGubernamental', False)
-    if habitual == 'on':
-        habitual = True
-
-    if gubernamental == 'on':
-        gubernamental = True
-
-    cliente = Cliente.objects.get(cuil_cuit = cuil_cuit)
-
-    cliente.cuil_cuit = cuil_cuit
-    cliente.apellido = apellido
-    cliente.nombre = nombre
-    cliente.correo = correo
-    cliente.habitual = habitual
-    cliente.gubernamental = gubernamental
-    cliente.save()
-    messages.success(request, "Modificacion realizada con exito")
-    return infoCliente(request, cuil_cuit)
 
 
 #Gestion Inmueble
 
-@method_decorator(login_required, name='dispatch')
 class Inmuebles(View):
     def get(self, request, *args, **kwargs):
         clientes = Cliente.objects.all()
@@ -113,7 +85,6 @@ class Inmuebles(View):
         }
         return render(request, "clientes/inmuebles.html", context)
     
-@login_required
 def crearInmueble(request, cuil_cuit):
     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
     inmuebles = Inmueble.objects.filter(cliente=cliente)
@@ -123,7 +94,6 @@ def crearInmueble(request, cuil_cuit):
     }
     return render(request, "clientes/crearInmueble.html", context)
 
-@login_required
 def infoInmueble(request, cuil_cuit):
     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
     inmuebles = Inmueble.objects.filter(cliente=cliente)
@@ -133,46 +103,53 @@ def infoInmueble(request, cuil_cuit):
     }
     return render(request, "clientes/infoInmueble.html", context)
 
+class ProductoCreateView(CreateView):
+    model = Producto
+    form_class = ProductoForm
+    success_url = reverse_lazy('home')
+    #template_name = "core/producto_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Registrar Producto"
+        print(self.template_name)
+        return context
+
 #Gestion Empleado
 
-class CrudEmpleado(View):
-    #pide informacion para ver get()
-    def get(self,request,*args,**kwargs):
-        empleado = Empleado.objects.all()
-        context={
 
-        }
-        return render(request,'empleado/crudEmpleado.html', {"empleado": empleado})
+class EmpleadoListView(ListView):
+    model = Empleado #Nombre del modelo
+    template_name = "empleado/empleado_list.html" #Ruta del template
+    context_object_name = 'empleado' #Nombre de la lista usar ''
+    queryset = Empleado.objects.all()
+
+
+class EmpleadoCreateView(CreateView):
+    model = Empleado
+    form_class = EmpleadoForm
+    success_url = reverse_lazy('listarEmpleado')
+    template_name = "empleado/empleado_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Registrar Empleado"
+        context['boton1'] = "Crear Empleado"
+        print(self.template_name)
+        print(context["form"].errors)
+        return context
+
     
-def crearEmpleado(request):
-    legajo= request.POST['numLegajo']
-    apellido= request.POST['txtApellido']
-    nombre= request.POST['txtNombre']
-    correo= request.POST['emailCorreo']
-    cuil=request.POST['txtCuil']
-   
-    empleado=Empleado.objects.create(
-        legajo = legajo, apellido=apellido, nombre=nombre,
-        correo=correo, cuil=cuil)
-    return redirect('/empleado')
+class EmpleadoUpdateView(UpdateView):
+    model = Empleado
+    form_class = EmpleadoForm
+    success_url = reverse_lazy('listarEmpleado')
+    template_name = "empleado/empleado_modal.html"
 
-def infoEmpleado(request, legajo):
-    empleado = Empleado.objects.get(legajo = legajo)
-    return render(request, "empleado/infoEmpleado.html", {"empleado": empleado})
-
-def modificacionEmpleado(request):
-    legajo= request.POST['numLegajo']
-    apellido= request.POST['txtApellido']
-    nombre= request.POST['txtNombre']
-    correo= request.POST['emailCorreo']
-    cuil=request.POST['txtCuil']
-
-    empleado = Empleado.objects.get(legajo = legajo)
-
-    empleado.legajo = legajo
-    empleado.apellido = apellido
-    empleado.nombre = nombre
-    empleado.correo = correo
-    empleado.cuil = cuil
-    empleado.save()
-    return infoEmpleado(request, legajo)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Empleado"
+        print(self.template_name)
+        return context
+    
+    

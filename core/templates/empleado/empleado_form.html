@@ -1,0 +1,62 @@
+{% extends "../base.html" %}
+{% load static %}
+
+{% block tmain %}
+    <h4 class="mx-3">{{ titulo }}</h4>
+{% endblock %}
+
+{% block cmain %}
+
+<div class="col-12 col-md-7 mx-auto">
+    <div class="card flex-fill border-0">
+        <div class="card-body py-4">
+            
+            {% for msg in messages %}
+
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Hey!</strong> {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+                
+            {% endfor %}
+            <h4>{{ titulo }}</h4>
+            <div class="card">
+                <div class="card-body">
+                    <form action="{% url 'crearEmpleado' %}" method="POST"> {% csrf_token %}
+                        <div class="form-group mb-3">
+                            {{ form.legajo.label }}
+                            {{ form.legajo }}
+                            {{ form.legajo.errors }}
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.apellido.label }}
+                            {{ form.apellido }}
+                            {{ form.apellido.errors }}
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.nombre.label }}
+                            {{ form.nombre }}
+                            {{ form.nombre.errors }}
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.correo.label }}
+                            {{ form.correo }}
+                            {{ form.correo.errors }}
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form.cuil.label }}
+                            {{ form.cuil }}
+                            {{ form.cuil.errors }}
+                        </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-block text-white">{{ boton1 }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

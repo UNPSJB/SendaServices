@@ -1,0 +1,15 @@
+{% comment "" %} {% extends "basecrud.html" %}{% endcomment %}
+
+{% load static %}
+
+{% block title %} {{ titulo }} {% endblock %}
+
+
+{% block section %}
+    <form method="POST">
+        {% csrf_token %}
+        {{form}}
+        <button type="submit">Guardar</button>
+    </form>
+
+{% endblock %}

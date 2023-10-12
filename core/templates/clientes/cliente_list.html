@@ -58,13 +58,11 @@
 
 
                                     <td>
-                                        <button type="button" class="btn mx-2 mb-2 btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modificarCliente">
-                                            Modificar
-                                          </button>
-
-                                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>
-                                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
-                                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a></td>
+                                        <button onclick="abrir_modal_edicion('{% url "modificarCliente" c.cuil_cuit %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
+                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>
+                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
+                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -76,24 +74,20 @@
     </div>
     {% endif %}
 
-    <!-- Vertically centered modal -->
-        <!-- Modal -->
-<div class="modal-dialog modal-dialog-centered modal fade" id="modificarCliente" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="modificarClienteLabel">Modal title</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Understood</button>
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="modal fate" id="modificar" role="dialog">
 
+    </div>
+
+
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    var $ = jQuery.noConflict();
+    function abrir_modal_edicion(url){
+        $('#modificar').load(url, function(){
+            $(this).modal('show');
+        });
+    }
+</script>
 {% endblock %}

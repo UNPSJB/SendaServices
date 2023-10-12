@@ -56,7 +56,7 @@ class ClienteCreateView(CreateView):
 class ClienteUpdateView(UpdateView):
     model = Cliente
     form_class = ClienteForm
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('listarCliente')
     template_name = "clientes/cliente_modal.html"
 
     def get_context_data(self, **kwargs):
@@ -64,6 +64,8 @@ class ClienteUpdateView(UpdateView):
         context['titulo'] = "Modificar Cliente"
         print(self.template_name)
         return context
+    
+    
 
 
 #Gestion Inmueble

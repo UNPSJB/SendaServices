@@ -31,6 +31,7 @@ class Estado(models.Model):
     descripcion= models.CharField(max_length=30, primary_key=True)
     fechaInicio= models.DateField()
     fechaVigencia= models.DateField()
+    servicio= models.ForeignKey(Servicio, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.descripcion

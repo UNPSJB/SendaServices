@@ -69,10 +69,11 @@
 
               <ul id="cliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
                 <li class="sidebar-item">
-                  <a href="{% url 'cliente' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                  <a href="{% url 'crearCliente' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
                 </li>
+                
                 <li class="sidebar-item">
-                  <a href="#" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                  <a href="{% url 'listarCliente' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
                 </li>
               </ul>
             </ul>

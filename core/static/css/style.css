@@ -2,6 +2,9 @@
 
 :root {
     --color-letra: #e9ecef;
+    --color-prueba: #111;
+    --color-amarillo: #ffec00;
+    --color-verdeOscuro: #105736;
 }
 
 *,
@@ -32,6 +35,29 @@ h4 {
     font-family: 'Poppins', sans-serif;
     font-size: 1.275rem;
     color: var(--bs-emphasis-color);
+}
+
+.login {
+    background-image: url('../img/login.jpg');
+    background-size: cover;
+    /* Escala la imagen para cubrir todo el fondo */
+    /* Centra la imagen en el fondo */
+    background-repeat: no-repeat;
+    /* Evita que la imagen se repita */
+    height: 100vh;
+    /* Altura del fondo igual al 100% de la ventana */
+}
+
+/* Clase personalizada para elementos readonly */
+.readonly {
+    background-color: #f2f2f2;
+    /* Color de fondo gris */
+    pointer-events: none;
+    /* Deshabilita las interacciones del usuario */
+    cursor: not-allowed;
+    /* Cambia el cursor a "no permitido" */
+    color: #888;
+    /* Color de texto gris claro */
 }
 
 .wrapper {
@@ -92,7 +118,11 @@ a.sidebar-link {
     font-size: 0.875rem;
 }
 
-.sidebar-link[data-bs-toggle="collapse"]::after {
+a.sidebar-link:hover {
+    background-color: var(--color-verdeOscuro);
+}
+
+a.sidebar-link[data-bs-toggle="collapse"]::after {
     border: solid;
     border-width: 0 .075rem .075rem 0;
     content: "";
@@ -141,4 +171,87 @@ a.sidebar-link {
 
 #sidebar.collapsed {
     margin-left: -264px;
+}
+
+.switch-container {
+    position: relative;
+    display: inline-block;
+    width: 65px;
+    /* Anoche del contenedor */
+    height: 30px;
+    /* Alto del contenedor */
+    border-radius: 20px;
+    border: 3px solid rgba(2, 137, 155, 0.050);
+    /* Bordeado fuera del switch */
+}
+
+.swtich-container input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #979797;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    /* Alto de la bola */
+    width: 24px;
+    /* Ancho de la bola */
+    left: 4px;
+    /* Ubicacion Izquierda de la bola */
+    bottom: 3.5px;
+    /* Ubicacion Arriba-Abajo de la bola */
+    background-color: white;
+    /* Color de la bola */
+    -webkit-transition: .2s;
+    /* Velicidad de transición */
+    transition: .2s;
+    /* Velicidad de transición de Webkit*/
+}
+
+input:checked+.slider {
+    background-color: #02889B;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(32px);
+    /* Desplazamiento Webkit*/
+    -ms-transform: translateX(32px);
+    /* Desplazamiento */
+    transform: translateX(32px);
+    /* Desplazamiento */
+}
+
+
+/* Slider */
+
+.slider {
+    border-radius: 17px;
+}
+
+.slider:before {
+    border-radius: 50%;
+}
+
+.form-control {
+    margin: 10px 0px;
+}
+
+.checkbox {
+    margin: 10px 0px;
 }

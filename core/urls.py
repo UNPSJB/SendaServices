@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import CrudCliente, Inmuebles, salir, index, login_view ,crearCliente, infoCliente, modificacionCliente, crearInmueble
+from django.contrib.auth.decorators import login_required
+from .views import Inmuebles, salir, index, login_view , ClienteListView, ClienteCreateView, ClienteUpdateView, crearInmueble, ProductoCreateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,13 +29,16 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     # Gestion Cliente
-    path('cliente/', CrudCliente.as_view(), name="cliente"),
-    path('crearCliente/', crearCliente, name="crearCliente"),
-    path('infoCliente/<cuil_cuit>', infoCliente),
-    path('modificacionCliente/', modificacionCliente),
+    path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
+    path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
+    path('clienteModificar/<int:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
+
 
     # Gestion Inmuebles
     path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
     path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
+
+    # Gestion Productos
+    path('producto/', ProductoCreateView.as_view(), name='crearProducto'),
 
 ]

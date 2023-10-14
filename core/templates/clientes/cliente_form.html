@@ -1,5 +1,6 @@
 {% extends "../base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block tmain %}
     <h4 class="mx-3">{{ titulo }}</h4>
@@ -22,40 +23,16 @@
             <h4>{{ titulo }}</h4>
             <div class="card">
                 <div class="card-body">
-                    <form action="{% url 'crearCliente' %}" method="POST"> {% csrf_token %}
-                        <div class="form-group mb-3">
-                            {{ form.cuil_cuit.label }}
-                            {{ form.cuil_cuit }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.apellido.label }}
-                            {{ form.apellido }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.nombre.label }}
-                            {{ form.nombre }}
-                        </div>
-                        <div class="form-group mb-3">
-                            {{ form.correo.label }}
-                            {{ form.correo }}
-                        </div>
-                        <div class="form-group">
 
-                            <div class="mb-3 form-check">
-                                {{ form.habitual.label }}
-                                {{ form.habitual }}
-                            </div>
+                    <form action="{% url 'crearCliente' %}" method="POST">
+                        {% csrf_token %}
+                        {{ form | crispy }}
 
-                            <div class="mb-3 form-check">
-                                {{ form.gubernamental.label }}
-                                {{ form.gubernamental }}
-                            </div>
-
-                        </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-block text-white">{{ boton1 }}</button>
                         </div>
-                    </form>
+                     </form>
+                    
                 </div>
             </div>
         </div>

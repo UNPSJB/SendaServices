@@ -74,18 +74,19 @@
     </div>
     {% endif %}
 
-    <div class="modal fate" id="modificar" role="dialog">
-
+    <div class="modal" id="modal" role="dialog">
+        
     </div>
 
 
 {% endblock %}
 
 {% block extrajs %}
+<!--Modal-->
 <script type="text/javascript">
     var $ = jQuery.noConflict();
     function abrir_modal_edicion(url){
-        $('#modificar').load(url, function(){
+        $('#modal').load(url, function(){
             $(this).modal('show');
         });
     }

@@ -1,0 +1,94 @@
+{% extends "../base.html" %}
+{% load static %}
+
+{% block tmain %}
+<h4 class="mx-3">{{ titulo }}</h4>
+{% endblock %}
+
+{% block cmain %}
+
+    {% if clientes %}
+    <div class="col-12 mx-auto">
+        <div class="card flex-fill border-0">
+            <div class="card-body py-4">
+
+
+                <div class="d-flex">
+                    <div class="d-grid gap-1">
+                        <h4>Listado de Clientes</h4>
+
+                    </div>
+                </div>
+
+
+                <div class="d-flex align-items-start">
+                    <div class="flex-grow-1 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="table-primary">
+                                    <th>#</th>
+                                    <th>Cuit-Cuil</th>
+                                    <th>Apellido</th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Habitual</th>
+                                    <th>Gubernamental</th>
+                                    
+                                    <th colspan="">Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in clientes %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{c.cuil_cuit}}</td>
+                                    <td>{{c.apellido}}</td>
+                                    <td>{{c.nombre}}</td>
+                                    <td>{{c.correo}}</td>
+                                    {% if c.habitual %}
+                                        <td>Si</td>
+                                    {% else %}
+                                        <td>No</td>
+                                    {% endif %}
+                                    {% if c.gubernamental %}
+                                        <td>Si</td>
+                                    {% else %}
+                                        <td>No</td>
+                                    {% endif %}
+
+
+                                    <td>
+                                        <button onclick="abrir_modal_edicion('{% url "modificarCliente" c.cuil_cuit %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
+                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>
+                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
+                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="modal" id="modal" role="dialog">
+        
+    </div>
+
+
+{% endblock %}
+
+{% block extrajs %}
+<!--Modal-->
+<script type="text/javascript">
+    var $ = jQuery.noConflict();
+    function abrir_modal_edicion(url){
+        $('#modal').load(url, function(){
+            $(this).modal('show');
+        });
+    }
+</script>
+{% endblock %}

@@ -33,6 +33,10 @@ class Producto(models.Model):
     def __str__(self):
         return self.descripcion
     
+class Categoria(models.Model):
+    nombre= models.CharField(max_length=30)
+    sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
+    
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, primary_key=True)
     nombreYapellido= models.CharField(max_length=90)
@@ -42,9 +46,7 @@ class Empleado(models.Model):
     def __str__(self):
         return self.apellido_y_nombre
     
-class Categoria(models.Model):
-    nombre= models.CharField(max_length=30)
-    sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
+
 
 
 

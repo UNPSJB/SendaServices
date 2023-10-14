@@ -2,12 +2,20 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.decorators import method_decorator
+from django.views.generic import View, ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
+<<<<<<< HEAD
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Cliente, Inmueble, Producto
 from .forms import ProductoForm
+=======
+from django.urls import reverse_lazy
+from .models import Cliente, Producto, Inmueble
+from .forms import ProductoForm, ClienteForm
+>>>>>>> beefb0d458cdfa5931dc991036379519820f84f6
 
 # Login
 
@@ -34,73 +42,80 @@ def login_view(request):
 
 # Gestion Empleado
 
-@method_decorator(login_required, name='dispatch')
-class CrudCliente(View):
+class ClienteListView(ListView):
+    model = Cliente #Nombre del modelo
+    template_name = "clientes/cliente_list.html" #Ruta del template
+    context_object_name = 'clientes' #Nombre de la lista usar ''
+    queryset = Cliente.objects.all()
+
+
+<<<<<<< HEAD
+=======
+class ClienteCreateView(CreateView):
+    model = Cliente
+    form_class = ClienteForm
+    success_url = reverse_lazy('listarCliente')
+    template_name = "clientes/cliente_form.html"
+>>>>>>> beefb0d458cdfa5931dc991036379519820f84f6
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Registrar Cliente"
+        context['boton1'] = "Crear Cliente"
+        print(self.template_name)
+        return context
+    
+class ClienteUpdateView(UpdateView):
+    model = Cliente
+    form_class = ClienteForm
+    success_url = reverse_lazy('listarCliente')
+    template_name = "clientes/cliente_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Cliente"
+        context['boton'] = "Actualizar" 
+        context['btnColor'] = "btn-primary"
+        print(self.template_name)
+        return context
+<<<<<<< HEAD
+=======
+    
+    
+
+
+>>>>>>> beefb0d458cdfa5931dc991036379519820f84f6
+#Gestion Inmueble
+
+class Inmuebles(View):
     def get(self, request, *args, **kwargs):
         clientes = Cliente.objects.all()
+        inmueble = Inmueble.objects.all()
         context = {
             "clientes": clientes,
+            "inmueble": inmueble,
         }
-        return render(request, 'clientes/crudCliente.html', context)
-
-
-def crearCliente(request):
-    cuil_cuit= request.POST['txtCuitCuil']
-    apellido= request.POST['txtApellido']
-    nombre= request.POST['txtNombre']
-    correo= request.POST['emailCorreo']
-
-    habitual = request.POST.get('cbHabitual', False)
-    gubernamental = request.POST.get('cbGubernamental', False)
-
-    if habitual == 'on':
-        habitual = True
-
-    if gubernamental == 'on':
-        gubernamental = True
-
-    cliente=Cliente.objects.create(
-        cuil_cuit = cuil_cuit, apellido=apellido, nombre=nombre,
-        correo=correo, habitual=habitual, gubernamental=gubernamental)
-    messages.success(request, "Cliente creado con exito")
-    return redirect('/cliente')
-
-@login_required
-def infoCliente(request, cuil_cuit):
+        return render(request, "clientes/inmuebles.html", context)
+    
+def crearInmueble(request, cuil_cuit):
     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
     inmuebles = Inmueble.objects.filter(cliente=cliente)
     context = {
         "cliente": cliente,  # Agrega el objeto cliente al contexto
         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
     }
-    return render(request, "clientes/infoCliente.html", context)
+    return render(request, "clientes/crearInmueble.html", context)
 
-
-def modificacionCliente(request):
-    cuil_cuit= request.POST['txtCuitCuil']
-    apellido= request.POST['txtApellido']
-    nombre= request.POST['txtNombre']
-    correo= request.POST['emailCorreo']
-    habitual = request.POST.get('cbHabitual', False)
-    gubernamental = request.POST.get('cbGubernamental', False)
-    if habitual == 'on':
-        habitual = True
-
-    if gubernamental == 'on':
-        gubernamental = True
-
-    cliente = Cliente.objects.get(cuil_cuit = cuil_cuit)
-
-    cliente.cuil_cuit = cuil_cuit
-    cliente.apellido = apellido
-    cliente.nombre = nombre
-    cliente.correo = correo
-    cliente.habitual = habitual
-    cliente.gubernamental = gubernamental
-    cliente.save()
-    messages.success(request, "Modificacion realizada con exito")
-    return infoCliente(request, cuil_cuit)
-
+def infoInmueble(request, cuil_cuit):
+    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
+    inmuebles = Inmueble.objects.filter(cliente=cliente)
+    context = {
+        "cliente": cliente,  # Agrega el objeto cliente al contexto
+        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
+    }
+    return render(request, "clientes/infoInmueble.html", context)
+<<<<<<< HEAD
+=======
 
 class ProductoCreateView(CreateView):
     model = Producto
@@ -113,35 +128,4 @@ class ProductoCreateView(CreateView):
         context['titulo'] = "Registrar Producto"
         print(self.template_name)
         return context
-#Gestion Inmueble
-
-@method_decorator(login_required, name='dispatch')
-class Inmuebles(View):
-    def get(self, request, *args, **kwargs):
-        clientes = Cliente.objects.all()
-        inmueble = Inmueble.objects.all()
-        context = {
-            "clientes": clientes,
-            "inmueble": inmueble,
-        }
-        return render(request, "clientes/inmuebles.html", context)
-    
-@login_required
-def crearInmueble(request, cuil_cuit):
-    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-    inmuebles = Inmueble.objects.filter(cliente=cliente)
-    context = {
-        "cliente": cliente,  # Agrega el objeto cliente al contexto
-        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-    }
-    return render(request, "clientes/crearInmueble.html", context)
-
-@login_required
-def infoInmueble(request, cuil_cuit):
-    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-    inmuebles = Inmueble.objects.filter(cliente=cliente)
-    context = {
-        "cliente": cliente,  # Agrega el objeto cliente al contexto
-        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-    }
-    return render(request, "clientes/infoInmueble.html", context)
+>>>>>>> beefb0d458cdfa5931dc991036379519820f84f6

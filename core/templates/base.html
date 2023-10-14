@@ -33,7 +33,6 @@
         <div class="sidebar-logo p-0 m-0">
           <a href="#">
 
-
             <div class="d-flex justify-content-center align-items-center" style="width: 264px; height: 64.4px;">
               <img src="{% static 'img/senda.png' %}" class="p-0">
 
@@ -46,7 +45,7 @@
             Opciones Generales
           </li>
           <li class="sidebar-item">
-            <a href="/home" class="sidebar-link">
+            <a href="{% url 'home' %}" class="sidebar-link">
               <i class="bi bi-house-fill"></i>
               Home
             </a>
@@ -61,7 +60,7 @@
                 <a href="/cliente" class="sidebar-link">CRUD Cliente</a>
               </li>
               <li class="sidebar-item">
-                <a href="#" class="sidebar-link">CRUD Inmueble</a>
+                <a href="/inmuebles" class="sidebar-link">CRUD Inmueble</a>
               </li>
             </ul>
           </li>
@@ -151,7 +150,9 @@
               <div class="dropdown-menu dropdown-menu-end">
                 <a href="#" class="dropdown-item">Perfil</a>
                 <a href="#" class="dropdown-item">Informacion</a>
-                <a href="#" class="dropdown-item">Salir</a>
+                {% block salir %}
+                <a href="{% url 'salir' %}" class="dropdown-item">Salir</a> 
+                {% endblock salir %}
               </div>
             </li>
           </ul>
@@ -162,7 +163,7 @@
         <div class="container-fluid">
           <div class="d-flex pt-2 pb-2">
             {% block volver %}
-            <a class="" href="../home"><i class="bi bi-arrow-left"></i></a>
+            <a class="" href="../"><i class="bi bi-arrow-left"></i></a>
             {% endblock %}
             {% block tmain %}
             <h4>Panel Admin</h4>

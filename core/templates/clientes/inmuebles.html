@@ -1,0 +1,126 @@
+{% extends "../base.html" %}
+
+{% block tmain %}
+<h4 class="mx-3">CRUD Cliente</h4>
+{% endblock %}
+
+{% block cmain %}
+
+<div class="col-12 col-md-4">
+    <div class="card flex-fill border-0">
+        <div class="card-body py-4">
+            <h4>Buscar Cliente</h4>
+            <div class="card">
+                <div class="card-body">
+
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="exampleDataList" class="form-label">Clientes</label>
+                            <input class="form-control" list="datalistOptions" id="lCliente" name="cuil-cuit" placeholder="Buscar Cliente" required>
+                            <datalist id="datalistOptions">
+                                {% for c in clientes %}
+                                    <option value="{{c.cuil_cuit}} - {{c.apellido}} - {{c.nombre}}">
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                    
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-block text-white">Buscar</button>
+                        </div>
+                    </form>
+                    
+
+                </div>
+            </div>
+
+            <h4>Crear Inmueble</h4>
+            <div class="card">
+                <div class="card-body">
+                    {% block fieldset %}
+                    <fieldset disabled>
+                    {% endblock %}
+
+                    <form action="" method="POST"> {% csrf_token %}
+
+                        <div class="form-group mb-3">
+                            <label for="txtDomicilio">Domicilio</label>
+                            <input type="text" id="txtDomicilio" name="txtDomicilio" class="form-control"
+                                placeholder="Domicilio" maxlength="90" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="numMetros">Metros Cuadrados</label>
+                            <input type="number" id="numMetros" name="numMetros" class="form-control"
+                                placeholder="Metros Cuadrados" required min="0">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="numAmbientes">Numero Ambientes</label>
+                            <input type="number" id="numAmbientes" name="numAmbientes" class="form-control"
+                                placeholder="Numero Ambientes" required min="0">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="selTipo" class="pb-2">Tipo Inmueble</label>
+                            <select class="form-select" aria-label="Default select example" id="selTipo" name="selTipo">
+                                <option value="1">casa</option>
+                                <option value="2">oficina</option>
+                                <option value="3">salon</option>
+                              </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-block text-white">Crear</button>
+                        </div>
+                    </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-12 col-md-8 d-flex">
+    <div class="card flex-fill border-0">
+        <div class="card-body py-4">
+
+
+            <div class="d-flex">
+                <div class="d-grid gap-1">
+                    <h4>Listado de Inmuebles</h4>
+
+                </div>
+            </div>
+
+
+            <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="table-primary">
+                                <th>#</th>
+                                <th>Domicilio</th>
+                                <th>Tipo</th>
+                                <th colspan="">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in inmuebles %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{i.domicilio}}</td>
+                                <td>{{i.tipo}}</td>
+                                <td><a href="/infoInmueble/{{cliente}}" class="btn btn-sm btn-primary">+Info</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

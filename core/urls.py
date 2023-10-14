@@ -15,16 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from .views import LoginView, Home, CrudCliente, crearCliente, infoCliente, modificacionCliente, ProductoCreateView
+from django.urls import path, include
+from .views import CrudCliente, Inmuebles, salir, index, login_view ,crearCliente, infoCliente, modificacionCliente, crearInmueble, ProductoCreateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', Home.as_view(), name="home"),
-    path('cliente/', CrudCliente.as_view()),
-    path('', LoginView.as_view(),name="login"),
-    path('crearCliente/', crearCliente),
+
+    # Login
+    path('', index, name="home"),
+    path('login/', login_view, name='login'),
+    path('salir/', salir, name="salir"),
+    path('accounts/', include('django.contrib.auth.urls')),
+
+    # Gestion Cliente
+    path('cliente/', CrudCliente.as_view(), name="cliente"),
+    path('crearCliente/', crearCliente, name="crearCliente"),
     path('infoCliente/<cuil_cuit>', infoCliente),
     path('modificacionCliente/', modificacionCliente),
+
+    # Gestion Inmuebles
+    path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
+    path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
+
     path('producto/', ProductoCreateView.as_view(), name='crearProducto'),
+
 ]

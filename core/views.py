@@ -1,36 +1,49 @@
-
-from django.views.generic import View
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect
+from django.views import View
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Cliente, Producto
+from .models import Cliente, Inmueble, Producto
 from .forms import ProductoForm
 
-class LoginView(View):
-    #pide informacion para ver get()
-    def get(self,request,*args,**kwargs):
-        context={
+# Login
 
-        }
-        return render(request,'login.html',context)
-    
-class Home(View):
-    #pide informacion para ver get()
-    def get(self,request,*args,**kwargs):
-        context={
+@login_required
+def index(request):
+    return render(request, 'home.html')
 
-        }
-        return render(request,'home.html',context)
-    
+def salir(request):
+    logout(request)
+    return redirect('/')
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("")
+        else:
+            messages.error(request, "La contraseña no es válida. Por favor, inténtalo de nuevo.")
+
+    return render(request, "registration/login.html")
+
+# Gestion Empleado
+
+@method_decorator(login_required, name='dispatch')
 class CrudCliente(View):
-    #pide informacion para ver get()
-    def get(self,request,*args,**kwargs):
+    def get(self, request, *args, **kwargs):
         clientes = Cliente.objects.all()
-        context={
-
+        context = {
+            "clientes": clientes,
         }
-        return render(request,'clientes/crudCliente.html', {"clientes": clientes})
-    
+        return render(request, 'clientes/crudCliente.html', context)
+
+
 def crearCliente(request):
     cuil_cuit= request.POST['txtCuitCuil']
     apellido= request.POST['txtApellido']
@@ -49,11 +62,19 @@ def crearCliente(request):
     cliente=Cliente.objects.create(
         cuil_cuit = cuil_cuit, apellido=apellido, nombre=nombre,
         correo=correo, habitual=habitual, gubernamental=gubernamental)
+    messages.success(request, "Cliente creado con exito")
     return redirect('/cliente')
 
+@login_required
 def infoCliente(request, cuil_cuit):
-    cliente = Cliente.objects.get(cuil_cuit = cuil_cuit)
-    return render(request, "clientes/infoCliente.html", {"cliente": cliente})
+    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
+    inmuebles = Inmueble.objects.filter(cliente=cliente)
+    context = {
+        "cliente": cliente,  # Agrega el objeto cliente al contexto
+        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
+    }
+    return render(request, "clientes/infoCliente.html", context)
+
 
 def modificacionCliente(request):
     cuil_cuit= request.POST['txtCuitCuil']
@@ -77,6 +98,7 @@ def modificacionCliente(request):
     cliente.habitual = habitual
     cliente.gubernamental = gubernamental
     cliente.save()
+    messages.success(request, "Modificacion realizada con exito")
     return infoCliente(request, cuil_cuit)
 
 
@@ -91,3 +113,35 @@ class ProductoCreateView(CreateView):
         context['titulo'] = "Registrar Producto"
         print(self.template_name)
         return context
+#Gestion Inmueble
+
+@method_decorator(login_required, name='dispatch')
+class Inmuebles(View):
+    def get(self, request, *args, **kwargs):
+        clientes = Cliente.objects.all()
+        inmueble = Inmueble.objects.all()
+        context = {
+            "clientes": clientes,
+            "inmueble": inmueble,
+        }
+        return render(request, "clientes/inmuebles.html", context)
+    
+@login_required
+def crearInmueble(request, cuil_cuit):
+    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
+    inmuebles = Inmueble.objects.filter(cliente=cliente)
+    context = {
+        "cliente": cliente,  # Agrega el objeto cliente al contexto
+        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
+    }
+    return render(request, "clientes/crearInmueble.html", context)
+
+@login_required
+def infoInmueble(request, cuil_cuit):
+    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
+    inmuebles = Inmueble.objects.filter(cliente=cliente)
+    context = {
+        "cliente": cliente,  # Agrega el objeto cliente al contexto
+        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
+    }
+    return render(request, "clientes/infoInmueble.html", context)

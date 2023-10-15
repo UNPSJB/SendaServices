@@ -63,6 +63,8 @@ class ClienteUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Modificar Cliente"
+        context['boton'] = "Actualizar" 
+        context['btnColor'] = "btn-primary"
         print(self.template_name)
         return context
     

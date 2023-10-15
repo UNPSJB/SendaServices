@@ -109,23 +109,13 @@
 
             <!--Productos-->
             <ul id="gestionProductos" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-
-              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#producto" data-bs-toggle="collapse"
-                aria-expanded="false">
-                <i class="bi bi-person-fill"></i>
-                Producto
-              </a>
-
-              <ul id="producto" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="{% url 'crearProducto' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
-                </li>
-                
-                <li class="sidebar-item">
-                  {% comment "" %}{% url 'listarProductos' %}{% endcomment %}
-                  <a href="#" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-                </li>
-              </ul>
+              <li class="sidebar-item">
+                <a href="{% url 'crearProducto' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+              </li>
+              
+              <li class="sidebar-item">
+                <a href="{% url 'listarProductos' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+              </li>
             </ul>
           </li>
 

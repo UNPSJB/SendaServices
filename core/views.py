@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Cliente, Producto, Inmueble
-from .forms import ProductoForm, ClienteForm
+from .forms import ProductoForm, ClienteForm, ProductoUpdateForm
 
 # Login
 
@@ -118,5 +118,17 @@ class ProductoCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Producto"
-        print(self.template_name)
+        return context
+    
+class ProductoUpdateView(UpdateView):
+    model = Producto
+    form_class = ProductoUpdateForm
+    success_url = reverse_lazy('listarProductos')
+    template_name = "core/producto_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Producto"
+        context['boton'] = "Actualizar" 
+        context['btnColor'] = "btn-primary"
         return context

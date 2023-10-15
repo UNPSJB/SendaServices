@@ -19,10 +19,10 @@ class ProductoForm(ModelForm):
         fields = '__all__'
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
-            'codigo': 'Codigo',
-            'descripcion': 'Descripcion',
+            'codigo': 'Código',
+            'descripcion': 'Descripción',
             'stock': 'Stock',
-            'precioUnitario': 'Precio',
+            'precioUnitario': 'Precio Unitario',
            
         }
         #Referencia a los estilos con los que se renderizan los campos
@@ -65,3 +65,8 @@ class ProductoForm(ModelForm):
 
         self.helper.add_input(Submit('submit', 'Guardar'))
 
+
+class ProductoUpdateForm(ProductoForm):
+
+    class Meta(ProductoForm.Meta):
+        exclude = ["stock", "codigo"]

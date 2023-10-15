@@ -7,7 +7,6 @@
 
 {% block cmain %}
 
-    {% if productos %}
     <div class="col-12 mx-auto">
         <div class="card flex-fill border-0">
             <div class="card-body py-4">
@@ -26,6 +25,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr class="table-primary">
+                                    <th>#</th>
                                     <th>Codigo</th>
                                     <th>Descripcion</th>
                                     <th>Stock</th>
@@ -35,20 +35,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for c in productos %}
-                                <tr>
-                                    <td>{{forloop.counter}}</td>
-                                    <td>{{c.codigo}}</td>
-                                    <td>{{c.descripcion}}</td>
-                                    <td>{{c.stock}}</td>
-                                    <td>{{c.precioUnitario}}</td>
-                                    <td>
-                                        <button onclick="abrir_modal_edicion('{% url "modificarCliente" c.cuil_cuit %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a>
-                                    </td>
-                                </tr>
+                                {% for p in productos %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{p.codigo}}</td>
+                                        <td>{{p.descripcion}}</td>
+                                        <td>{{p.stock}}</td>
+                                        <td>{{p.precioUnitario}}</td>
+                                        <td>
+                                            <button onclick="abrir_modal_edicion('{% url "modificarProducto" p.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr><td> No hay productos registrados. </td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -57,7 +56,6 @@
             </div>
         </div>
     </div>
-    {% endif %}
 
     <div class="modal fate" id="modificar" role="dialog">
 

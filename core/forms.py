@@ -1,6 +1,8 @@
 from django import forms
 from django.forms import ModelForm
 from .models import Producto, Cliente
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 
 class ClienteForm(ModelForm):
 
@@ -38,18 +40,28 @@ class ProductoForm(ModelForm):
                     'placeholder':'Ingrese descripcion del producto',
                 }
             ),
-            'stock': forms.TextInput(
+            'stock': forms.NumberInput(
                 attrs = {
+                    'min': 0,
                     'class': 'form-control',
                     'placeholder':'Ingrese el stock del producto',
 
                 }
             ),
-            'precioUnitario': forms.TextInput(
+            'precioUnitario': forms.NumberInput(
                 attrs = {
+                    'min': 0,                    
                     'class': 'form-control',
                     'placeholder':'Ingrese el precio del producto',
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-productoForm'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Guardar'))
 

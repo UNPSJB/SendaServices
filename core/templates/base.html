@@ -97,8 +97,39 @@
                 </li>
               </ul>
             </ul>
-
           </li>
+
+          <!-- Menu productos -->
+          <li class="sidebar-item">
+
+            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionProductos" data-bs-toggle="collapse"
+              aria-expanded="false">
+              <i class="bi bi-person-lines-fill"></i> Gestion Productos
+            </a>
+
+            <!--Productos-->
+            <ul id="gestionProductos" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#producto" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-person-fill"></i>
+                Producto
+              </a>
+
+              <ul id="producto" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'crearProducto' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+                <li class="sidebar-item">
+                  {% comment "" %}{% url 'listarProductos' %}{% endcomment %}
+                  <a href="#" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
+            </ul>
+          </li>
+
+
 
           <!--Menu con caida cascada-->
           <li class="sidebar-item">

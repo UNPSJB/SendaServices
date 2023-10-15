@@ -99,11 +99,19 @@ def infoInmueble(request, cuil_cuit):
     }
     return render(request, "clientes/infoInmueble.html", context)
 
+#Gestion Productos
+
+class ProductoListView(ListView):
+    model = Producto #Nombre del modelo
+    template_name = "core/producto_list.html" #Ruta del template
+    context_object_name = 'productos' #Nombre de la lista usar ''
+    queryset = Producto.objects.all()
+
 class ProductoCreateView(CreateView):
     model = Producto
     form_class = ProductoForm
     success_url = reverse_lazy('home')
-    #template_name = "core/producto_form.html"
+    template_name = "core/producto_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

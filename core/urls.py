@@ -18,14 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required
 from .views import (
-    Inmuebles, 
     salir, 
     index, 
     login_view , 
     ClienteListView, 
     ClienteCreateView, 
     ClienteUpdateView, 
-    crearInmueble, 
+    InmuebleCreateView,
+    InmuebleListView,
+    InmuebleUpdateView,
     ProductoCreateView,
     ProductoListView,
     ProductoUpdateView
@@ -45,10 +46,13 @@ urlpatterns = [
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
     path('clienteModificar/<int:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
 
-
     # Gestion Inmuebles
-    path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
-    path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
+    path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
+    path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
+    path('inmuebles/listar', InmuebleListView.as_view(), name='listarInmuebles'),
+
+    # path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
+    # path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
 
     # Gestion Productos
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),

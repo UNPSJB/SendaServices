@@ -79,8 +79,26 @@
             </ul>
 
             
-            <!--Inmuebles-->
-            <ul id="gestioncliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+            <!--Menu Inmuebles-->
+            <li class="sidebar-item">
+
+              <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionInmuebles" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-person-lines-fill"></i> Gestion Inmuebles
+              </a>
+
+              <!--Inmuebles-->
+              <ul id="gestionInmuebles" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'crearInmueble' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+                <li class="sidebar-item">
+                  <a href="{% url 'listarInmuebles' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
+            </li>
+            {% comment %} <ul id="gestioncliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
 
               <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#inmueble" data-bs-toggle="collapse"
                 aria-expanded="false">
@@ -97,7 +115,7 @@
                 </li>
               </ul>
             </ul>
-          </li>
+          </li> {% endcomment %}
 
           <!-- Menu productos -->
           <li class="sidebar-item">

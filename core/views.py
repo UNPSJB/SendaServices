@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Cliente, Producto, Inmueble
-from .forms import ProductoForm, ClienteForm
+from .forms import ProductoForm, ClienteForm, ProductoUpdateForm
 
 # Login
 
@@ -101,14 +101,34 @@ def infoInmueble(request, cuil_cuit):
     }
     return render(request, "clientes/infoInmueble.html", context)
 
+#Gestion Productos
+
+class ProductoListView(ListView):
+    model = Producto #Nombre del modelo
+    template_name = "core/producto_list.html" #Ruta del template
+    context_object_name = 'productos' #Nombre de la lista usar ''
+    queryset = Producto.objects.all()
+
 class ProductoCreateView(CreateView):
     model = Producto
     form_class = ProductoForm
-    success_url = reverse_lazy('home')
-    #template_name = "core/producto_form.html"
+    success_url = reverse_lazy('crearProducto')
+    template_name = "core/producto_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Producto"
-        print(self.template_name)
+        return context
+    
+class ProductoUpdateView(UpdateView):
+    model = Producto
+    form_class = ProductoUpdateForm
+    success_url = reverse_lazy('listarProductos')
+    template_name = "core/producto_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Producto"
+        context['boton'] = "Actualizar" 
+        context['btnColor'] = "btn-primary"
         return context

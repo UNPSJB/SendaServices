@@ -17,7 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required
-from .views import Inmuebles, salir, index, login_view , ClienteListView, ClienteCreateView, ClienteUpdateView, crearInmueble, ProductoCreateView
+from .views import (
+    Inmuebles, 
+    salir, 
+    index, 
+    login_view , 
+    ClienteListView, 
+    ClienteCreateView, 
+    ClienteUpdateView, 
+    crearInmueble, 
+    ProductoCreateView,
+    ProductoListView,
+    ProductoUpdateView
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,6 +51,7 @@ urlpatterns = [
     path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
 
     # Gestion Productos
-    path('producto/', ProductoCreateView.as_view(), name='crearProducto'),
-
+    path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
+    path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
+    path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
 ]

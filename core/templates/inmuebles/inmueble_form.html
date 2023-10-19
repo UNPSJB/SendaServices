@@ -11,28 +11,30 @@
 <div class="col-12 col-md-7 mx-auto">
     <div class="card flex-fill border-0">
         <div class="card-body py-4">
-            
+
             {% for msg in messages %}
 
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <strong>Hey!</strong> {{ msg }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-                
+
             {% endfor %}
             <h4>{{ titulo }}</h4>
             <div class="card">
                 <div class="card-body">
 
-                    <form action="{% url 'crearCliente' %}" method="POST">
+                    {% comment %} <form action="{% url 'crearCliente' %}" method="POST">
                         {% csrf_token %}
                         {{ form | crispy }}
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-block text-white">{{ boton1 }}</button>
                         </div>
-                     </form>
-                    
+                     </form> {% endcomment %}
+
+                     {% crispy form form.helper %}
+
                 </div>
             </div>
         </div>

@@ -7,9 +7,14 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 
 from django.urls import reverse_lazy
+<<<<<<< HEAD
 from .models import Cliente, Producto, Inmueble,Empleado
 from .forms import ProductoForm, ClienteForm,EmpleadoForm
 
+=======
+from .models import Cliente, Producto, Inmueble
+from .forms import ProductoForm, ClienteForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm
+>>>>>>> origin/desarrollo
 
 # Login
 
@@ -66,54 +71,93 @@ class ClienteUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Modificar Cliente"
+        context['boton'] = "Actualizar" 
+        context['btnColor'] = "btn-primary"
         print(self.template_name)
         return context
     
-    
-
 
 
 #Gestion Inmueble
 
-class Inmuebles(View):
-    def get(self, request, *args, **kwargs):
-        clientes = Cliente.objects.all()
-        inmueble = Inmueble.objects.all()
-        context = {
-            "clientes": clientes,
-            "inmueble": inmueble,
-        }
-        return render(request, "clientes/inmuebles.html", context)
-    
-def crearInmueble(request, cuil_cuit):
-    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-    inmuebles = Inmueble.objects.filter(cliente=cliente)
-    context = {
-        "cliente": cliente,  # Agrega el objeto cliente al contexto
-        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-    }
-    return render(request, "clientes/crearInmueble.html", context)
+class InmuebleListView(ListView):
+    model = Inmueble #Nombre del modelo
+    template_name = "inmuebles/inmueble_list.html" #Ruta del template
+    context_object_name = 'inmuebles' #Nombre de la lista usar ''
+    queryset = Inmueble.objects.all()
 
-def infoInmueble(request, cuil_cuit):
-    cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-    inmuebles = Inmueble.objects.filter(cliente=cliente)
-    context = {
-        "cliente": cliente,  # Agrega el objeto cliente al contexto
-        "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-    }
-    return render(request, "clientes/infoInmueble.html", context)
+class InmuebleCreateView(CreateView):
+    model = Inmueble
+    form_class = InmuebleForm
+    success_url = reverse_lazy('crearInmueble')
+    template_name = "inmuebles/inmueble_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Registrar Inmueble"
+        return context
+    
+class InmuebleUpdateView(UpdateView):
+    model = Inmueble
+    form_class = InmuebleUpdateForm
+    success_url = reverse_lazy('listarInmuebles')
+    template_name = "inmuebles/inmueble_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Inmueble"
+        context['boton'] = "Actualizar" 
+        context['btnColor'] = "btn-primary"
+        return context
+    
+# class Inmuebles(View):
+#     def get(self, request, *args, **kwargs):
+#         clientes = Cliente.objects.all()
+#         inmueble = Inmueble.objects.all()
+#         context = {
+#             "clientes": clientes,
+#             "inmueble": inmueble,
+#         }
+#         return render(request, "clientes/inmuebles.html", context)
+    
+# def crearInmueble(request, cuil_cuit):
+#     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
+#     inmuebles = Inmueble.objects.filter(cliente=cliente)
+#     context = {
+#         "cliente": cliente,  # Agrega el objeto cliente al contexto
+#         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
+#     }
+#     return render(request, "clientes/crearInmueble.html", context)
+
+# def infoInmueble(request, cuil_cuit):
+#     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
+#     inmuebles = Inmueble.objects.filter(cliente=cliente)
+#     context = {
+#         "cliente": cliente,  # Agrega el objeto cliente al contexto
+#         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
+#     }
+#     return render(request, "clientes/infoInmueble.html", context)
+
+
+#Gestion Productos
+
+class ProductoListView(ListView):
+    model = Producto #Nombre del modelo
+    template_name = "core/producto_list.html" #Ruta del template
+    context_object_name = 'productos' #Nombre de la lista usar ''
+    queryset = Producto.objects.all()
 
 class ProductoCreateView(CreateView):
     model = Producto
     form_class = ProductoForm
-    success_url = reverse_lazy('home')
-    #template_name = "core/producto_form.html"
+    success_url = reverse_lazy('crearProducto')
+    template_name = "core/producto_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Producto"
-        print(self.template_name)
         return context
+<<<<<<< HEAD
 
 #Gestion Empleado
 
@@ -153,3 +197,18 @@ class EmpleadoUpdateView(UpdateView):
         return context
     
     
+=======
+    
+class ProductoUpdateView(UpdateView):
+    model = Producto
+    form_class = ProductoUpdateForm
+    success_url = reverse_lazy('listarProductos')
+    template_name = "core/producto_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Producto"
+        context['boton'] = "Actualizar" 
+        context['btnColor'] = "btn-primary"
+        return context
+>>>>>>> origin/desarrollo

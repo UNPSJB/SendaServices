@@ -1,0 +1,20 @@
+{% load crispy_forms_tags %}
+
+<div class="modal-dialog"  role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="mx-3">Edicion Inmueble: {{ object }}</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        {% comment %} <form action="{% url 'modificarCliente' object.cuil_cuit %}" method="POST">
+        {% csrf_token %} {% endcomment %}
+        <div class="modal-body">
+            {% comment %} {{ form | crispy }} {% endcomment %}
+            {% crispy form form.helper %}
+        </div>
+        {% comment %} <div class="modal-footer">
+            <button type="submit" class="btn {{btnColor}}">{{boton}}</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div> {% endcomment %}
+    </div>
+  </div>

@@ -7,14 +7,9 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 
 from django.urls import reverse_lazy
-<<<<<<< HEAD
-from .models import Cliente, Producto, Inmueble,Empleado
-from .forms import ProductoForm, ClienteForm,EmpleadoForm
 
-=======
-from .models import Cliente, Producto, Inmueble
-from .forms import ProductoForm, ClienteForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm
->>>>>>> origin/desarrollo
+from .models import Cliente, Producto, Inmueble, Empleado,Categoria
+from .forms import ProductoForm, ClienteForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm,EmpleadoForm,CategoriaForm
 
 # Login
 
@@ -157,7 +152,20 @@ class ProductoCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Producto"
         return context
-<<<<<<< HEAD
+
+    
+class ProductoUpdateView(UpdateView):
+    model = Producto
+    form_class = ProductoUpdateForm
+    success_url = reverse_lazy('listarProductos')
+    template_name = "core/producto_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Producto"
+        context['boton'] = "Actualizar" 
+        context['btnColor'] = "btn-primary"
+        return context
 
 #Gestion Empleado
 
@@ -196,19 +204,41 @@ class EmpleadoUpdateView(UpdateView):
         print(self.template_name)
         return context
     
-    
-=======
-    
-class ProductoUpdateView(UpdateView):
-    model = Producto
-    form_class = ProductoUpdateForm
-    success_url = reverse_lazy('listarProductos')
-    template_name = "core/producto_modal.html"
+
+#Gestion Categoria
+
+
+class CategoriaListView(ListView):
+    model = Categoria #Nombre del modelo
+    template_name = "categoria/categoria_list.html" #Ruta del template
+    context_object_name = 'categoria' #Nombre de la lista usar ''
+    queryset = Categoria.objects.all()
+
+
+class CategoriaCreateView(CreateView):
+    model = Categoria
+    form_class = CategoriaForm
+    success_url = reverse_lazy('listarCategoria')
+    template_name = "categoria/categoria_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Producto"
-        context['boton'] = "Actualizar" 
-        context['btnColor'] = "btn-primary"
+        context['titulo'] = "Registrar Categoria"
+        context['boton1'] = "Crear Categoria"
+        print(self.template_name)
+        print(context["form"].errors)
         return context
->>>>>>> origin/desarrollo
+
+    
+class CategoriaUpdateView(UpdateView):
+    model = Categoria
+    form_class = CategoriaForm
+    success_url = reverse_lazy('listarCategoria')
+    template_name = "categoria/categoria_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Categoria"
+        print(self.template_name)
+        return context
+    

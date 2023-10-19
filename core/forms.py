@@ -1,13 +1,9 @@
 from django import forms
 from django.forms import ModelForm
-<<<<<<< HEAD
-from .models import Producto, Cliente,Empleado
-from crispy_forms.helper import FormHelper
-=======
-from .models import Producto, Cliente, Inmueble
+from .models import Producto, Cliente, Inmueble, Empleado,Categoria
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
->>>>>>> origin/desarrollo
+
 
 class ClienteForm(ModelForm):
 
@@ -71,7 +67,6 @@ class ProductoForm(ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar'))
 
 
-<<<<<<< HEAD
 class EmpleadoForm(ModelForm):
 
     class Meta:
@@ -121,7 +116,7 @@ class EmpleadoForm(ModelForm):
             ),
         
         }
-=======
+
 class ProductoUpdateForm(ProductoForm):
 
     class Meta(ProductoForm.Meta):
@@ -193,4 +188,46 @@ class InmuebleUpdateForm(InmuebleForm):
 
     class Meta(InmuebleForm.Meta):
         exclude = ["domicilio", "cliente.cuil_cuit"]
->>>>>>> origin/desarrollo
+
+
+
+class CategoriaForm(ModelForm):
+
+    class Meta:
+        model = Categoria
+        fields = '__all__'
+        #Label se refiere la descripcion que esta al lado del formulario.
+        labels = { 
+            'nombre':'Nombre',
+            'sueldoBase': 'Sueldo Base',
+            'empleado.legajo': 'Empleado',
+           
+        }
+        #Referencia a los estilos con los que se renderizan los campos
+        widgets = {
+            'nombre': forms.TextInput(
+                #Permite estilizar los formularios
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el nombre de la categoria',
+                }
+            ),
+            'sueldoBase': forms.NumberInput(
+                attrs = {
+                    'min': 0,
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el sueldo base de la categoria',
+                }
+            )
+            
+        }
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-inmuebleForm'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Guardar'))
+

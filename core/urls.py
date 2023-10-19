@@ -19,10 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from django.contrib.auth.decorators import login_required
-<<<<<<< HEAD
-from .views import Inmuebles, salir, index, login_view , ClienteListView, ClienteCreateView, ClienteUpdateView, crearInmueble, ProductoCreateView,EmpleadoCreateView,EmpleadoListView,EmpleadoUpdateView
 
-=======
 from .views import (
     salir, 
     index, 
@@ -35,9 +32,15 @@ from .views import (
     InmuebleUpdateView,
     ProductoCreateView,
     ProductoListView,
-    ProductoUpdateView
+    ProductoUpdateView,
+    EmpleadoCreateView,
+    EmpleadoListView,
+    EmpleadoUpdateView,
+    CategoriaCreateView,
+    CategoriaListView,
+    CategoriaUpdateView
 )
->>>>>>> origin/desarrollo
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -62,20 +65,22 @@ urlpatterns = [
     # path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
 
 
-    # Gestion Productos
-<<<<<<< HEAD
-    path('producto/', ProductoCreateView.as_view(), name='crearProducto'),
-
+  
     #Gestion Empleados
     path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),
     path('empleadoList/', EmpleadoListView.as_view(), name="listarEmpleado"),
     path('empleadoModificar/<int:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
 
-]
 
-=======
+    # Gestion Productos
+
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
     path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
     path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
-]
->>>>>>> origin/desarrollo
+    
+    #Gestion Categoria
+    path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),
+    path('categoria/modificar/<str:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
+    path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria')
+    ]
+

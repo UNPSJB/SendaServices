@@ -45,7 +45,8 @@
                                     <td>{{c.nombre}}</td>
                                     <td>{{c.cuil}}</td>
                                     <td>{{c.correo}}</td>
-                                   
+                                    <td>{{c.categoria}}</td>        
+                            
                                     <td>
                                        <button onclick="abrir_modal_edicion('{% url "modificarEmpleado" c.legajo%}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
                                         <a href="/infoEmpleado/{{c.legajo}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>

@@ -32,20 +32,26 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.descripcion
-    
+
+class Categoria(models.Model):
+    nombre= models.CharField(max_length=30)
+    sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
+
+    def __str__(self):
+        return self.nombre
+
+
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, primary_key=True)
     nombre= models.CharField(max_length=45)
     apellido= models.CharField(max_length=45)
     correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)
+    categoria=models.ForeignKey(Categoria,on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.apellido}{self.nombre}"
     
-class Categoria(models.Model):
-    nombre= models.CharField(max_length=30)
-    sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
 
 
 

@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
+from .utils import ListFilterView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Cliente, Producto, Inmueble
-from .forms import ProductoForm, ClienteForm
+from .forms import ProductoForm, ClienteForm, ClienteModForm, ClienteFiltrosForm
 
 # Login
 
@@ -34,7 +35,8 @@ def login_view(request):
 
 # Gestion Empleado
 
-class ClienteListView(ListView):
+class ClienteListView(ListFilterView):
+    filtros = ClienteFiltrosForm
     model = Cliente #Nombre del modelo
     template_name = "clientes/cliente_list.html" #Ruta del template
     context_object_name = 'clientes' #Nombre de la lista usar ''
@@ -56,7 +58,7 @@ class ClienteCreateView(CreateView):
     
 class ClienteUpdateView(UpdateView):
     model = Cliente
-    form_class = ClienteForm
+    form_class = ClienteModForm
     success_url = reverse_lazy('listarCliente')
     template_name = "clientes/cliente_modal.html"
 

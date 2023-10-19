@@ -1,16 +1,21 @@
-{% extends "../base.html" %}
+{% extends "../baselist.html" %}
+{% load crispy_forms_tags %}
 {% load static %}
 
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
 
-{% block cmain %}
 
     {% if clientes %}
-    <div class="col-12 mx-auto">
-        <div class="card flex-fill border-0">
-            <div class="card-body py-4">
+
+    {% block filtros %}
+
+    {% crispy filtros filtros.helper %}
+
+    {% endblock %}
+
+    {% block lista %}
 
 
                 <div class="d-flex">
@@ -23,17 +28,13 @@
 
                 <div class="d-flex align-items-start">
                     <div class="flex-grow-1 table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped  {% if filtros %} sortable{% endif %}">
                             <thead>
                                 <tr class="table-primary">
                                     <th>#</th>
-                                    <th>Cuit-Cuil</th>
-                                    <th>Apellido</th>
-                                    <th>Nombre</th>
-                                    <th>Correo</th>
-                                    <th>Habitual</th>
-                                    <th>Gubernamental</th>
-                                    
+                                    {% for sortable in filtros.sortables %}
+                                        <th class="sortable bg-transition pointer" scope="col" data-s-field={{sortable.0}}>{{sortable.1}}</th>
+                                    {% endfor %}
                                     <th colspan="">Opciones</th>
                                 </tr>
                             </thead>
@@ -68,10 +69,9 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
+
     </div>
+    {% endblock %}
     {% endif %}
 
     <div class="modal" id="modal" role="dialog">
@@ -79,7 +79,8 @@
     </div>
 
 
-{% endblock %}
+
+
 
 {% block extrajs %}
 <!--Modal-->

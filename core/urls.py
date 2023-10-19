@@ -16,12 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-<<<<<<< HEAD
-from .views import CrudCliente, Inmuebles, salir, index, login_view ,crearCliente, infoCliente, modificacionCliente, crearInmueble, ProductoCreateView
-=======
 from django.contrib.auth.decorators import login_required
 from .views import Inmuebles, salir, index, login_view , ClienteListView, ClienteCreateView, ClienteUpdateView, crearInmueble, ProductoCreateView
->>>>>>> beefb0d458cdfa5931dc991036379519820f84f6
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,20 +31,17 @@ urlpatterns = [
     # Gestion Cliente
     path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
-    path('clienteModificar/<int:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
+    path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
 
 
     # Gestion Inmuebles
     path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
     path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
 
-<<<<<<< HEAD
-    path('producto/', ProductoCreateView.as_view(), name='crearProducto'),
-
-]
-=======
     # Gestion Productos
     path('producto/', ProductoCreateView.as_view(), name='crearProducto'),
 
+    # Gestion Tipo Servicio
+    path('servicios/', include('servicios.urls',namespace='servicios'))
+
 ]
->>>>>>> beefb0d458cdfa5931dc991036379519820f84f6

@@ -5,17 +5,9 @@ from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
-<<<<<<< HEAD
-from django.views import View
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from .models import Cliente, Inmueble, Producto
-from .forms import ProductoForm
-=======
 from django.urls import reverse_lazy
 from .models import Cliente, Producto, Inmueble
 from .forms import ProductoForm, ClienteForm
->>>>>>> beefb0d458cdfa5931dc991036379519820f84f6
 
 # Login
 
@@ -49,14 +41,11 @@ class ClienteListView(ListView):
     queryset = Cliente.objects.all()
 
 
-<<<<<<< HEAD
-=======
 class ClienteCreateView(CreateView):
     model = Cliente
     form_class = ClienteForm
     success_url = reverse_lazy('listarCliente')
     template_name = "clientes/cliente_form.html"
->>>>>>> beefb0d458cdfa5931dc991036379519820f84f6
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -78,13 +67,10 @@ class ClienteUpdateView(UpdateView):
         context['btnColor'] = "btn-primary"
         print(self.template_name)
         return context
-<<<<<<< HEAD
-=======
     
     
 
 
->>>>>>> beefb0d458cdfa5931dc991036379519820f84f6
 #Gestion Inmueble
 
 class Inmuebles(View):
@@ -114,8 +100,6 @@ def infoInmueble(request, cuil_cuit):
         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
     }
     return render(request, "clientes/infoInmueble.html", context)
-<<<<<<< HEAD
-=======
 
 class ProductoCreateView(CreateView):
     model = Producto
@@ -128,4 +112,6 @@ class ProductoCreateView(CreateView):
         context['titulo'] = "Registrar Producto"
         print(self.template_name)
         return context
->>>>>>> beefb0d458cdfa5931dc991036379519820f84f6
+
+
+

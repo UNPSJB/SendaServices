@@ -20,7 +20,7 @@ class Servicio(models.Model):
 class TipoServicio(models.Model):
     codigo= models.CharField(max_length=30,primary_key=True)
     descripcion= models.CharField( max_length=250)
-    costo= models.DecimalField(decimal_places=2,max_digits=10)
+    costo= models.DecimalField(decimal_places=2,max_digits=14)
     unidadDeMedida= models.CharField(max_length=30)
     productos= models.ManyToManyField(Producto,through='TipoServicioProducto')
 

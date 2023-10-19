@@ -65,6 +65,8 @@
                                         <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a>
                                     </td>
                                 </tr>
+                                {% empty %}
+                                <tr><td> No hay clientes cargados. </td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>

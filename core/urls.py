@@ -17,7 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required
-from .views import Inmuebles, salir, index, login_view , ClienteListView, ClienteCreateView, ClienteUpdateView, crearInmueble, ProductoCreateView
+from .views import (
+    salir, 
+    index, 
+    login_view , 
+    ClienteListView, 
+    ClienteCreateView, 
+    ClienteUpdateView, 
+    InmuebleCreateView,
+    InmuebleListView,
+    InmuebleUpdateView,
+    ProductoCreateView,
+    ProductoListView,
+    ProductoUpdateView
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,12 +46,16 @@ urlpatterns = [
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
 
-
     # Gestion Inmuebles
-    path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
-    path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
+    path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
+    path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
+    path('inmuebles/listar', InmuebleListView.as_view(), name='listarInmuebles'),
+
+    # path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
+    # path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
 
     # Gestion Productos
-    path('producto/', ProductoCreateView.as_view(), name='crearProducto'),
-
+    path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
+    path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
+    path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
 ]

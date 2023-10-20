@@ -6,15 +6,14 @@
             <h4 class="mx-3">Edicion del Inmueble de: {{ object.cliente }}</h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        {% comment %} <form action="{% url 'modificarCliente' object.cuil_cuit %}" method="POST"> {% endcomment %}
+        <form action="{% url 'modificarInmueble' object.domicilio %}" method="POST">
         {% csrf_token %} 
         <div class="modal-body">
-            {% comment %} {{ form | crispy }} {% endcomment %}
-            {% crispy form form.helper %}
+            {{ form | crispy }} 
         </div>
-        {% comment %} <div class="modal-footer">
+        <div class="modal-footer">
             <button type="submit" class="btn {{btnColor}}">{{boton}}</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        </div> {% endcomment %}
+        </div> 
     </div>
   </div>

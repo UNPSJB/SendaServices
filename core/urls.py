@@ -44,7 +44,7 @@ urlpatterns = [
     # Gestion Cliente
     path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
-    path('clienteModificar/<int:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
+    path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
 
     # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),

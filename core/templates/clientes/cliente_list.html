@@ -72,17 +72,22 @@
                         </table>
                     </div>
 
+
+
     </div>
+
+
+
     {% endblock %}
     {% endif %}
 
-    <div class="modal" id="modal" role="dialog">
-        
-    </div>
+    {% block modal %}
 
+        <div class="modal" id="modal" role="dialog">
+            
+        </div>
 
-
-
+    {% endblock %}
 
 {% block extrajs %}
 <!--Modal-->

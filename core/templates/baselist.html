@@ -2,32 +2,38 @@
 
 {% load static %}
  
-{% block tmain %} 
-{% endblock %} 
+    {% block tmain %} 
+    {% endblock %} 
 
-{% block cmain %}
+    {% block cmain %}
 
-    <div class="col-9 mx-auto">
-        <div class="card flex-fill border-0">
-            <div class="card-body py-4">
+        <div class="col-9 mx-auto">
+            <div class="card flex-fill border-0">
+                <div class="card-body py-4">
 
-                {% block lista %}
-                {% endblock %}
-                
+                    {% block lista %}
+                    {% endblock %}
+                    
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-3 mx-auto">
-        <div class="card flex-fill border-0">
-            <div class="card-body py-4">
+        <div class="col-3 mx-auto">
+            <div class="card flex-fill border-0">
+                <div class="card-body py-4">
 
-                {% block filtros %}
-                {% endblock %}
-                
-
+                    {% block filtros %}
+                    {% endblock %}
+                    
+                </div>
             </div>
         </div>
-    </div>
 
+        {% block modal %}
+
+        {% endblock %}
+
+{% endblock %}
+
+{% block extrajs %}
 {% endblock %}

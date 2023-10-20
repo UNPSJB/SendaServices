@@ -9,7 +9,6 @@
       <form action="{% url 'modificarCliente' object.cuil_cuit %}" method="POST">
         {% csrf_token %}
         <div class="modal-body">
-          {{ form.cuit-cuil = object.cuil_cuit }}
             {{ form | crispy }}
         </div>
           <div class="modal-footer">

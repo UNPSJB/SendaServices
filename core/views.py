@@ -33,7 +33,8 @@ def login_view(request):
 
     return render(request, "registration/login.html")
 
-# Gestion Empleado
+
+# Gestion Cliente
 
 class ClienteListView(ListFilterView):
     filtros = ClienteFiltrosForm
@@ -103,34 +104,6 @@ class InmuebleUpdateView(UpdateView):
         context['btnColor'] = "btn-primary"
         return context
     
-# class Inmuebles(View):
-#     def get(self, request, *args, **kwargs):
-#         clientes = Cliente.objects.all()
-#         inmueble = Inmueble.objects.all()
-#         context = {
-#             "clientes": clientes,
-#             "inmueble": inmueble,
-#         }
-#         return render(request, "clientes/inmuebles.html", context)
-    
-# def crearInmueble(request, cuil_cuit):
-#     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-#     inmuebles = Inmueble.objects.filter(cliente=cliente)
-#     context = {
-#         "cliente": cliente,  # Agrega el objeto cliente al contexto
-#         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-#     }
-#     return render(request, "clientes/crearInmueble.html", context)
-
-# def infoInmueble(request, cuil_cuit):
-#     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-#     inmuebles = Inmueble.objects.filter(cliente=cliente)
-#     context = {
-#         "cliente": cliente,  # Agrega el objeto cliente al contexto
-#         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-#     }
-#     return render(request, "clientes/infoInmueble.html", context)
-
 
 #Gestion Productos
 

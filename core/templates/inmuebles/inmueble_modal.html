@@ -3,11 +3,11 @@
 <div class="modal-dialog"  role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h4 class="mx-3">Edicion Inmueble: {{ object }}</h4>
+            <h4 class="mx-3">Edicion del Inmueble de: {{ object.cliente }}</h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        {% comment %} <form action="{% url 'modificarCliente' object.cuil_cuit %}" method="POST">
-        {% csrf_token %} {% endcomment %}
+        {% comment %} <form action="{% url 'modificarCliente' object.cuil_cuit %}" method="POST"> {% endcomment %}
+        {% csrf_token %} 
         <div class="modal-body">
             {% comment %} {{ form | crispy }} {% endcomment %}
             {% crispy form form.helper %}

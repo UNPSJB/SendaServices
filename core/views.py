@@ -44,6 +44,8 @@ class ClienteListView(ListFilterView):
     queryset = Cliente.objects.all()
 
 
+
+
 class ClienteCreateView(CreateView):
     model = Cliente
     form_class = ClienteForm
@@ -56,6 +58,12 @@ class ClienteCreateView(CreateView):
         context['boton1'] = "Crear Cliente"
         print(self.template_name)
         return context
+    
+    #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El cliente se ha creado exitosamente.')
+        return super().form_valid(form)
+
     
 class ClienteUpdateView(UpdateView):
     model = Cliente
@@ -70,6 +78,11 @@ class ClienteUpdateView(UpdateView):
         context['btnColor'] = "btn-primary"
         print(self.template_name)
         return context
+    
+    #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El cliente se ha modificado exitosamente.')
+        return super().form_valid(form)
     
 
 #Gestion Inmueble

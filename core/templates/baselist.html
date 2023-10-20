@@ -7,13 +7,47 @@
 
     {% block cmain %}
 
+        {% for msg in messages %}
+
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Hey!</strong> {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+            
+        {% endfor %}
+
         <div class="col-9 mx-auto">
             <div class="card flex-fill border-0">
-                <div class="card-body py-4">
+                <div class="card-body py-4 pb-2">
 
                     {% block lista %}
                     {% endblock %}
                     
+                    <div class="d-flex justify-content-between align-items-center pt-2">
+
+                        <p>Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</p>
+
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                            <li class="page-link">
+                                <a href="?page=1{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">&laquo; primera</a>
+                            </li>
+                            <li class="page-link">
+                                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">anterior</a>
+                            </li>                            
+                            {% endif %}
+
+                            {% if page_obj.has_next %}
+                            <li class="page-link">
+                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">siguiente</a>
+                            </li>
+                            <li class="page-link">
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">ultima &raquo;</a>
+                            </li>
+                            
+                            {% endif %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -28,7 +62,6 @@
                 </div>
             </div>
         </div>
-
         {% block modal %}
 
         {% endblock %}

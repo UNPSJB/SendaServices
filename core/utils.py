@@ -61,6 +61,8 @@ class FiltrosForm(forms.Form):
 # Lista Filtros - ListView
 
 class ListFilterView(ListView):
+
+    paginate_by = 3
     filtros = None
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,6 +77,8 @@ class ListFilterView(ListView):
             filtros = self.filtros(self.request.GET)
             return filtros.apply(qs)
         return qs
+    
+
 
 def export_list(request, Modelo, Filtros): # Metodo utilizado para la exportar listados a formato .csv
 

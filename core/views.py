@@ -37,13 +37,14 @@ def login_view(request):
 # Gestion Cliente
 
 class ClienteListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 3
+    #Filtros de la lista
     filtros = ClienteFiltrosForm
     model = Cliente #Nombre del modelo
     template_name = "clientes/cliente_list.html" #Ruta del template
     context_object_name = 'clientes' #Nombre de la lista usar ''
     queryset = Cliente.objects.all()
-
-
 
 
 class ClienteCreateView(CreateView):

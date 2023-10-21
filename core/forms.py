@@ -8,6 +8,7 @@ from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 
 
 class ClienteFiltrosForm(FiltrosForm):
+    #Campos del modelo
     ORDEN_CHOICES = [
         ("cuil_cuit", "CUIL/CUIT"),
         ("apellido", "Apellido"),
@@ -27,7 +28,7 @@ class ClienteFiltrosForm(FiltrosForm):
 
     ]
 
-
+    #Formulario de filtrado
     cuil_cuit = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cuil/Cuit'}), max_length=45)
     apellido = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Apellido'}), max_length=45)
     nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}), max_length=45)
@@ -44,7 +45,7 @@ class ClienteFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "cuil_cuit","nombre", "apellido", "correo",
+                "cuil_cuit","nombre", "apellido", "correo", #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

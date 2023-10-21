@@ -61,8 +61,6 @@ class FiltrosForm(forms.Form):
 # Lista Filtros - ListView
 
 class ListFilterView(ListView):
-
-    paginate_by = 3
     filtros = None
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

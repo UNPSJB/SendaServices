@@ -1,5 +1,5 @@
 {% extends "base.html" %} 
-
+{% load crispy_forms_tags %}
 {% load static %}
  
     {% block tmain %} 
@@ -16,13 +16,26 @@
             
         {% endfor %}
 
-        <div class="col-9 mx-auto">
+        <div class="col-12 col-md-3 mx-auto">
+            <div class="card flex-fill border-0">
+                <div class="card-body py-4">
+
+                    {% block filtros %}
+                        {% crispy filtros filtros.helper %}
+                    {% endblock %}
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-9 mx-auto">
             <div class="card flex-fill border-0">
                 <div class="card-body py-4 pb-2">
 
                     {% block lista %}
                     {% endblock %}
                     
+                    <!--Paginacion-->
                     <div class="d-flex justify-content-between align-items-center pt-2">
 
                         <p>Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</p>
@@ -52,21 +65,26 @@
             </div>
         </div>
 
-        <div class="col-3 mx-auto">
-            <div class="card flex-fill border-0">
-                <div class="card-body py-4">
+    {% block modal %}
 
-                    {% block filtros %}
-                    {% endblock %}
-                    
-                </div>
-            </div>
+        <div class="modal" id="modal" role="dialog">
+            
         </div>
-        {% block modal %}
+    
+    {% endblock %}
 
-        {% endblock %}
+    {% endblock %}
 
-{% endblock %}
+
 
 {% block extrajs %}
+<!--Modal-->
+<script type="text/javascript">
+var $ = jQuery.noConflict();
+function abrir_modal(url){
+    $('#modal').load(url, function(){
+        $(this).modal('show');
+    });
+}
+</script>
 {% endblock %}

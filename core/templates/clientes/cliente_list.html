@@ -7,21 +7,12 @@
 {% endblock %}
 
 
-    {% if clientes %}
-
-    {% block filtros %}
-
-    {% crispy filtros filtros.helper %}
-
-    {% endblock %}
-
+{% if clientes %}
     {% block lista %}
-
 
                 <div class="d-flex">
                     <div class="d-grid gap-1">
                         <h4>Listado de Clientes</h4>
-
                     </div>
                 </div>
 
@@ -32,10 +23,12 @@
                             <thead>
                                 <tr class="table-primary">
                                     <th>#</th>
+                                    <!--Filtros columnas-->
                                     {% for sortable in filtros.sortables %}
                                         <th class="sortable bg-transition pointer" scope="col" data-s-field={{sortable.0}}>{{sortable.1}}</th>
                                     {% endfor %}
                                     <th colspan="">Opciones</th>
+                                    <th colspan="">Informacion</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -59,8 +52,12 @@
 
 
                                     <td>
-                                        <button onclick="abrir_modal_edicion('{% url "modificarCliente" c.cuil_cuit %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>
+                                        <!--Si queremos abrir un moda, se utiliza abrir-->
+                                        <button onclick="abrir_modal('{% url "modificarCliente" c.cuil_cuit %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
+                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
+                                    </td>
+
+                                    <td>
                                         <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
                                         <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a>
                                     </td>
@@ -72,31 +69,6 @@
                         </table>
                     </div>
 
-
-
     </div>
-
-
-
     {% endblock %}
-    {% endif %}
-
-    {% block modal %}
-
-        <div class="modal" id="modal" role="dialog">
-            
-        </div>
-
-    {% endblock %}
-
-{% block extrajs %}
-<!--Modal-->
-<script type="text/javascript">
-    var $ = jQuery.noConflict();
-    function abrir_modal_edicion(url){
-        $('#modal').load(url, function(){
-            $(this).modal('show');
-        });
-    }
-</script>
-{% endblock %}
+{% endif %}

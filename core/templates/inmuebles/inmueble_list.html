@@ -1,11 +1,14 @@
-{% extends "../base.html" %}
+{% extends "../baselist.html" %}
+{% load crispy_forms_tags %}
 {% load static %}
 
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
 
-{% block cmain %}
+
+{% if clientes %}
+    {% block lista %}
 
     <div class="col-12 mx-auto">
         <div class="card flex-fill border-0">
@@ -26,11 +29,10 @@
                             <thead>
                                 <tr class="table-primary">
                                     <th>#</th>
-                                    <th>Domicilio</th>
-                                    <th>Metros Cuadrados</th>
-                                    <th>Cantidad de Ambientes</th>
-                                    <th>Tipo</th>
-                                    <th>Propietario</th>
+                                    <!--Filtros columnas-->
+                                    {% for sortable in filtros.sortables %}
+                                        <th class="sortable bg-transition pointer" scope="col" data-s-field={{sortable.0}}>{{sortable.1}}</th>
+                                    {% endfor %}
                                     
                                     <th colspan="">Opciones</th>
                                 </tr>
@@ -45,10 +47,8 @@
                                     <td>{{i.tipo}}</td>
                                     <td>{{i.cliente}}</td>
                                     <td>
-                                        <button onclick="abrir_modal_edicion('{% url "modificarInmueble" i.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
-                                        {% comment %} <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a> {% endcomment %}
+                                        <button onclick="abrir_modal('{% url "modificarInmueble" i.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
+                                        {% comment %} <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>{% endcomment %}
                                     </td>
                                 </tr>
                                 {% empty %}
@@ -68,8 +68,8 @@
 
 
 {% endblock %}
-
-{% block extrajs %}
+{% endif %}
+{% comment %} {% block extrajs %}
 <!--Modal-->
 <script type="text/javascript">
     var $ = jQuery.noConflict();
@@ -78,5 +78,5 @@
             $(this).modal('show');
         });
     }
-</script>
-{% endblock %}
+</script> 
+{% endblock %}{% endcomment %}

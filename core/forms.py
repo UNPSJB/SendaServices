@@ -171,6 +171,46 @@ class InmuebleFiltrosForm(FiltrosForm):
         )
 
 
+class ProductoFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("codigo", "Código"),
+        ("descripcion", "Descripción"),
+        ("stock", "Stock"),
+        ("precioUnitario", "Precio Unitario"),
+    ]
+    ATTR_CHOICES = ORDEN_CHOICES
+
+    #Formulario de filtrado
+    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'EJ000'}), max_length=45)
+    descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Lavandina'}), max_length=45)
+    stock__gte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Mínimo', 'min': 1}), required=False)
+    stock__lte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Máximo', 'min': 1}), required=False)
+    precioUnitario__gte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Mínimo', 'min': 1}), required=False)
+    precioUnitario__lte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Máximo', 'min': 1}), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "codigo",
+                "descripcion", 
+                HTML(
+                    '<label class="form-label">Stock</label>'),
+                Div("stock__gte", Div('', css_class="custom-range-separator") , "stock__lte", css_class="custom-range-form"),
+                HTML(
+                    '<label class="form-label">Precio Unitario</label>'),
+                Div("precioUnitario__gte", Div('<hr/>', css_class="custom-range-separator") , "precioUnitario__lte", css_class="custom-range-form"),
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
 class ProductoForm(ModelForm):
 
     class Meta:

@@ -255,3 +255,26 @@ input:checked+.slider:before {
 .checkbox {
     margin: 10px 0px;
 }
+
+.list-options {
+    display: flex;
+}
+
+.list-options .bi {
+    padding-right: 10px;
+}
+
+.icon-danger {
+    color:red;
+}
+
+.custom-range-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.custom-range-separator {
+    width: 10px;
+    padding: 0 5px 0 5px;
+}

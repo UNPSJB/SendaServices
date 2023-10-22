@@ -201,10 +201,10 @@ class ProductoFiltrosForm(FiltrosForm):
                 "descripcion", 
                 HTML(
                     '<label class="form-label">Stock</label>'),
-                Div("stock__gte", Div('', css_class="custom-range-separator") , "stock__lte", css_class="custom-range-form"),
+                Div("stock__gte", "stock__lte", css_class="custom-range-form"),
                 HTML(
                     '<label class="form-label">Precio Unitario</label>'),
-                Div("precioUnitario__gte", Div('<hr/>', css_class="custom-range-separator") , "precioUnitario__lte", css_class="custom-range-form"),
+                Div("precioUnitario__gte", "precioUnitario__lte", css_class="custom-range-form"),
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

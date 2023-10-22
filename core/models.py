@@ -29,9 +29,15 @@ class Producto(models.Model):
     descripcion= models.CharField( max_length=250)
     stock= models.IntegerField()
     precioUnitario= models.DecimalField("Precio unitario",decimal_places=2,max_digits=10)
+    baja= models.BooleanField(default=False)
 
     def __str__(self):
         return self.descripcion
+    
+    def dar_de_baja(self):
+        # TODO: verificar que unicamente se marque con baja=True si el producto pasa todas las condiciones para hacerlo.
+        self.baja = True
+        self.save()
     
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, primary_key=True)

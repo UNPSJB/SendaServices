@@ -8,7 +8,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Cliente, Producto, Inmueble
-from .forms import ProductoForm, ClienteForm, ClienteModForm, ClienteFiltrosForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm
+from .forms import ProductoForm, ClienteForm, ClienteModForm, ClienteFiltrosForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm, InmuebleFiltrosForm
 
 # Login
 
@@ -88,7 +88,11 @@ class ClienteUpdateView(UpdateView):
 
 #Gestion Inmueble
 
-class InmuebleListView(ListView):
+class InmuebleListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 3
+    #Filtros de la lista
+    filtros = InmuebleFiltrosForm
     model = Inmueble #Nombre del modelo
     template_name = "inmuebles/inmueble_list.html" #Ruta del template
     context_object_name = 'inmuebles' #Nombre de la lista usar ''
@@ -105,6 +109,12 @@ class InmuebleCreateView(CreateView):
         context['titulo'] = "Registrar Inmueble"
         return context
     
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha creado exitosamente.')
+        return super().form_valid(form)
+    
+    
 class InmuebleUpdateView(UpdateView):
     model = Inmueble
     form_class = InmuebleUpdateForm
@@ -118,6 +128,10 @@ class InmuebleUpdateView(UpdateView):
         context['btnColor'] = "btn-primary"
         return context
     
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha modificado exitosamente.')
+        return super().form_valid(form)
 
 #Gestion Productos
 

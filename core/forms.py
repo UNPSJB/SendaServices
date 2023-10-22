@@ -202,10 +202,10 @@ class ProductoFiltrosForm(FiltrosForm):
                 "descripcion", 
                 HTML(
                     '<label class="form-label">Stock</label>'),
-                Div("stock__gte", Div('', css_class="custom-range-separator") , "stock__lte", css_class="custom-range-form"),
+                Div("stock__gte", "stock__lte", css_class="custom-range-form"),
                 HTML(
                     '<label class="form-label">Precio Unitario</label>'),
-                Div("precioUnitario__gte", Div('<hr/>', css_class="custom-range-separator") , "precioUnitario__lte", css_class="custom-range-form"),
+                Div("precioUnitario__gte", "precioUnitario__lte", css_class="custom-range-form"),
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
@@ -216,6 +216,7 @@ class ProductoForm(ModelForm):
     class Meta:
         model = Producto
         fields = '__all__'
+        exclude = ['baja']
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
             'codigo': 'Código',
@@ -268,4 +269,4 @@ class ProductoForm(ModelForm):
 class ProductoUpdateForm(ProductoForm):
 
     class Meta(ProductoForm.Meta):
-        exclude = ["stock", "codigo"]
+        exclude = ["stock", "codigo", "baja"]

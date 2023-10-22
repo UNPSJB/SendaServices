@@ -274,7 +274,6 @@ input:checked+.slider:before {
     align-items: baseline;
 }
 
-.custom-range-separator {
-    width: 10px;
-    padding: 0 5px 0 5px;
+.custom-range-form div:last-child {
+    margin-left: 10px;
 }

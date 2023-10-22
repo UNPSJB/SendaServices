@@ -1,6 +1,8 @@
+from typing import Any
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
 from .utils import ListFilterView
@@ -141,7 +143,7 @@ class ProductoListView(ListFilterView):
     model = Producto #Nombre del modelo
     template_name = "core/producto_list.html" #Ruta del template
     context_object_name = 'productos' #Nombre de la lista usar ''
-    queryset = Producto.objects.all()
+    queryset = Producto.objects.filter(baja=False)
 
 class ProductoCreateView(CreateView):
     model = Producto
@@ -153,6 +155,11 @@ class ProductoCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Producto"
         return context
+    
+    #Este form, es para cuando se muestre el mensaje de producto creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El producto se ha creado exitosamente.')
+        return super().form_valid(form)
     
 class ProductoUpdateView(UpdateView):
     model = Producto
@@ -166,3 +173,18 @@ class ProductoUpdateView(UpdateView):
         context['boton'] = "Actualizar" 
         context['btnColor'] = "btn-primary"
         return context
+    
+    #Este form, es para cuando se muestre el mensaje de producto modificado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El producto se ha modificado exitosamente.')
+        return super().form_valid(form)
+    
+class ProductoDeleteView(DeleteView):
+    model = Producto
+    success_url = reverse_lazy('listarProductos')
+    template_name = "core/producto_confirm_delete.html"
+
+    def post(self, *args, **kwargs):
+        producto = Producto.objects.get(pk=self.kwargs["pk"])
+        producto.dar_de_baja()
+        return redirect(self.success_url)

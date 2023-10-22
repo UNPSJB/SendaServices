@@ -32,7 +32,7 @@ class ClienteFiltrosForm(FiltrosForm):
     cuil_cuit = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cuil/Cuit'}), max_length=45)
     apellido = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Apellido'}), max_length=45)
     nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}), max_length=45)
-    correo = forms.EmailField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Correo'})) # permite flitrar inmuebles por cliente
+    correo = forms.EmailField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Correo'}))
         
     
 
@@ -133,14 +133,14 @@ class InmuebleUpdateForm(InmuebleForm):
 class InmuebleFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
-        ("domicilio", "DOMICILIO"),
+        ("domicilio", "Domicilio"),
         ("metrosCuadrados", "Metros Cuadrados"),
         ("nroAmbientes", "Cantidad de Ambientes"),
         ("tipo", "Tipo"),
         ("cliente", "Propietario"),
     ]
     ATTR_CHOICES = [
-        ("domicilio", "DOMICILIO"),
+        ("domicilio", "Domicilio"),
         ("metrosCuadrados", "Metros Cuadrados"),
         ("nroAmbientes", "Cantidad de Ambientes"),
         ("tipo", "Tipo"),
@@ -152,7 +152,7 @@ class InmuebleFiltrosForm(FiltrosForm):
     metrosCuadrados = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Metros Cuadrados'}))
     nroAmbientes = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cantidad de Ambientes'}))
     tipo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Tipo'}))
-    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=False, label='Propietario')
+    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=False, label='Propietario') #filtrar inmuebles por cliente
 
 
     def __init__(self, *args, **kwargs):

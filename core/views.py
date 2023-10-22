@@ -55,8 +55,6 @@ class ClienteCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Cliente"
-        context['boton1'] = "Crear Cliente"
         print(self.template_name)
         return context
     
@@ -74,9 +72,6 @@ class ClienteUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Cliente"
-        context['boton'] = "Actualizar" 
-        context['btnColor'] = "btn-primary"
         print(self.template_name)
         return context
     
@@ -106,7 +101,6 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Inmueble"
         return context
     
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
@@ -123,9 +117,6 @@ class InmuebleUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Inmueble"
-        context['boton'] = "Actualizar" 
-        context['btnColor'] = "btn-primary"
         return context
     
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list

@@ -1,16 +1,10 @@
 {% extends "../baseform.html" %}
-{% load static %}
-{% load crispy_forms_tags %} <!--Crispy PONER SI O SI-->
-
-{% block tmain %}
-    <h4 class="mx-3">{{ titulo }}</h4>
-{% endblock %}
 
 <!--Titulo del formulario-->
-{% block tblock %} {{ titulo }} {% endblock %}
+{% block tform %} Crear Cliente {% endblock %}
 
 <!--Url del formulario-->
 {% block url %} {% url 'crearCliente' %} {% endblock %}
 
 <!--Boton del formulario-->
-{% block tboton %} {{ boton1 }} {% endblock %}
+{% block btnform %} Guardar {% endblock %}

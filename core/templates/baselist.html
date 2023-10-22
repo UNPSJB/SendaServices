@@ -16,14 +16,11 @@
             
         {% endfor %}
 
+        <!--Filtro cabecera-->
         <div class="col-12 col-md-3 mx-auto">
             <div class="card flex-fill border-0">
                 <div class="card-body py-4">
-
-                    {% block filtros %}
                         {% crispy filtros filtros.helper %}
-                    {% endblock %}
-                    
                 </div>
             </div>
         </div>
@@ -33,8 +30,43 @@
                 <div class="card-body py-4 pb-2">
 
                     {% block lista %}
+                    <!--Titulo Lista-->
+                    <div class="d-flex">
+                        <div class="d-grid gap-1">
+                            <h4>{% block tlista %}{% endblock %}</h4>
+                        </div>
+                    </div>
+
+                    <!--Lista-->
+
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1 table-responsive">
+                            <table class="table table-striped  {% if filtros %} sortable{% endif %}">
+                                <!--Cabecera de la lista se cargan todos los campos del form-->
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th>#</th>
+                                        <!--Filtros cabecera lista-->
+                                        {% for sortable in filtros.sortables %}
+                                            <th class="sortable bg-transition pointer" scope="col" data-s-field={{sortable.0}}>{{sortable.1}}</th>
+                                        {% endfor %}
+                                        <!--Elementos extra cabecera-->
+                                        {% block thextras %}  {% endblock %}
+                                    </tr>
+                                </thead>
+                                <!--Cuerpo de la lista-->
+                                <tbody>
+                                    {% block tcuerpo %}
+                                    {% endblock %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     {% endblock %}
-                    
+
+
+
                     <!--Paginacion-->
                     <div class="d-flex justify-content-between align-items-center pt-2">
 
@@ -65,13 +97,13 @@
             </div>
         </div>
 
-    {% block modal %}
+        {% block modal %}
 
-        <div class="modal" id="modal" role="dialog">
-            
-        </div>
-    
-    {% endblock %}
+            <div class="modal" id="modal" role="dialog">
+                
+            </div>
+        
+        {% endblock %}
 
     {% endblock %}
 

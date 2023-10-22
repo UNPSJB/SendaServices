@@ -6,69 +6,46 @@
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
 
+    {% block tlista %} Listado de Clientes {% endblock %}
 
-{% if clientes %}
-    {% block lista %}
-
-                <div class="d-flex">
-                    <div class="d-grid gap-1">
-                        <h4>Listado de Clientes</h4>
-                    </div>
-                </div>
-
-
-                <div class="d-flex align-items-start">
-                    <div class="flex-grow-1 table-responsive">
-                        <table class="table table-striped  {% if filtros %} sortable{% endif %}">
-                            <thead>
-                                <tr class="table-primary">
-                                    <th>#</th>
-                                    <!--Filtros columnas-->
-                                    {% for sortable in filtros.sortables %}
-                                        <th class="sortable bg-transition pointer" scope="col" data-s-field={{sortable.0}}>{{sortable.1}}</th>
-                                    {% endfor %}
-                                    <th colspan="">Opciones</th>
-                                    <th colspan="">Informacion</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for c in clientes %}
-                                <tr>
-                                    <td>{{forloop.counter}}</td>
-                                    <td>{{c.cuil_cuit}}</td>
-                                    <td>{{c.apellido}}</td>
-                                    <td>{{c.nombre}}</td>
-                                    <td>{{c.correo}}</td>
-                                    {% if c.habitual %}
-                                        <td>Si</td>
-                                    {% else %}
-                                        <td>No</td>
-                                    {% endif %}
-                                    {% if c.gubernamental %}
-                                        <td>Si</td>
-                                    {% else %}
-                                        <td>No</td>
-                                    {% endif %}
+    {% block thextras %}
+        <th colspan="">Opciones</th>
+        <th colspan="">Informacion</th>
+    {% endblock%}
+    
+    {% block tcuerpo %}
+        {% for c in clientes %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{c.cuil_cuit}}</td>
+                <td>{{c.apellido}}</td>
+                <td>{{c.nombre}}</td>
+                <td>{{c.correo}}</td>
+                {% if c.habitual %}
+                <td>Si</td>
+                {% else %}
+                <td>No</td>
+                {% endif %}
+                {% if c.gubernamental %}
+                <td>Si</td>
+                {% else %}
+                <td>No</td>
+                {% endif %}
 
 
-                                    <td>
-                                        <!--Si queremos abrir un moda, se utiliza abrir-->
-                                        <button onclick="abrir_modal('{% url "modificarCliente" c.cuil_cuit %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
-                                    </td>
+                <td>
+                    <!--Si queremos abrir un moda, se utiliza abrir-->
+                    <button onclick="abrir_modal('{% url "modificarCliente" c.cuil_cuit %}')"
+                        class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
+                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
+                </td>
 
-                                    <td>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
-                                        <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr><td> No hay clientes cargados. </td></tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-    </div>
-    {% endblock %}
-{% endif %}
+                <td>
+                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
+                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a>
+                </td>
+            </tr>
+            {% empty %}
+                <tr> <td> No hay clientes registrados </td> </tr>
+    {% endfor %}
+{% endblock %}

@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.views.generic import View,CreateView,UpdateView, ListView, DetailView
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from .forms import tipoServicioForm
+from .forms import TipoServicioForm, TipoServicioProductoFormSetHelper,TipoServicioProductoInline
 from .models import TipoServicio
 
 
@@ -28,7 +28,7 @@ class TipoServicioDetailView(DetailView):
 
 class TipoServicioCreateView(CreateView): 
     model = TipoServicio
-    form_class = tipoServicioForm
+    form_class = TipoServicioForm
     success_url = reverse_lazy('servicios:listarTipoServicio')
     template_name = "tiposServicios/tipoServicioForm.html"
 
@@ -42,7 +42,7 @@ class TipoServicioCreateView(CreateView):
 
 class TipoServicioUpdateView(UpdateView): 
     model = TipoServicio
-    form_class = tipoServicioForm
+    form_class = TipoServicioForm
     success_url = reverse_lazy('servicios:listarTipoServicio')
     template_name = "tiposServicios/tipoServicio_modal.html"
 
@@ -51,7 +51,8 @@ class TipoServicioUpdateView(UpdateView):
         context['titulo'] = "Modificar Tipo servicio"
         context['boton'] = "Actualizar" 
         context['btnColor'] = "btn-primary"
-        print(self.template_name)
+        context['tipoServicio_producto_formset'] = TipoServicioProductoInline()()  # pasarle las lineas previas
+        context['tipoServicio_producto_formset_helper'] = TipoServicioProductoFormSetHelper()
         return context
 
 

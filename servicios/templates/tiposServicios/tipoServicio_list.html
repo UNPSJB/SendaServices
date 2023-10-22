@@ -76,6 +76,8 @@
     function abrir_modal_edicion(url){
         $('#edicion').load(url, function(){
             $(this).modal('show');
+            console.log('estoy listo');
+            bindFormSet($('#edicion'));
         });
     }
 </script>

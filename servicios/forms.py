@@ -1,6 +1,7 @@
 
 from django import forms 
 from .models import TipoServicio, TipoServicioProducto
+from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 
@@ -63,5 +64,43 @@ class TipoServicioProductoFormSetHelper(FormHelper):
 
 
     
+
+class TipoServicioFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("codigo", "Codigo"),
+        ("descripcion", "Descripcion"),
+        ("costo", "Costo"),
+        ("unidadDeMedida", "Unidad de medida"),
+    ]
+    ATTR_CHOICES = [
+        ("codigo", "Codigo"),
+        ("descripcion", "Descripcion"),
+        ("costo", "Costo"),
+        ("unidadDeMedida", "Unidad de medida"),
+
+    ]
+
+    #Formulario de filtrado
+    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Codigo'}), max_length=30)
+    descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Descipcion'}), max_length=250)
+    costo = forms.DecimalField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Costo'}), decimal_places=2,max_digits=14)
+    unidadDeMedida = forms.CharField(label="Unidad de Medida",required=False, widget=forms.TextInput(attrs={'placeholder': 'Unidad de medida'}), max_length=30)
+        
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "codigo","descripcion", "costo", "unidadDeMedida", #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
 
 

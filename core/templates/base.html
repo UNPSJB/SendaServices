@@ -24,7 +24,9 @@
 </head>
 
 <body>
-  {% block body %}
+{% block body %}
+
+  {%block aside %}
   <!--MENU-->
   <div class="wrapper">
     <aside id="sidebar">
@@ -118,26 +120,37 @@
               </li>
             </ul>
           </li>
-
-
-
-          <!--Menu con caida cascada-->
+      
+          <!-- Menu clientes -->
           <li class="sidebar-item">
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse"
+
+            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionservicios" data-bs-toggle="collapse"
               aria-expanded="false">
-              <i class="bi bi-file-earmark"></i>Gestion Tipos de servicio</a>
-            <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Registrar tipo de servicio</a>
-              </li>
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Page 2</a>
-              </li>
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Page 3</a>
-              </li>
+              <i class="bi bi-file-earmark-text-fill"></i>Gestion de Servicios
+            </a>
+
+            <!--Clientes-->
+            <ul id="gestionservicios" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#tipoServicio" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-file-medical-fill"></i>
+                Tipo Servicio
+              </a>
+
+              <ul id="tipoServicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'servicios:crearTipoServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+                <li class="sidebar-item">
+                  <a href="{% url 'servicios:listarTipoServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
             </ul>
           </li>
+
+
 
           <li class="sidebar-item">
             <a href="#" class="sidebar-link collapsed" data-bs-target="#post" data-bs-toggle="collapse"
@@ -191,6 +204,9 @@
         </ul>
       </div>
     </aside>
+    {% endblock %}
+
+    {% block nav %}
     <div class="main">
       <!--Contenido del nav-->
       <nav class="navbar navbar-expand px-3 border-bottom bg-light nav-light">
@@ -214,92 +230,38 @@
           </ul>
         </div>
       </nav>
+      {% endblock %}
+
       <!--Contenido del main-->
       <main class="content px-3 py-2">
         <div class="container-fluid">
           <div class="d-flex pt-2 pb-2">
+            
             {% block volver %}
             <a class="" href="../"><i class="bi bi-arrow-left"></i></a>
             {% endblock %}
+
             {% block tmain %}
-            <h4>Panel Admin</h4>
             {% endblock %}
+
           </div>
           <div class="row">
+            
             {% block cmain %}
-            <div class="col-12 col-md-6 d-flex">
-              <div class="card flex-fill border-0 illustration">
-                <div class="card-body p-0 d-flex flex-fill">
-                  <div class="row g-0 w-100">
-                    <div class="col-6">
-                      <div class="p-3 m-1">
-                        <h4>Bienvenido de nuevo, Admin</h4>
-                        <p class="mb-0">Panel admin, senda</p>
-                      </div>
-                      <div class="col-6 align-self-end text-end">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-12 col-md-6 d-flex">
-              <div class="card flex-fill border-0">
-                <div class="card-body py-4">
-                  <div class="d-flex align-items-start">
-                    <div class="flex-grow-1">
-                      <h4 class="mb-2">
-                        $ 78.00
-                      </h4>
-                      <p class="mb-2">
-                        Ganancias totales
-                      </p>
-                      <div class="mb-0">
-                        <span class="badge text-success me-2">
-                          +9.0%
-                        </span>
-                        <span class="text-muted">
-                          Olaa
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <div class="col-12 col-md-6 w-100">
-              <div class="card flex-fill border-0">
-                <div class="card-body py-4">
-                  <div class="d-flex align-items-start">
-                    <div class="flex-grow-1">
-                      <h4 class="mb-2">
-                        $ 78.00
-                      </h4>
-                      <p class="mb-2">
-                        Ganancias totales
-                      </p>
-                      <div class="mb-0">
-                        <span class="badge text-success me-2">
-                          +9.0%
-                        </span>
-                        <span class="text-muted">
-                          Olaa
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             {% endblock %}
+
           </div>
         </div>
       </main>
+      
     </div>
 
   </div>
   {% endblock %}
+
+
+
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -309,6 +271,9 @@
 
   <script src="{% static 'js/custom-inlines.js' %}"></script>
   <script src="{% static 'js/scripts.js' %}"></script>
+  <script src="{% static 'js/tablas.js' %}"></script>
+
+  <script src="{% static 'js/aside.js' %}"></script>
 
   {% block extrajs %}
   {% endblock %}

@@ -1,21 +1,31 @@
+{% extends 'basemodal.html' %}
+
+
 {% load crispy_forms_tags %}
 
-<div class="modal-dialog modal-lg" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h4 class="modal-title">Edicion Tipo servicio: {{ object }}</h4>
-      <button type="button" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-      <form action="{% url 'servicios:modificarTipoServicio' object.codigo %}" method="POST">
-        {% csrf_token %}
-        {% crispy form form.helper %}
-        <div data-formset="tipoServicio_producto" id="productos" class="">
-          {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
-        </div>
-        <button type="submit" class="btn {{ btnColor }}">{{ boton }}</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-      </form>
-    </div>
+<!-- Titulo del modal -->
+{% block tmodal %}
+  Edicion Tipo servicio:
+{% endblock %}
+
+<!-- Objeto del titulo del modal -->
+{% block tobjectmodal %}
+  {{ object }}
+{% endblock %}
+
+<!-- Url del modal -->
+{% block url %}
+  {% url 'servicios:modificarTipoServicio' object.codigo %}
+{% endblock %}
+
+{% block cmodal %}
+  {% crispy form form.helper %}
+  <div data-formset="tipoServicio_producto" id="productos" >
+    {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
   </div>
-</div>
+{% endblock %}
+
+<!-- Boton del modal -->
+{% block btnmodal %}
+  Guardar
+{% endblock %}

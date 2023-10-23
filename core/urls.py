@@ -49,10 +49,7 @@ urlpatterns = [
     # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
     path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
-    path('inmuebles/listar', InmuebleListView.as_view(), name='listarInmuebles'),
-
-    # path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
-    # path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
+    path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
 
     # Gestion Tipo Servicio
     path('servicios/', include('servicios.urls',namespace='servicios')),

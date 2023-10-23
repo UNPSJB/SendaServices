@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
+from .utils import ListFilterView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Cliente, Producto, Inmueble
-from .forms import ProductoForm, ClienteForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm
+from .forms import ProductoForm, ClienteForm, ClienteModForm, ClienteFiltrosForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm, InmuebleFiltrosForm
 
 # Login
 
@@ -32,9 +33,14 @@ def login_view(request):
 
     return render(request, "registration/login.html")
 
-# Gestion Empleado
 
-class ClienteListView(ListView):
+# Gestion Cliente
+
+class ClienteListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 3
+    #Filtros de la lista
+    filtros = ClienteFiltrosForm
     model = Cliente #Nombre del modelo
     template_name = "clientes/cliente_list.html" #Ruta del template
     context_object_name = 'clientes' #Nombre de la lista usar ''
@@ -49,29 +55,39 @@ class ClienteCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Cliente"
-        context['boton1'] = "Crear Cliente"
         print(self.template_name)
         return context
     
+    #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El cliente se ha creado exitosamente.')
+        return super().form_valid(form)
+
+    
 class ClienteUpdateView(UpdateView):
     model = Cliente
-    form_class = ClienteForm
+    form_class = ClienteModForm
     success_url = reverse_lazy('listarCliente')
     template_name = "clientes/cliente_modal.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Cliente"
-        context['boton'] = "Actualizar" 
-        context['btnColor'] = "btn-primary"
         print(self.template_name)
         return context
+    
+    #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El cliente se ha modificado exitosamente.')
+        return super().form_valid(form)
     
 
 #Gestion Inmueble
 
-class InmuebleListView(ListView):
+class InmuebleListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 3
+    #Filtros de la lista
+    filtros = InmuebleFiltrosForm
     model = Inmueble #Nombre del modelo
     template_name = "inmuebles/inmueble_list.html" #Ruta del template
     context_object_name = 'inmuebles' #Nombre de la lista usar ''
@@ -85,8 +101,13 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Inmueble"
         return context
+    
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha creado exitosamente.')
+        return super().form_valid(form)
+    
     
 class InmuebleUpdateView(UpdateView):
     model = Inmueble
@@ -96,39 +117,12 @@ class InmuebleUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Inmueble"
-        context['boton'] = "Actualizar" 
-        context['btnColor'] = "btn-primary"
         return context
     
-# class Inmuebles(View):
-#     def get(self, request, *args, **kwargs):
-#         clientes = Cliente.objects.all()
-#         inmueble = Inmueble.objects.all()
-#         context = {
-#             "clientes": clientes,
-#             "inmueble": inmueble,
-#         }
-#         return render(request, "clientes/inmuebles.html", context)
-    
-# def crearInmueble(request, cuil_cuit):
-#     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-#     inmuebles = Inmueble.objects.filter(cliente=cliente)
-#     context = {
-#         "cliente": cliente,  # Agrega el objeto cliente al contexto
-#         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-#     }
-#     return render(request, "clientes/crearInmueble.html", context)
-
-# def infoInmueble(request, cuil_cuit):
-#     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-#     inmuebles = Inmueble.objects.filter(cliente=cliente)
-#     context = {
-#         "cliente": cliente,  # Agrega el objeto cliente al contexto
-#         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-#     }
-#     return render(request, "clientes/infoInmueble.html", context)
-
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha modificado exitosamente.')
+        return super().form_valid(form)
 
 #Gestion Productos
 

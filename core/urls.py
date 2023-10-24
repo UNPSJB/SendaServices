@@ -24,6 +24,9 @@ from .views import (
     ClienteListView, 
     ClienteCreateView, 
     ClienteUpdateView, 
+    ClienteInmuebleListView,
+    ClienteInmuebleCreateView,
+    ClienteInmuebleUpdateView,
     InmuebleCreateView,
     InmuebleListView,
     InmuebleUpdateView,
@@ -46,6 +49,9 @@ urlpatterns = [
     path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
+    path('cliente/<str:pk>/inmuebles', ClienteInmuebleListView.as_view(), name="inmueblesCliente"),
+    path('cliente/<str:pk>/inmuebles/crear', ClienteInmuebleCreateView.as_view(), name="crearInmuebleCliente"),
+    path('clientes/<str:pk>/inmuebles/modificar', ClienteInmuebleUpdateView.as_view(), name="modificarInmuebleCliente"),
 
     # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),

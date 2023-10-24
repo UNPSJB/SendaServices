@@ -198,10 +198,15 @@
     {% block nav %}
     <div class="main">
       <!--Contenido del nav-->
-      <nav class="navbar navbar-expand px-3 border-bottom bg-light nav-light">
+      <nav class="navbar navbar-expand px-3 border-bottom bg-light">
         <button class="btn" id="sidebar-toggle" type="button">
           <span class="navbar-toggler-icon"></span>
         </button>
+
+        {% block tnav %}
+          <div class="container-fluid"><h4 class="mt-2">{{ tnav }}</h4></div> 
+        {% endblock %}
+
         <div class="navbar-collapse navbar">
           <ul class="navbar-nav">
             <li class="nav-item dropdown">

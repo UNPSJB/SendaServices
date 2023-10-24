@@ -7,6 +7,7 @@
 
     {% block cmain %}
 
+
         {% for msg in messages %}
 
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -31,9 +32,11 @@
 
                     {% block lista %}
                     <!--Titulo Lista-->
-                    <div class="d-flex">
-                        <div class="d-grid gap-1">
-                            <h4>{% block tlista %}{% endblock %}</h4>
+                    <div class="container-fluid">
+                        <div class="d-flex justify-content-between">
+                        <h4>{% block tlista %}{% endblock %}</h4>
+                        {% block tExtras %}
+                        {% endblock %}
                         </div>
                     </div>
 
@@ -75,19 +78,19 @@
                         <ul class="pagination">
                             {% if page_obj.has_previous %}
                             <li class="page-link">
-                                <a href="?page=1{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">&laquo; primera</a>
+                                <a href="?page=1{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}"  class="bi bi-arrow-bar-left"></a>
                             </li>
                             <li class="page-link">
-                                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">anterior</a>
+                                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-left"></a>
                             </li>                            
                             {% endif %}
 
                             {% if page_obj.has_next %}
                             <li class="page-link">
-                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">siguiente</a>
+                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-right"></a>
                             </li>
                             <li class="page-link">
-                                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}">ultima &raquo;</a>
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-bar-right"></a>
                             </li>
                             
                             {% endif %}

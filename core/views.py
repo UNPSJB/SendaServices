@@ -156,9 +156,9 @@ class ProductoCreateView(CreateView):
         context['titulo'] = "Registrar Producto"
         return context
     
-    #Este form, es para cuando se muestre el mensaje de producto creado en list
+    #Este form, es para cuando se envia se muestre el mensaje de producto creado en list
     def form_valid(self, form):
-        messages.success(self.request, 'El producto se ha creado exitosamente.')
+        messages.success(self.request, 'El producto se creo exitosamente.')
         return super().form_valid(form)
     
 class ProductoUpdateView(UpdateView):
@@ -174,9 +174,9 @@ class ProductoUpdateView(UpdateView):
         context['btnColor'] = "btn-primary"
         return context
     
-    #Este form, es para cuando se muestre el mensaje de producto modificado en list
+    #Este form, es para cuando se envia se muestre el mensaje de producto modificado en list
     def form_valid(self, form):
-        messages.success(self.request, 'El producto se ha modificado exitosamente.')
+        messages.success(self.request, 'El producto se modifico exitosamente.')
         return super().form_valid(form)
     
 class ProductoDeleteView(DeleteView):

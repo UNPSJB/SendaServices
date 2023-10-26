@@ -216,7 +216,7 @@ class ProductoForm(ModelForm):
     class Meta:
         model = Producto
         fields = '__all__'
-        exclude = ['baja']
+        exclude = ["baja"] 
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
             'codigo': 'Código',

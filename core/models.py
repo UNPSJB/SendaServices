@@ -38,6 +38,7 @@ class Producto(models.Model):
         # TODO: verificar que unicamente se marque con baja=True si el producto pasa todas las condiciones para hacerlo.
         self.baja = True
         self.save()
+
         
 class Categoria(models.Model):
     nombre= models.CharField(max_length=30)

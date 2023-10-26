@@ -1,0 +1,125 @@
+{% extends "base.html" %} 
+{% load crispy_forms_tags %}
+{% load static %}
+ 
+    {% block tmain %} 
+    {% endblock %} 
+
+    {% block cmain %}
+
+
+        {% for msg in messages %}
+
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Hey!</strong> {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+            
+        {% endfor %}
+
+        <!--Filtro cabecera-->
+        <div class="col-12 col-md-3 mx-auto">
+            <div class="card flex-fill border-0">
+                <div class="card-body py-4">
+                        {% crispy filtros filtros.helper %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-9 mx-auto">
+            <div class="card flex-fill border-0">
+                <div class="card-body py-4 pb-2">
+
+                    {% block lista %}
+                    <!--Titulo Lista-->
+                    <div class="container-fluid">
+                        <div class="d-flex justify-content-between">
+                        <h4>{% block tlista %}{% endblock %}</h4>
+                        {% block tExtras %}
+                        {% endblock %}
+                        </div>
+                    </div>
+
+                    <!--Lista-->
+
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1 table-responsive">
+                            <table class="table table-striped  {% if filtros %} sortable{% endif %}">
+                                <!--Cabecera de la lista se cargan todos los campos del form-->
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th>#</th>
+                                        <!--Filtros cabecera lista-->
+                                        {% for sortable in filtros.sortables %}
+                                            <th class="sortable bg-transition pointer" scope="col" data-s-field={{sortable.0}}>{{sortable.1}}</th>
+                                        {% endfor %}
+                                        <!--Elementos extra cabecera-->
+                                        {% block thextras %}  {% endblock %}
+                                    </tr>
+                                </thead>
+                                <!--Cuerpo de la lista-->
+                                <tbody>
+                                    {% block tcuerpo %}
+                                    {% endblock %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endblock %}
+
+
+
+                    <!--Paginacion-->
+                    <div class="d-flex justify-content-between align-items-center pt-2">
+
+                        <p>Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</p>
+
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                            <li class="page-link">
+                                <a href="?page=1{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}"  class="bi bi-arrow-bar-left"></a>
+                            </li>
+                            <li class="page-link">
+                                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-left"></a>
+                            </li>                            
+                            {% endif %}
+
+                            {% if page_obj.has_next %}
+                            <li class="page-link">
+                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-right"></a>
+                            </li>
+                            <li class="page-link">
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-bar-right"></a>
+                            </li>
+                            
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% block modal %}
+
+            <div class="modal" id="modal" role="dialog">
+                
+            </div>
+        
+        {% endblock %}
+
+    {% endblock %}
+
+
+
+{% block extrajs %}
+<!--Modal-->
+<script type="text/javascript">
+var $ = jQuery.noConflict();
+function abrir_modal(url){
+    $('#modal').load(url, function(){
+        $(this).modal('show');
+    });
+}
+</script>
+{% endblock %}

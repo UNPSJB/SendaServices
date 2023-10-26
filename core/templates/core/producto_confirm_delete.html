@@ -1,0 +1,13 @@
+{% extends "../base_confirm_delete.html" %}
+
+{% block title %}
+ Eliminar Producto 
+ {% endblock %}
+
+{% block action %}
+ {% url "eliminarProducto" object.pk %}
+{% endblock %}
+
+{% block object %}
+    {{object}}
+{% endblock %}

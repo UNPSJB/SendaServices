@@ -7,7 +7,7 @@
 {% block tobjectmodal %} {{object.cliente}} {% endblock %}
 
 <!--Url del modal-->
-{% block url %} {% url 'modificarInmueble' object.domicilio %} {% endblock %}
+{% block url %} {% url 'modificarInmuebleCliente' object.pk %} {% endblock %}
 
 <!--Boton del modal-->
-{% block btnmodal %} Guardar {% endblock %} 
+{% block btnmodal %} Modificar {% endblock %} 

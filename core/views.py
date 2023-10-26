@@ -1,15 +1,37 @@
+from typing import Any
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
+from .utils import ListFilterView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 
-from django.urls import reverse_lazy
 
-from .models import Cliente, Producto, Inmueble, Empleado,Categoria
-from .forms import ProductoForm, ClienteForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm,EmpleadoForm,CategoriaForm
+from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from .models import Cliente, Producto, Inmueble,Empleado,Categoria
+from .forms import (
+    ProductoForm, 
+    ProductoUpdateForm, 
+    ProductoFiltrosForm, 
+    ClienteForm, 
+    ClienteModForm, 
+    ClienteFiltrosForm, 
+    InmueblesClienteFiltrosForm,
+    InmuebleForm, 
+    InmuebleUpdateForm, 
+    InmuebleFiltrosForm,
+    EmpleadoForm,
+    EmpleadoModForm,
+    EmpleadoFiltrosForm,
+    CategoriaForm,
+    CategoriaUpdateForm,
+    CategoriaFiltrosForm,
+  )
+
 
 # Login
 
@@ -34,14 +56,91 @@ def login_view(request):
 
     return render(request, "registration/login.html")
 
-# Gestion Empleado
+class ClienteInmuebleUpdateView(UpdateView):
+    model = Inmueble
+    form_class = InmuebleUpdateForm
+    template_name = "clientes/clienteInmueble_modal.html"
 
 
 class ClienteListView(ListView):
+
+    def get_success_url(self):
+        # Aquí estamos generando la URL inversa con el cliente como parte de la URL
+        return reverse('inmueblesCliente', kwargs={'pk': self.object.cliente.pk})
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha modificado exitosamente.')
+        return super().form_valid(form)
+
+class ClienteInmuebleCreateView(CreateView):
+    model = Inmueble
+    form_class = InmuebleForm
+    success_url = reverse_lazy('inmueblesCliente')
+    template_name = "clientes/clienteInmueble_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha creado exitosamente.')
+        return super().form_valid(form)
+
+
+
+# Gestion Cliente
+class ClienteInmuebleListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 3
+    #Filtros de la lista
+    filtros = InmueblesClienteFiltrosForm
+    model = Inmueble #Nombre del modelo
+    template_name = "clientes/clienteInmuebles_list.html" #Ruta del template
+    context_object_name = 'inmuebles' #Nombre de la lista usar ''
+
+    def get_queryset(self):
+        # Obtener el valor de 'pk' de la URL
+        pk = self.kwargs.get('pk')
+
+        # Filtrar los objetos Inmueble por el valor 'pk'
+        qs = Inmueble.objects.filter(cliente__pk=pk)
+        qs = super().apply_filters_to_qs(qs)
+        #if self.filtros:
+        #    filtros = self.filtros(self.request.GET)
+        #    return filtros.apply(qs)
+        return qs
+
+        #return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Clientes"
+        return context
+
+
+class ClienteListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 6
+    #Filtros de la lista
+    filtros = ClienteFiltrosForm
     model = Cliente #Nombre del modelo
     template_name = "clientes/cliente_list.html" #Ruta del template
     context_object_name = 'clientes' #Nombre de la lista usar ''
     queryset = Cliente.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Clientes"
+        return context
 
 
 class ClienteCreateView(CreateView):
@@ -52,30 +151,41 @@ class ClienteCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Cliente"
-        context['boton1'] = "Crear Cliente"
         print(self.template_name)
+        context['tnav'] = "Gestion de Clientes"
         return context
+    
+    #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El cliente se ha creado exitosamente.')
+        return super().form_valid(form)
+
     
 class ClienteUpdateView(UpdateView):
     model = Cliente
-    form_class = ClienteForm
+    form_class = ClienteModForm
     success_url = reverse_lazy('listarCliente')
     template_name = "clientes/cliente_modal.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Cliente"
-        context['boton'] = "Actualizar" 
-        context['btnColor'] = "btn-primary"
         print(self.template_name)
         return context
+    
+    #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El cliente se ha modificado exitosamente.')
+        return super().form_valid(form)
     
 
 
 #Gestion Inmueble
 
-class InmuebleListView(ListView):
+class InmuebleListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 3
+    #Filtros de la lista
+    filtros = InmuebleFiltrosForm
     model = Inmueble #Nombre del modelo
     template_name = "inmuebles/inmueble_list.html" #Ruta del template
     context_object_name = 'inmuebles' #Nombre de la lista usar ''
@@ -89,8 +199,13 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Inmueble"
         return context
+    
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha creado exitosamente.')
+        return super().form_valid(form)
+    
     
 class InmuebleUpdateView(UpdateView):
     model = Inmueble
@@ -100,47 +215,22 @@ class InmuebleUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Inmueble"
-        context['boton'] = "Actualizar" 
-        context['btnColor'] = "btn-primary"
         return context
     
-# class Inmuebles(View):
-#     def get(self, request, *args, **kwargs):
-#         clientes = Cliente.objects.all()
-#         inmueble = Inmueble.objects.all()
-#         context = {
-#             "clientes": clientes,
-#             "inmueble": inmueble,
-#         }
-#         return render(request, "clientes/inmuebles.html", context)
-    
-# def crearInmueble(request, cuil_cuit):
-#     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-#     inmuebles = Inmueble.objects.filter(cliente=cliente)
-#     context = {
-#         "cliente": cliente,  # Agrega el objeto cliente al contexto
-#         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-#     }
-#     return render(request, "clientes/crearInmueble.html", context)
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha modificado exitosamente.')
+        return super().form_valid(form)
 
-# def infoInmueble(request, cuil_cuit):
-#     cliente = Cliente.objects.get(cuil_cuit=cuil_cuit)
-#     inmuebles = Inmueble.objects.filter(cliente=cliente)
-#     context = {
-#         "cliente": cliente,  # Agrega el objeto cliente al contexto
-#         "inmuebles": inmuebles  # Agrega el objeto inmueble al contexto
-#     }
-#     return render(request, "clientes/infoInmueble.html", context)
-
-
-#Gestion Productos
-
-class ProductoListView(ListView):
+class ProductoListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 5
+    #Filtros de la lista
+    filtros = ProductoFiltrosForm
     model = Producto #Nombre del modelo
     template_name = "core/producto_list.html" #Ruta del template
     context_object_name = 'productos' #Nombre de la lista usar ''
-    queryset = Producto.objects.all()
+    queryset = Producto.objects.filter(baja=False)
 
 class ProductoCreateView(CreateView):
     model = Producto
@@ -170,11 +260,22 @@ class ProductoUpdateView(UpdateView):
 #Gestion Empleado
 
 
-class EmpleadoListView(ListView):
+class EmpleadoListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 6
+    #Filtros de la lista
+    filtros = EmpleadoFiltrosForm
     model = Empleado #Nombre del modelo
     template_name = "empleado/empleado_list.html" #Ruta del template
     context_object_name = 'empleado' #Nombre de la lista usar ''
     queryset = Empleado.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Empleado"
+        return context
+
 
 
 class EmpleadoCreateView(CreateView):
@@ -208,12 +309,21 @@ class EmpleadoUpdateView(UpdateView):
 #Gestion Categoria
 
 
-class CategoriaListView(ListView):
+class CategoriaListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 2
+    #Filtros de la lista
+    filtros = CategoriaFiltrosForm
     model = Categoria #Nombre del modelo
     template_name = "categoria/categoria_list.html" #Ruta del template
     context_object_name = 'categoria' #Nombre de la lista usar ''
     queryset = Categoria.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Categoria"
+        return context
 
 class CategoriaCreateView(CreateView):
     model = Categoria
@@ -242,3 +352,15 @@ class CategoriaUpdateView(UpdateView):
         print(self.template_name)
         return context
     
+
+    
+class ProductoDeleteView(DeleteView):
+    model = Producto
+    success_url = reverse_lazy('listarProductos')
+    template_name = "core/producto_confirm_delete.html"
+
+    def post(self, *args, **kwargs):
+        producto = Producto.objects.get(pk=self.kwargs["pk"])
+        producto.dar_de_baja()
+        return redirect(self.success_url)
+

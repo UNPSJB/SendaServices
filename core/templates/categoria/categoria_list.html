@@ -1,62 +1,34 @@
-{% extends "../base.html" %}
+{% extends "../baselist.html" %}
+{% load crispy_forms_tags %}
 {% load static %}
 
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
 
-{% block cmain %}
+    {% block tlista %} Listado de Categorias {% endblock %}
 
-    <div class="col-12 mx-auto">
-        <div class="card flex-fill border-0">
-            <div class="card-body py-4">
+    {% block thextras %}
+        <th colspan="">Opciones</th>
+    {% endblock%}
+    
+    {% block tcuerpo %}
+        {% for c in categoria %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{c.nombre}}</td>
+                <td>{{c.sueldoBase}}</td>
+            
 
+                <td>
+                    <!--Si queremos abrir un moda, se utiliza abrir-->
 
-                <div class="d-flex">
-                    <div class="d-grid gap-1">
-                        <h4>Listado de Categorias</h4>
+                    <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarCategoria" c.pk %}')"></a>
+                    
+                </td>
 
-                    </div>
-                </div>
-
-
-                <div class="d-flex align-items-start">
-                    <div class="flex-grow-1 table-responsive">
-                        <table class="table table-striped">
-                            <tbody>
-                                {% for c in Categoria %}
-                                <tr>
-                                    <td>{{forloop.counter}}</td>
-                                    <td>{{c.nombre}}</td>
-                                    <td>{{c.sueldoBase}}</td>
-                                    <td>
-                                        <button onclick="abrir_modal_edicion('{% url "modificarCategoria" c.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="modificar" role="dialog">
-        
-    </div>
-
-
-{% endblock %}
-
-{% block extrajs %}
-<!--Modal-->
-<script type="text/javascript">
-    var $ = jQuery.noConflict();
-    function abrir_modal_edicion(url){
-        $('#modificar').load(url, function(){
-            $(this).modal('show');
-        });
-    }
-</script>
+            </tr>
+            {% empty %}
+                <tr> <td> No hay clientes registrados </td> </tr>
+    {% endfor %}
 {% endblock %}

@@ -1,81 +1,37 @@
-{% extends "../base.html" %}
+{% extends "../baselist.html" %}
+{% load crispy_forms_tags %}
 {% load static %}
 
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
 
-{% block cmain %}
+    {% block tlista %} Listado de Empleados {% endblock %}
 
-    {% if clientes %}
-    <div class="col-12 mx-auto">
-        <div class="card flex-fill border-0">
-            <div class="card-body py-4">
+    {% block thextras %}
+        <th colspan="">Opciones</th>
+    {% endblock%}
+    
+    {% block tcuerpo %}
+        {% for e in empleado %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{e.legajo}}</td>
+                <td>{{e.apellido}}</td>
+                <td>{{e.nombre}}</td>
+                <td>{{e.correo}}</td>
+                <td>{{e.cuil}}</td>
+                <td>{{e.categoria}}</td>
+            
+                <td>
+                    <!--Si queremos abrir un moda, se utiliza abrir-->
 
+                    <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarEmpleado" e.legajo %}')"></a>
+                    <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""></i></a>
+                </td>
 
-                <div class="d-flex">
-                    <div class="d-grid gap-1">
-                        <h4>Listado de Empleados</h4>
-
-                    </div>
-                </div>
-
-
-                <div class="d-flex align-items-start">
-                    <div class="flex-grow-1 table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr class="table-primary">
-                                    <th>#</th>
-                                    <th>Legajo</th>
-                                    <th>Apellido</th>
-                                    <th>Nombre</th>
-                                    <th>Cuil</th>
-                                    <th>Correo</th>
-                                    
-                                    <th colspan="">Opciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for c in Empleados %}
-                                <tr>
-                                    <td>{{forloop.counter}}</td>
-                                    <td>{{c.legajo}}</td>
-                                    <td>{{c.apellido}}</td>
-                                    <td>{{c.nombre}}</td>
-                                    <td>{{c.cuil}}</td>
-                                    <td>{{c.correo}}</td>
-                                    <td>{{c.categoria}}</td>        
-                            
-                                    <td>
-                                       <button onclick="abrir_modal_edicion('{% url "modificarEmpleado" c.legajo%}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
-                                        <a href="/infoEmpleado/{{c.legajo}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="modal fate" id="modificar" role="dialog">
-
-    </div>
-
-
-{% endblock %}
-
-{% block extrajs %}
-<script type="text/javascript">
-    var $ = jQuery.noConflict();
-    function abrir_modal_edicion(url){
-        $('#modificar').load(url, function(){
-            $(this).modal('show');
-        });
-    }
-</script>
+            </tr>
+            {% empty %}
+                <tr> <td> No hay empleados registrados </td> </tr>
+    {% endfor %}
 {% endblock %}

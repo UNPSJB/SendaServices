@@ -27,6 +27,9 @@ from .views import (
     ClienteListView, 
     ClienteCreateView, 
     ClienteUpdateView, 
+    ClienteInmuebleListView,
+    ClienteInmuebleCreateView,
+    ClienteInmuebleUpdateView,
     InmuebleCreateView,
     InmuebleListView,
     InmuebleUpdateView,
@@ -38,7 +41,9 @@ from .views import (
     EmpleadoUpdateView,
     CategoriaCreateView,
     CategoriaListView,
-    CategoriaUpdateView
+    CategoriaUpdateView,
+    ProductoDeleteView
+
 )
 
 
@@ -54,15 +59,15 @@ urlpatterns = [
     # Gestion Cliente
     path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
-    path('clienteModificar/<int:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
+    path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
+    path('cliente/<str:pk>/inmuebles', ClienteInmuebleListView.as_view(), name="inmueblesCliente"),
+    path('cliente/<str:pk>/inmuebles/crear', ClienteInmuebleCreateView.as_view(), name="crearInmuebleCliente"),
+    path('clientes/<str:pk>/inmuebles/modificar', ClienteInmuebleUpdateView.as_view(), name="modificarInmuebleCliente"),
 
     # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
     path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
-    path('inmuebles/listar', InmuebleListView.as_view(), name='listarInmuebles'),
-
-    # path('inmuebles/', Inmuebles.as_view(), name="inmuebles"),
-    # path('inmueblesCliente/<cuil_cuit>', crearInmueble, name="inmueblesCliente"),
+    path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
 
 
   
@@ -77,10 +82,15 @@ urlpatterns = [
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
     path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
     path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
+    path('productos/eliminar/<str:pk>', ProductoDeleteView.as_view(), name='eliminarProducto'),
     
     #Gestion Categoria
     path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),
     path('categoria/modificar/<str:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
     path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria')
-    ]
+    
+
+
+    
+]
 

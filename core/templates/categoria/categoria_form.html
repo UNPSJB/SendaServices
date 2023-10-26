@@ -1,44 +1,10 @@
-{% extends "../base.html" %}
-{% load static %}
-{% load crispy_forms_tags %} 
+{% extends "../baseform.html" %}
 
-{% block tmain %}
-    <h4 class="mx-3">{{ titulo }}</h4>
-{% endblock %}
+<!--Titulo del formulario-->
+{% block tform %} Crear Categoria{% endblock %}
 
-{% block cmain %}
+<!--Url del formulario-->
+{% block url %} {% url 'crearCategoria' %} {% endblock %}
 
-<div class="col-12 col-md-7 mx-auto">
-    <div class="card flex-fill border-0">
-        <div class="card-body py-4">
-
-            {% for msg in messages %}
-
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Hey!</strong> {{ msg }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-
-            {% endfor %}
-            <h4>{{ titulo }}</h4>
-            <div class="card">
-                <div class="card-body">
-
-                    {% comment %} <form action="{% url 'crearCategoria' %}" method="POST">
-                        {% csrf_token %}
-                        {{ form | crispy }}
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-block text-white">{{ boton1 }}</button>
-                        </div>
-                     </form> {% endcomment %}
-
-                     {% crispy form form.helper %}
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{% endblock %}
+<!--Boton del formulario-->
+{% block btnform %} Guardar {% endblock %}

@@ -1,8 +1,54 @@
 from django import forms
 from django.forms import ModelForm
 from .models import Producto, Cliente, Inmueble, Empleado,Categoria
+from .utils import FiltrosForm
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
+
+
+
+class ClienteFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("cuil_cuit", "CUIL/CUIT"),
+        ("apellido", "Apellido"),
+        ("nombre", "Nombre"),
+        ("correo", "Correo"),
+        ("habitual", "Habitual"),
+        ("gubernamental", "Gubernamental"),
+    ]
+    ATTR_CHOICES = [
+
+        ("cuil_cuit", "CUIL/CUIT"),
+        ("apellido", "Apellido"),
+        ("nombre", "Nombre"),
+        ("correo", "Correo"),
+        ("habitual", "Habitual"),
+        ("gubernamental", "Gubernamental"),
+
+    ]
+
+    #Formulario de filtrado
+    cuil_cuit = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cuil/Cuit'}), max_length=45)
+    apellido = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Apellido'}), max_length=45)
+    nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}), max_length=45)
+    correo = forms.EmailField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Correo'}))
+        
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "cuil_cuit","nombre", "apellido", "correo", #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
 
 
 class ClienteForm(ModelForm):
@@ -11,49 +57,37 @@ class ClienteForm(ModelForm):
         model = Cliente
         fields = '__all__'
         #Label se refiere la descripcion que esta al lado del formulario.
-        
-
-class ProductoForm(ModelForm):
-
-    class Meta:
-        model = Producto
-        fields = '__all__'
-        #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
-            'codigo': 'Código',
-            'descripcion': 'Descripción',
-            'stock': 'Stock',
-            'precioUnitario': 'Precio Unitario',
-           
+            'cuil_cuit': 'Cuil/Cuit',
+            'apellido': 'Apellido',
+            'nombre': 'Nombre',
+            'correo': 'Correo',
         }
         #Referencia a los estilos con los que se renderizan los campos
         widgets = {
-            'codigo': forms.TextInput(
+            'cuil_cuit': forms.TextInput(
                 #Permite estilizar los formularios
                 attrs = {
                     'class': 'form-control',
-                    'placeholder':'Ingrese el codigo del producto',
+                    'placeholder':'Ingrese el cuil/cuit del cliente',
                 }
             ),
-            'descripcion': forms.TextInput(
+            'nombre': forms.TextInput(
                 attrs = {
                     'class': 'form-control',
-                    'placeholder':'Ingrese descripcion del producto',
+                    'placeholder':'Ingrese el nombre del cliente',
                 }
             ),
-            'stock': forms.NumberInput(
+            'apellido': forms.TextInput(
                 attrs = {
-                    'min': 0,
                     'class': 'form-control',
-                    'placeholder':'Ingrese el stock del producto',
-
+                    'placeholder':'Ingrese el apellido del cliente',
                 }
             ),
-            'precioUnitario': forms.NumberInput(
-                attrs = {
-                    'min': 0,                    
+            'correo': forms.EmailInput(
+                attrs = {           
                     'class': 'form-control',
-                    'placeholder':'Ingrese el precio del producto',
+                    'placeholder':'Ingrese el correo del cliente',
                 }
             ),
         }
@@ -61,10 +95,11 @@ class ProductoForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'id-productoForm'
+        self.helper.form_id = 'id-clienteForm'
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Guardar'))
+
 
 
 class EmpleadoForm(ModelForm):
@@ -117,11 +152,157 @@ class EmpleadoForm(ModelForm):
         
         }
 
-class ProductoUpdateForm(ProductoForm):
+class EmpleadoFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("legajo", "Legajo"),
+        ("apellido", "Apellido"),
+        ("nombre", "Nombre"),
+        ("correo", "Correo"),
+        ("cuil", "Cuil"),
+        ("categoria", "Categoria"),
+    ]
+    ATTR_CHOICES = [
 
-    class Meta(ProductoForm.Meta):
-        exclude = ["stock", "codigo"]
+        ("legajo", "Legajo"),
+        ("apellido", "Apellido"),
+        ("nombre", "Nombre"),
+        ("correo", "Correo"),
+        ("cuil", "Cuil"),
+        ("categoria", "Categoria"),
 
+    ]
+
+    #Formulario de filtrado
+    leagajo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Legajo'}), max_length=45)
+    apellido = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Apellido'}), max_length=45)
+    nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}), max_length=45)
+    correo = forms.EmailField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Correo'}))
+    cuil = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cuil'}), max_length=45)
+    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=False, label='Categoria') 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "legajo","nombre", "apellido", "correo","cuil","categoria" #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
+class EmpleadoModForm(ModelForm):
+
+    class Meta:
+        model = Empleado
+        exclude = ('legajo',)
+
+        #Label se refiere la descripcion que esta al lado del formulario.
+        labels = { 
+            'apellido': 'Apellido',
+            'nombre': 'Nombre',
+            'correo': 'Correo',
+            'cuil': 'Cuil',
+            'categoria': 'Categoria',
+        }
+        #Referencia a los estilos con los que se renderizan los campos
+        widgets = {
+            'nombre': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el nombre del empleado',
+                }
+            ),
+            'apellido': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el apellido del empleado',
+
+                }
+            ),
+            'correo': forms.EmailInput(
+                attrs = {           
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el correo del empleado',
+                }
+            ),
+                 
+            'cuil': forms.NumberInput(
+                attrs = {           
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el cuil del empleado',
+                }
+            ),
+            'Categoria.numero': forms.NumberInput(
+                attrs = {           
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el numero de la categoria',
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-EmpleadoForm'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Guardar'))
+
+
+    
+
+
+class ClienteModForm(ModelForm):
+
+    class Meta:
+        model = Cliente
+        exclude = ('cuil_cuit',)
+
+        #Label se refiere la descripcion que esta al lado del formulario.
+        labels = { 
+            'apellido': 'Apellido',
+            'nombre': 'Nombre',
+            'correo': 'Correo',
+        }
+        #Referencia a los estilos con los que se renderizan los campos
+        widgets = {
+            'nombre': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el nombre del cliente',
+                }
+            ),
+            'apellido': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el apellido del cliente',
+
+                }
+            ),
+            'correo': forms.EmailInput(
+                attrs = {           
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el correo del cliente',
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-clienteForm'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Guardar'))
+
+
+    
 
 class InmuebleForm(ModelForm):
 
@@ -222,12 +403,224 @@ class CategoriaForm(ModelForm):
             
         }
 
+        exclude = ["domicilio", "cliente"]
+
+class CategoriaUpdateForm(CategoriaForm):
+
+    class Meta(CategoriaForm.Meta):
+        exclude = ["numero", "empleado.legajo"]
+
+
+
+class CategoriaFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("nombre", "Nombre"),
+        ("sueldoBase", "Sueldo Base"),
+    ]
+    ATTR_CHOICES = [
+        ("nombre", "Nombre"),
+        ("sueldoBase", "Sueldo Base"),
+    ]
+
+    #Formulario de filtrado
+
+    nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}))
+    sueldoBase = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Sueldo Base'}))
+    
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'id-inmuebleForm'
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "numero","nombre", "sueldoBase"
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
+
+class InmueblesClienteFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("domicilio", "Domicilio"),
+        ("metrosCuadrados", "Metros Cuadrados"),
+        ("nroAmbientes", "Cantidad de Ambientes"),
+        ("tipo", "Tipo"),
+    ]
+    ATTR_CHOICES = [
+        ("domicilio", "Domicilio"),
+        ("metrosCuadrados", "Metros Cuadrados"),
+        ("nroAmbientes", "Cantidad de Ambientes"),
+        ("tipo", "Tipo"),
+    ]
+
+    #Formulario de filtrado
+    domicilio = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Domicilio'}), max_length=90)
+    metrosCuadrados = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Metros Cuadrados'}))
+    nroAmbientes = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cantidad de Ambientes'}))
+    tipo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Tipo'}))
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "domicilio","metrosCuadrados", "nroAmbientes", "tipo", #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
+class InmuebleFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("domicilio", "Domicilio"),
+        ("metrosCuadrados", "Metros Cuadrados"),
+        ("nroAmbientes", "Cantidad de Ambientes"),
+        ("tipo", "Tipo"),
+        ("cliente", "Propietario"),
+    ]
+    ATTR_CHOICES = [
+        ("domicilio", "Domicilio"),
+        ("metrosCuadrados", "Metros Cuadrados"),
+        ("nroAmbientes", "Cantidad de Ambientes"),
+        ("tipo", "Tipo"),
+        ("cliente", "Propietario"),
+    ]
+
+    #Formulario de filtrado
+    domicilio = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Domicilio'}), max_length=90)
+    metrosCuadrados = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Metros Cuadrados'}))
+    nroAmbientes = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cantidad de Ambientes'}))
+    tipo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Tipo'}))
+    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=False, label='Propietario') #filtrar inmuebles por cliente
+
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "domicilio","metrosCuadrados", "nroAmbientes", "tipo", "cliente", #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
+class ProductoFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("codigo", "Código"),
+        ("descripcion", "Descripción"),
+        ("stock", "Stock"),
+        ("precioUnitario", "Precio Unitario"),
+    ]
+    ATTR_CHOICES = ORDEN_CHOICES
+
+    #Formulario de filtrado
+    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'EJ000'}), max_length=45)
+    descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Lavandina'}), max_length=45)
+    stock__gte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Mínimo', 'min': 1}), required=False)
+    stock__lte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Máximo', 'min': 1}), required=False)
+    precioUnitario__gte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Mínimo', 'min': 1}), required=False)
+    precioUnitario__lte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Máximo', 'min': 1}), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "codigo",
+                "descripcion", 
+                HTML(
+                    '<label class="form-label">Stock</label>'),
+                Div("stock__gte", "stock__lte", css_class="custom-range-form"),
+                HTML(
+                    '<label class="form-label">Precio Unitario</label>'),
+                Div("precioUnitario__gte", "precioUnitario__lte", css_class="custom-range-form"),
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
+class ProductoForm(ModelForm):
+
+    class Meta:
+        model = Producto
+        fields = '__all__'
+        exclude=["baja"]
+        #Label se refiere la descripcion que esta al lado del formulario.
+        labels = { 
+            'codigo': 'Código',
+            'descripcion': 'Descripción',
+            'stock': 'Stock',
+            'precioUnitario': 'Precio Unitario',
+           
+        }
+        #Referencia a los estilos con los que se renderizan los campos
+        widgets = {
+            'codigo': forms.TextInput(
+                #Permite estilizar los formularios
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el codigo del producto',
+                }
+            ),
+            'descripcion': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese descripcion del producto',
+                }
+            ),
+            'stock': forms.NumberInput(
+                attrs = {
+                    'min': 0,
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el stock del producto',
+
+                }
+            ),
+            'precioUnitario': forms.NumberInput(
+                attrs = {
+                    'min': 0,                    
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el precio del producto',
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-productoForm'
+
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Guardar'))
+
+
+
+class ProductoUpdateForm(ProductoForm):
+
+    class Meta(ProductoForm.Meta):
+        exclude = ["stock", "codigo", "baja"]
 

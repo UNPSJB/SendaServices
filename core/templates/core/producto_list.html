@@ -1,76 +1,31 @@
-{% extends "../base.html" %}
-{% load static %}
+{% extends "../baselist.html" %}
 
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
 
-{% block cmain %}
+{% block tlista %} Listado de Productos {% endblock %}
 
-    <div class="col-12 mx-auto">
-        <div class="card flex-fill border-0">
-            <div class="card-body py-4">
+{% block thextras %}
+<th colspan="">Opciones</th>
+{% endblock%}
 
-
-                <div class="d-flex">
-                    <div class="d-grid gap-1">
-                        <h4>Listado de Productos</h4>
-
-                    </div>
-                </div>
-
-
-                <div class="d-flex align-items-start">
-                    <div class="flex-grow-1 table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr class="table-primary">
-                                    <th>#</th>
-                                    <th>Codigo</th>
-                                    <th>Descripcion</th>
-                                    <th>Stock</th>
-                                    <th>Precio</th>
-                                    
-                                    <th colspan="">Opciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for p in productos %}
-                                    <tr>
-                                        <td>{{forloop.counter}}</td>
-                                        <td>{{p.codigo}}</td>
-                                        <td>{{p.descripcion}}</td>
-                                        <td>{{p.stock}}</td>
-                                        <td>{{p.precioUnitario}}</td>
-                                        <td>
-                                            <button onclick="abrir_modal_edicion('{% url "modificarProducto" p.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
-                                        </td>
-                                    </tr>
-                                {% empty %}
-                                    <tr><td> No hay productos registrados. </td></tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fate" id="modificar" role="dialog">
-
-    </div>
-
-
+{% block tcuerpo %}
+    {% for p in productos %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{p.codigo}}</td>
+        <td>{{p.descripcion}}</td>
+        <td>{{p.stock}}</td>
+        <td>{{p.precioUnitario}}</td>
+        <td class="list-options">
+            <a href="#"><i class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarProducto" p.pk %}')"></i></a>
+            <a href="#"><i class="bi bi-trash3 icon-danger" onclick="abrir_modal('{% url "eliminarProducto" p.pk %}')"></i></a>
+            <!--button onclick="abrir_modal('{% url "modificarProducto" p.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button-->
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td> No hay productos registrados. </td></tr>
+    {% endfor %}
 {% endblock %}
 
-{% block extrajs %}
-<script type="text/javascript">
-    var $ = jQuery.noConflict();
-    function abrir_modal_edicion(url){
-        $('#modificar').load(url, function(){
-            $(this).modal('show');
-        });
-    }
-</script>
-{% endblock %}

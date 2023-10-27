@@ -1,7 +1,7 @@
 from django.db import models
 
 class Cliente(models.Model):
-    cuil_cuit= models.CharField("Cuil/Cuit",max_length=30,primary_key=True)
+    cuil_cuit= models.CharField("Cuil/Cuit",max_length=11, unique=True)
     apellido= models.CharField(max_length=45)
     nombre= models.CharField(max_length=45)
     correo= models.EmailField(max_length=45)
@@ -13,7 +13,7 @@ class Cliente(models.Model):
 
 
 class Inmueble(models.Model):
-    domicilio= models.CharField(max_length=90, primary_key=True)
+    domicilio= models.CharField(max_length=90, unique=True)
     metrosCuadrados= models.IntegerField("Metros Cuadrados")
     nroAmbientes= models.IntegerField("Numero de ambientes")
     TIPOS= [('casa','casa'),('oficina','oficina'),('salon','salon')]
@@ -25,7 +25,7 @@ class Inmueble(models.Model):
 
 
 class Producto(models.Model):
-    codigo= models.CharField(max_length=30,primary_key=True)
+    codigo= models.CharField(max_length=30, unique=True)
     descripcion= models.CharField( max_length=250)
     stock= models.IntegerField()
     precioUnitario= models.DecimalField("Precio unitario",decimal_places=2,max_digits=10)
@@ -40,7 +40,7 @@ class Producto(models.Model):
         self.save()
     
 class Empleado(models.Model):
-    legajo= models.CharField(max_length=30, primary_key=True)
+    legajo= models.CharField(max_length=30, unique=True)
     nombreYapellido= models.CharField(max_length=90)
     correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)

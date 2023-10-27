@@ -69,6 +69,7 @@ class ClienteForm(ModelForm):
                 attrs = {
                     'class': 'form-control',
                     'placeholder':'Ingrese el cuil/cuit del cliente',
+                    'pattern': '([0-9]{11}|[0-9]{2}-[0-9]{8}-[0-9]{1})', 'placeholder': '###########',
                 }
             ),
             'nombre': forms.TextInput(

@@ -9,7 +9,7 @@
 
         {% for msg in messages %}
 
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert {% if msg.tags != "error" %} alert-{{msg.tags}} {% else %} alert-danger {% endif %} alert-dismissible fade show" role="alert">
             <strong>Hey!</strong> {{ msg }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>

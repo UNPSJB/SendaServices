@@ -2,6 +2,7 @@ from typing import Any
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
@@ -179,12 +180,17 @@ class ProductoUpdateView(UpdateView):
         messages.success(self.request, 'El producto se modifico exitosamente.')
         return super().form_valid(form)
     
-class ProductoDeleteView(DeleteView):
+class ProductoDeleteView(SuccessMessageMixin, DeleteView):
     model = Producto
+    context_object_name = "producto"
     success_url = reverse_lazy('listarProductos')
+    success_message = "El producto ha sido eliminado!"
     template_name = "core/producto_confirm_delete.html"
-
-    def post(self, *args, **kwargs):
-        producto = Producto.objects.get(pk=self.kwargs["pk"])
-        producto.dar_de_baja()
-        return redirect(self.success_url)
+    
+    def form_valid(self, form):
+        res = self.get_object().delete() # intento eliminar a mano
+        if res is None: # no pudo eliminar
+            messages.error(self.request, "El producto se encuentra asociado a un servicio activo.")
+            return redirect(self.success_url)
+        else:
+            return super().form_valid(form)

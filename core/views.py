@@ -30,6 +30,8 @@ from .forms import (
     CategoriaForm,
     CategoriaUpdateForm,
     CategoriaFiltrosForm,
+
+
   )
 
 
@@ -268,7 +270,7 @@ class EmpleadoListView(ListFilterView):
     model = Empleado #Nombre del modelo
     template_name = "empleado/empleado_list.html" #Ruta del template
     context_object_name = 'empleado' #Nombre de la lista usar ''
-    queryset = Empleado.objects.all()
+    queryset = Empleado.objects.filter(baja=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -295,7 +297,7 @@ class EmpleadoCreateView(CreateView):
     
 class EmpleadoUpdateView(UpdateView):
     model = Empleado
-    form_class = EmpleadoForm
+    form_class = EmpleadoModForm
     success_url = reverse_lazy('listarEmpleado')
     template_name = "empleado/empleado_modal.html"
 
@@ -305,6 +307,17 @@ class EmpleadoUpdateView(UpdateView):
         print(self.template_name)
         return context
     
+
+class EmpleadoDeleteView(DeleteView):
+    model = Empleado
+    success_url = reverse_lazy('listarEmpleado')
+    template_name = "empleado/empleado_confirm_delete.html"
+
+    def post(self, *args, **kwargs):
+        empleado = Empleado.objects.get(pk=self.kwargs["pk"])
+        empleado.dar_de_baja()
+        return redirect(self.success_url)
+
 
 #Gestion Categoria
 
@@ -352,7 +365,6 @@ class CategoriaUpdateView(UpdateView):
         print(self.template_name)
         return context
     
-
     
 class ProductoDeleteView(DeleteView):
     model = Producto

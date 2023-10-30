@@ -44,9 +44,12 @@ class Producto(models.Model):
 class Categoria(models.Model):
     nombre= models.CharField(max_length=30)
     sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
+   
 
     def __str__(self):
         return self.nombre
+    
+   
 
 
 class Empleado(models.Model):
@@ -56,9 +59,15 @@ class Empleado(models.Model):
     correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)
     categoria=models.ForeignKey(Categoria,on_delete=models.CASCADE)
+    baja= models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.apellido}{self.nombre}"
+
+    def dar_de_baja(self):
+        # TODO: verificar que unicamente se marque con baja=True si el producto pasa todas las condiciones para hacerlo.
+        self.baja = True
+        self.save()
     
 
 

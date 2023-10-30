@@ -7,7 +7,7 @@
 {% block tobjectmodal %} {{object}} {% endblock %}
 
 <!--Url del modal-->
-{% block url %} {% url 'modificarCategoria' object.nombre %} {% endblock %}
+{% block url %} {% url 'modificarCategoria' object.pk %} {% endblock %}
 
 <!--Boton del modal-->
 {% block btnmodal %} Guardar {% endblock %} 

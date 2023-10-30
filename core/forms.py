@@ -107,6 +107,7 @@ class EmpleadoForm(ModelForm):
     class Meta:
         model = Empleado
         fields = '__all__'
+        exclude = ["baja"]
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
             'legajo': 'Legajo',
@@ -117,9 +118,10 @@ class EmpleadoForm(ModelForm):
         }
         #Referencia a los estilos con los que se renderizan los campos
         widgets = {
-            'legajo': forms.TextInput(
+            'legajo': forms.NumberInput(
                 #Permite estilizar los formularios
                 attrs = {
+                    'min':0,
                     'class': 'form-control',
                     'placeholder':'Ingrese el legajo del empleado',
                 }
@@ -139,6 +141,7 @@ class EmpleadoForm(ModelForm):
             ),
             'cuil': forms.NumberInput(
                 attrs = {
+                    'min':0,
                     'class': 'form-control',
                     'placeholder':'Ingrese el cuil del empleado',
                 }
@@ -174,12 +177,13 @@ class EmpleadoFiltrosForm(FiltrosForm):
     ]
 
     #Formulario de filtrado
-    leagajo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Legajo'}), max_length=45)
+    legajo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Legajo'}), max_length=45)
     apellido = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Apellido'}), max_length=45)
     nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}), max_length=45)
     correo = forms.EmailField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Correo'}))
     cuil = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cuil'}), max_length=45)
     categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=False, label='Categoria') 
+  
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -200,7 +204,7 @@ class EmpleadoModForm(ModelForm):
 
     class Meta:
         model = Empleado
-        exclude = ('legajo',)
+        exclude= ("legajo", "baja","cuil",)
 
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
@@ -249,9 +253,8 @@ class EmpleadoModForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'id-EmpleadoForm'
+        self.helper.form_id = 'legajo-EmpleadoForm'
         self.helper.form_method = 'post'
-
         self.helper.add_input(Submit('submit', 'Guardar'))
 
 
@@ -403,12 +406,11 @@ class CategoriaForm(ModelForm):
             
         }
 
-        exclude = ["domicilio", "cliente"]
 
 class CategoriaUpdateForm(CategoriaForm):
 
     class Meta(CategoriaForm.Meta):
-        exclude = ["numero", "empleado.legajo"]
+        exclude = ["baja", "empleado.legajo"]
 
 
 
@@ -438,7 +440,7 @@ class CategoriaFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "numero","nombre", "sueldoBase"
+                "nombre", "sueldoBase"
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

@@ -27,7 +27,8 @@
                     <!--Si queremos abrir un moda, se utiliza abrir-->
 
                     <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarEmpleado" e.legajo %}')"></a>
-                    <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""></i></a>
+                    <a href="#"><i class="bi bi-trash3 icon-danger" onclick="abrir_modal('{% url "eliminarEmpleado" e.legajo %}')"></i></a>
+                    
                 </td>
 
             </tr>

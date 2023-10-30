@@ -147,15 +147,52 @@ class ClienteModForm(ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar'))
 
 
-    
+class InmuebleFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("domicilio", "Domicilio"),
+        ("metrosCuadrados", "Metros Cuadrados"),
+        ("nroAmbientes", "Cantidad de Ambientes"),
+        ("tipo", "Tipo"),
+        ("cliente", "Propietario"),
+    ]
+    ATTR_CHOICES = [
+        ("domicilio", "Domicilio"),
+        ("metrosCuadrados", "Metros Cuadrados"),
+        ("nroAmbientes", "Cantidad de Ambientes"),
+        ("tipo", "Tipo"),
+        ("cliente", "Propietario"),
+    ]
 
+    #Formulario de filtrado
+    domicilio = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Domicilio'}), max_length=90)
+    metrosCuadrados = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Metros Cuadrados'}))
+    nroAmbientes = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cantidad de Ambientes'}))
+    tipo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Tipo'}))
+    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=False, label='Propietario') #filtrar inmuebles por cliente
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "domicilio","metrosCuadrados", "nroAmbientes", "tipo", "cliente", #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+    
 class InmuebleForm(ModelForm):
 
-    """cliente = forms.ModelChoiceField(
+    cliente = forms.ModelChoiceField(
         queryset=Cliente.objects.all(),
         label='Cliente',
-        widget=forms.Select(attrs={'class': 'form-control'}),
-    )"""
+       widget=forms.Select(attrs={'class': 'form-control'}),
+    )
 
     class Meta:
         model = Inmueble
@@ -166,7 +203,7 @@ class InmuebleForm(ModelForm):
             'metrosCuadrados': 'Metros Cuadrados',
             'nroAmbientes': 'Cantidad de Ambientes',
             'tipo': 'Tipo',
-            'cliente.cuil_cuit': 'Cliente', 
+            'cliente': 'Cliente', 
         }
 
         #Referencia a los estilos con los que se renderizan los campos
@@ -199,13 +236,14 @@ class InmuebleForm(ModelForm):
                     'placeholder':'Ingrese el tipo del inmueble',
                 }
             ),
-            'cliente.cuil_cuit': forms.NumberInput(
-                attrs = {                    
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el cuil/cuit del inmueble',
-                }
-            ),
+            #'cliente': forms.ModelChoiceField(
+            #    queryset=Cliente.objects.all(),  # Agrega un queryset para seleccionar opciones de cliente
+            #    attrs={
+            #        'class': 'form-control',
+            #    }
+            #),
         }
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -261,46 +299,6 @@ class InmuebleUpdateForm(InmuebleForm):
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )"""
-
-
-class InmuebleFiltrosForm(FiltrosForm):
-    #Campos del modelo
-    ORDEN_CHOICES = [
-        ("domicilio", "Domicilio"),
-        ("metrosCuadrados", "Metros Cuadrados"),
-        ("nroAmbientes", "Cantidad de Ambientes"),
-        ("tipo", "Tipo"),
-        ("cliente", "Propietario"),
-    ]
-    ATTR_CHOICES = [
-        ("domicilio", "Domicilio"),
-        ("metrosCuadrados", "Metros Cuadrados"),
-        ("nroAmbientes", "Cantidad de Ambientes"),
-        ("tipo", "Tipo"),
-        ("cliente", "Propietario"),
-    ]
-
-    #Formulario de filtrado
-    domicilio = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Domicilio'}), max_length=90)
-    metrosCuadrados = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Metros Cuadrados'}))
-    nroAmbientes = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cantidad de Ambientes'}))
-    tipo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Tipo'}))
-    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=False, label='Propietario') #filtrar inmuebles por cliente
-
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'get'
-        self.helper.layout = Layout(
-            Fieldset(
-                "",
-                HTML(
-                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "domicilio","metrosCuadrados", "nroAmbientes", "tipo", "cliente", #Remplazar campos formulario
-            ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
-        )
 
 
 class ProductoFiltrosForm(FiltrosForm):

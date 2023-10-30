@@ -183,30 +183,35 @@ class InmuebleCreateView(CreateView):
 
     def get_success_url(self):
         # Verificar si "pk" está en los argumentos de la URL
-        if "pk" in self.kwargs:
+        pk = self.kwargs.get('pk')
+        if pk is not None:
             success_url = reverse_lazy('listarInmuebles')
         else:
             success_url = reverse_lazy('crearInmuebles')
 
     def get_form_class(self):
         # Verificar si "pk" está en los argumentos de la URL
-        if "pk" in self.kwargs:
+        pk = self.kwargs.get('pk')
+        if pk is not None:
             return InmuebleClienteForm
         else:
             return InmuebleForm
 
     def get_cliente(self):
-        pk = self.kwargs["pk"] if "pk" in self.kwargs.keys() else None
-        return Cliente.objects.get(pk=pk) if pk is not None else form.cleaned_data['cliente']
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return Cliente.objects.get(pk=pk)
+        else:
+            return None
 
-    """def get_form_kwargs(self):
+    def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         cliente = self.get_cliente()
         if cliente is not None:
             kwargs['initial'] = { 
-                "cliente.cuil_cuit": cliente.cuil_cuit 
+                "cliente": cliente 
             }   
-        return kwargs"""
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -214,20 +219,9 @@ class InmuebleCreateView(CreateView):
 
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
     def form_valid(self, form):
-        inmueble = form.save(commit=False)
+        #inmueble = form.save(commit=False)
         #inmueble.cliente = self.get_cliente()
-
-        #for key in form.cleaned_data.keys():
-        #    print(key)
-
-        #cliente = form.cleaned_data['cliente']
-
-        #if cliente is None:
-        # Si el campo "cliente" no se completó en el formulario, asignar un cliente válido desde la base de datos
-        cliente = self.get_cliente()
-
-        inmueble.cliente = cliente
-        inmueble.save()
+        #inmueble.save()
         messages.success(self.request, 'El inmueble se ha creado exitosamente.')
         #return inmueble
         return super().form_valid(form)

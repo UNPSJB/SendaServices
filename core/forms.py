@@ -69,7 +69,8 @@ class ClienteForm(ModelForm):
                 attrs = {
                     'class': 'form-control',
                     'placeholder':'Ingrese el cuil/cuit del cliente',
-                    'pattern': '([0-9]{11}|[0-9]{2}-[0-9]{8}-[0-9]{1})', 'placeholder': '###########',
+                    'pattern': '([0-9]{11})', 'placeholder': '###########',
+                    #'pattern': '([0-9]{2}-([0-9]{8}|[0-9]{7})-[0-9]{1})', 'placeholder': '##-########-#',
                 }
             ),
             'nombre': forms.TextInput(
@@ -150,6 +151,12 @@ class ClienteModForm(ModelForm):
 
 class InmuebleForm(ModelForm):
 
+    """cliente = forms.ModelChoiceField(
+        queryset=Cliente.objects.all(),
+        label='Cliente',
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )"""
+
     class Meta:
         model = Inmueble
         fields = '__all__'
@@ -159,9 +166,9 @@ class InmuebleForm(ModelForm):
             'metrosCuadrados': 'Metros Cuadrados',
             'nroAmbientes': 'Cantidad de Ambientes',
             'tipo': 'Tipo',
-            'cliente.cuil_cuit': 'Cliente',
-           
+            'cliente.cuil_cuit': 'Cliente', 
         }
+
         #Referencia a los estilos con los que se renderizan los campos
         widgets = {
             'domicilio': forms.TextInput(
@@ -208,6 +215,11 @@ class InmuebleForm(ModelForm):
 
         self.helper.add_input(Submit('submit', 'Guardar'))
 
+class InmuebleClienteForm(InmuebleForm):
+
+    class Meta(InmuebleForm.Meta):
+       exclude = ["cliente"]
+
 
 class InmuebleUpdateForm(InmuebleForm):
 
@@ -215,7 +227,7 @@ class InmuebleUpdateForm(InmuebleForm):
         exclude = ["domicilio", "cliente"]
 
 
-class InmueblesClienteFiltrosForm(FiltrosForm):
+"""class InmueblesClienteFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
         ("domicilio", "Domicilio"),
@@ -248,7 +260,7 @@ class InmueblesClienteFiltrosForm(FiltrosForm):
                 "domicilio","metrosCuadrados", "nroAmbientes", "tipo", #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
-        )
+        )"""
 
 
 class InmuebleFiltrosForm(FiltrosForm):

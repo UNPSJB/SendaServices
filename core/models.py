@@ -1,7 +1,7 @@
 from django.db import models
 
 class Cliente(models.Model):
-    cuil_cuit= models.CharField("Cuil/Cuit",max_length=11, unique=True)
+    cuil_cuit= models.CharField("Cuil/Cuit",max_length=13, unique=True)
     apellido= models.CharField(max_length=45)
     nombre= models.CharField(max_length=45)
     correo= models.EmailField(max_length=45)

@@ -17,8 +17,9 @@ from .forms import (
     ClienteForm, 
     ClienteModForm, 
     ClienteFiltrosForm, 
-    InmueblesClienteFiltrosForm,
-    InmuebleForm, 
+    #InmueblesClienteFiltrosForm,
+    InmuebleForm,
+    InmuebleClienteForm, 
     InmuebleUpdateForm, 
     InmuebleFiltrosForm)
 
@@ -45,7 +46,7 @@ def login_view(request):
 
     return render(request, "registration/login.html")
 
-class ClienteInmuebleUpdateView(UpdateView):
+"""class ClienteInmuebleUpdateView(UpdateView):
     model = Inmueble
     form_class = InmuebleUpdateForm
     template_name = "clientes/clienteInmueble_modal.html"
@@ -109,7 +110,7 @@ class ClienteInmuebleListView(ListFilterView):
         context = super().get_context_data(**kwargs)
         print(self.template_name)
         context['tnav'] = "Gestion de Clientes"
-        return context
+        return context"""
 
 
 class ClienteListView(ListFilterView):
@@ -178,17 +179,57 @@ class InmuebleListView(ListFilterView):
 
 class InmuebleCreateView(CreateView):
     model = Inmueble
-    form_class = InmuebleForm
-    success_url = reverse_lazy('crearInmueble')
     template_name = "inmuebles/inmueble_form.html"
+
+    def get_success_url(self):
+        # Verificar si "pk" está en los argumentos de la URL
+        if "pk" in self.kwargs:
+            success_url = reverse_lazy('listarInmuebles')
+        else:
+            success_url = reverse_lazy('crearInmuebles')
+
+    def get_form_class(self):
+        # Verificar si "pk" está en los argumentos de la URL
+        if "pk" in self.kwargs:
+            return InmuebleClienteForm
+        else:
+            return InmuebleForm
+
+    def get_cliente(self):
+        pk = self.kwargs["pk"] if "pk" in self.kwargs.keys() else None
+        return Cliente.objects.get(pk=pk) if pk is not None else form.cleaned_data['cliente']
+
+    """def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        cliente = self.get_cliente()
+        if cliente is not None:
+            kwargs['initial'] = { 
+                "cliente.cuil_cuit": cliente.cuil_cuit 
+            }   
+        return kwargs"""
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-    
+
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
     def form_valid(self, form):
+        inmueble = form.save(commit=False)
+        #inmueble.cliente = self.get_cliente()
+
+        #for key in form.cleaned_data.keys():
+        #    print(key)
+
+        #cliente = form.cleaned_data['cliente']
+
+        #if cliente is None:
+        # Si el campo "cliente" no se completó en el formulario, asignar un cliente válido desde la base de datos
+        cliente = self.get_cliente()
+
+        inmueble.cliente = cliente
+        inmueble.save()
         messages.success(self.request, 'El inmueble se ha creado exitosamente.')
+        #return inmueble
         return super().form_valid(form)
     
     

@@ -1,6 +1,8 @@
+from typing import Any
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
 from .utils import ListFilterView
@@ -8,7 +10,16 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import Cliente, Producto, Inmueble
-from .forms import ProductoForm, ClienteForm, ClienteModForm, ClienteFiltrosForm, ProductoUpdateForm, InmuebleForm, InmuebleUpdateForm, InmuebleFiltrosForm
+from .forms import (
+    ProductoForm, 
+    ProductoUpdateForm, 
+    ProductoFiltrosForm, 
+    ClienteForm, 
+    ClienteModForm, 
+    ClienteFiltrosForm, 
+    InmuebleForm, 
+    InmuebleUpdateForm, 
+    InmuebleFiltrosForm)
 
 # Login
 
@@ -124,13 +135,15 @@ class InmuebleUpdateView(UpdateView):
         messages.success(self.request, 'El inmueble se ha modificado exitosamente.')
         return super().form_valid(form)
 
-#Gestion Productos
-
-class ProductoListView(ListView):
+class ProductoListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 5
+    #Filtros de la lista
+    filtros = ProductoFiltrosForm
     model = Producto #Nombre del modelo
     template_name = "core/producto_list.html" #Ruta del template
     context_object_name = 'productos' #Nombre de la lista usar ''
-    queryset = Producto.objects.all()
+    queryset = Producto.objects.filter(baja=False)
 
 class ProductoCreateView(CreateView):
     model = Producto
@@ -155,3 +168,13 @@ class ProductoUpdateView(UpdateView):
         context['boton'] = "Actualizar" 
         context['btnColor'] = "btn-primary"
         return context
+    
+class ProductoDeleteView(DeleteView):
+    model = Producto
+    success_url = reverse_lazy('listarProductos')
+    template_name = "core/producto_confirm_delete.html"
+
+    def post(self, *args, **kwargs):
+        producto = Producto.objects.get(pk=self.kwargs["pk"])
+        producto.dar_de_baja()
+        return redirect(self.success_url)

@@ -29,7 +29,8 @@ from .views import (
     InmuebleUpdateView,
     ProductoCreateView,
     ProductoListView,
-    ProductoUpdateView
+    ProductoUpdateView,
+    ProductoDeleteView
 )
 
 urlpatterns = [
@@ -57,7 +58,5 @@ urlpatterns = [
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
     path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
     path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
-
+    path('productos/eliminar/<str:pk>', ProductoDeleteView.as_view(), name='eliminarProducto')
 ]
-
-

@@ -26,12 +26,13 @@
 
 
         <td>
-            <button onclick="abrir_modal('{% url "servicios:modificarTipoServicio" pk=t.codigo %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
+            <a href="#" onclick="abrir_modal('{% url "servicios:modificarTipoServicio" pk=t.codigo %}')" class="bi bi-pencil-square text-primary"> </a>
+
 
         </td>
         <td>
-            <a href="/Productos/{{t.codigo}}" class="btn mx-2 mb-2 btn-sm btn-primary">Productos</a>
-
+            <a href="/Productos/{{t.codigo}}" class="btn btn-link"><i class="bi bi-journal"></i></a>
+           
         </td>
     </tr>
     {% empty %}

@@ -20,7 +20,7 @@
 
 {% block cmodal %}
   {% crispy form form.helper %}
-  <div data-formset="tipoServicio_producto" id="productos" >
+  <div data-formset="tipoServicio_productos" id="productos" >
     {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
   </div>
 {% endblock %}

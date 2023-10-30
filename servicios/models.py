@@ -45,7 +45,7 @@ class DetalleServicio(models.Model):
         return self.precio
     
 class TipoServicioProducto(models.Model):
-    tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE)
+    tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE, related_name="productos_cantidad")
     producto= models.ForeignKey(Producto,on_delete=models.CASCADE)
     cantidad= models.PositiveIntegerField()
 

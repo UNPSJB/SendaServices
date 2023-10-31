@@ -7,7 +7,7 @@
 {% block tobjectmodal %} {{object}} {% endblock %}
 
 <!--Url del modal-->
-{% block url %} {% url 'modificarCliente' object.cuil_cuit %} {% endblock %}
+{% block url %} {% url 'modificarCliente' object.pk %} {% endblock %}
 
 <!--Boton del modal-->
 {% block btnmodal %} Guardar {% endblock %} 

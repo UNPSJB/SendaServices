@@ -49,15 +49,13 @@ urlpatterns = [
     path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
-    #path('cliente/<str:pk>/inmuebles', ClienteInmuebleListView.as_view(), name="inmueblesCliente"),
-    #path('cliente/<str:pk>/inmuebles/crear', ClienteInmuebleCreateView.as_view(), name="crearInmuebleCliente"),
-    #path('clientes/<str:pk>/inmuebles/modificar', ClienteInmuebleUpdateView.as_view(), name="modificarInmuebleCliente"),
-
+    
     # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
     path('inmuebles/cliente/<str:pk>/crear', InmuebleCreateView.as_view(), name='crearInmuebleParaCliente'),
     path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
     path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
+    path('inmuebles/cliente/<str:pk>/listar', InmuebleListView.as_view(), name='listarInmueblesDeCliente'),
 
     # Gestion Productos
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),

@@ -71,7 +71,7 @@ class ListFilterView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        self.apply_filters_to_qs(qs)
+        qs = self.apply_filters_to_qs(qs)
         return qs
 
     def apply_filters_to_qs(self, qs):

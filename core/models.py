@@ -38,20 +38,28 @@ class Producto(models.Model):
         # TODO: verificar que unicamente se marque con baja=True si el producto pasa todas las condiciones para hacerlo.
         self.baja = True
         self.save()
+
+class CategoriaManager(models.Manager):
+    def media_jornada(self):
+        return self.get_queryset().filter(nombre=Categoria.MEDIA_JORNADA_NOMBRE).first()
     
+class Categoria(models.Model):
+    MEDIA_JORNADA_NOMBRE = "Media Jornada"
+    MEDIA_JORNADA_SUELDO = 58000
+    nombre = models.CharField(max_length=30)
+    sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
+    objects = CategoriaManager()
+
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, unique=True)
     nombreYapellido= models.CharField(max_length=90)
     correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)
+    categoria = models.ForeignKey(Categoria, related_name="empleados")
 
     def __str__(self):
         return self.apellido_y_nombre
     
-class Categoria(models.Model):
-    nombre= models.CharField(max_length=30)
-    sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
-
 
 
 

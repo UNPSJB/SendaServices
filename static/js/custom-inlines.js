@@ -107,7 +107,7 @@ const updateElementIndex = function (el, prefix, ndx) {
   
   const bindFormSet =function (context) {
     $('[data-formset]', context).each(function (index, el) {
-        $('.checkboxinput',context).remove(); // quita el checkbox 
+        //$('.checkboxinput',context).remove(); // quita el checkbox 
         
         const prefix = inlineFormset($(el));
         addQuitarButton(prefix)

@@ -1,48 +1,47 @@
-{% extends "base.html" %} 
+{% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
 
-{% block tmain %} 
-{% endblock %} 
+{% block tmain %}
+
+{% endblock %}
 
 {% block cmain %}
-
-    {% for msg in messages %}
-
+  {% for msg in messages %}
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>Hey!</strong> {{ msg }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <strong>Hey!</strong> {{ msg }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-        
-    {% endfor %}
+  {% endfor %}
 
+  <div class="col-12 col-md-7 mx-auto">
+    <div class="card flex-fill border-0">
+      <div class="card-body py-4">
+        <h4>
+          {% block tform %}
 
-        <div class="col-12 col-md-7 mx-auto">
-            <div class="card flex-fill border-0">
-                <div class="card-body py-4">
-                    
-                    <h4>{% block tform %} {% endblock %}</h4>
-                    <div class="card">
-                        <div class="card-body">
-        
-                            <form action="{% block url %}{% endblock %}" method="POST">
+          {% endblock %}
+        </h4>
+        <div class="card">
+          <div class="card-body">
+            <form action="{% block url %}
+              {% endblock %}"
+              method="POST">
+              {% csrf_token %} {% block cform %}
+                {{ form|crispy }}
+              {% endblock %}
 
-                                {% csrf_token %} {{ form | crispy }}
-        
-                                <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary btn-block text-white">{% block btnform%} {% endblock %}</button>
-                                </div>
-                            </form>
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-block text-white">
+                  {% block btnform %}
+
+                  {% endblock %}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-    {% endblock %}
-
-
-{% block extrajs %}
+      </div>
+    </div>
+  </div>
 {% endblock %}
- 

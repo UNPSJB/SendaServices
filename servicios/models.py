@@ -46,7 +46,7 @@ class Servicio(models.Model):
 
     def pagar(self, *args, **kwargs):
         self.strategy().pagar(self, *args, **kwargs)
-
+    
 
 class TipoServicio(models.Model):
     codigo= models.CharField(max_length=30,primary_key=True)
@@ -60,13 +60,13 @@ class TipoServicio(models.Model):
 
 class Estado(models.Model):
     class Tipo(models.TextChoices):
-        PRESUPUESTADO = "presupuestado", _("Presupuestado")
+        PRESUPUESTADO = "presupuestado", _("Presupuestado 👽")
         CONTRATADO = "contratado", _("Contratado 🛸")
-        VENCIDO = "vencido", _("Vencido 👽")
+        VENCIDO = "vencido", _("Vencido 💀")
         CANCELADO = "cancelado", _("Cancelado 💩")
-        PAGADO = "pagado", _("Pagado")
-        INICIADO = "iniciado", _("Iniciado")
-        FINALIZADO = "finalizado", _("Finalizado")
+        PAGADO = "pagado", _("Pagado 🤑")
+        INICIADO = "iniciado", _("Iniciado 😊")
+        FINALIZADO = "finalizado", _("Finalizado 😴")
 
     servicio = models.ForeignKey(Servicio, related_name="estados", on_delete=models.CASCADE)
     tipo = models.CharField(max_length=50, choices=Tipo.choices)

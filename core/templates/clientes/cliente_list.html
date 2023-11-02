@@ -35,9 +35,9 @@
                 <td>
                     <!--Si queremos abrir un moda, se utiliza abrir-->
 
-                    <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarCliente" c.cuil_cuit %}')"></a>
+                    <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarCliente" c.pk %}')"></a>
                     <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""></i></a>
-                    <a href="{% url "inmueblesCliente" c.cuil_cuit %}" class="bi bi-building-fill text-success"></a>
+                    <a href='{% url "listarInmueblesDeCliente" c.pk %}' class="bi bi-building-fill text-success"></a>
                 </td>
 
             </tr>
@@ -45,3 +45,4 @@
                 <tr> <td> No hay clientes registrados </td> </tr>
     {% endfor %}
 {% endblock %}
+

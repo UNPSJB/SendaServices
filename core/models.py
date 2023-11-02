@@ -55,7 +55,7 @@ class Empleado(models.Model):
     nombreYapellido= models.CharField(max_length=90)
     correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)
-    categoria = models.ForeignKey(Categoria, related_name="empleados")
+    categoria = models.ForeignKey(Categoria, related_name="empleados", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.apellido_y_nombre

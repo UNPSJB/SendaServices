@@ -17,7 +17,8 @@ from .forms import (
     ClienteForm, 
     ClienteModForm, 
     ClienteFiltrosForm, 
-    InmuebleForm,
+    #InmueblesClienteFiltrosForm,
+    InmuebleForm, 
     InmuebleUpdateForm, 
     InmuebleFiltrosForm)
 
@@ -43,6 +44,72 @@ def login_view(request):
             messages.error(request, "La contraseña no es válida. Por favor, inténtalo de nuevo.")
 
     return render(request, "registration/login.html")
+
+class ClienteInmuebleUpdateView(UpdateView):
+    model = Inmueble
+    form_class = InmuebleUpdateForm
+    template_name = "clientes/clienteInmueble_modal.html"
+
+    def get_success_url(self):
+        # Aquí estamos generando la URL inversa con el cliente como parte de la URL
+        return reverse('inmueblesCliente', kwargs={'pk': self.object.cliente.pk})
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha modificado exitosamente.')
+        return super().form_valid(form)
+
+class ClienteInmuebleCreateView(CreateView):
+    model = Inmueble
+    form_class = InmuebleForm
+    success_url = reverse_lazy('inmueblesCliente')
+    template_name = "clientes/clienteInmueble_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    
+    #Este form, es para cuando se muestre el mensaje de inmueble creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha creado exitosamente.')
+        return super().form_valid(form)
+
+
+
+# Gestion Cliente
+class ClienteInmuebleListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 3
+    #Filtros de la lista
+    #filtros = InmueblesClienteFiltrosForm
+    model = Inmueble #Nombre del modelo
+    template_name = "clientes/clienteInmuebles_list.html" #Ruta del template
+    context_object_name = 'inmuebles' #Nombre de la lista usar ''
+
+    def get_queryset(self):
+        # Obtener el valor de 'pk' de la URL
+        pk = self.kwargs.get('pk')
+
+        # Filtrar los objetos Inmueble por el valor 'pk'
+        qs = Inmueble.objects.filter(cliente__pk=pk)
+        qs = super().apply_filters_to_qs(qs)
+        #if self.filtros:
+        #    filtros = self.filtros(self.request.GET)
+        #    return filtros.apply(qs)
+        return qs
+
+        #return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Clientes"
+        return context
 
 
 class ClienteListView(ListFilterView):
@@ -109,94 +176,19 @@ class InmuebleListView(ListFilterView):
     context_object_name = 'inmuebles' #Nombre de la lista usar ''
     queryset = Inmueble.objects.all()
 
-    def get_cliente(self):
-        pk = self.kwargs.get('pk')
-        if pk is not None:
-            return Cliente.objects.get(pk=pk)
-        else:
-            return None
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        cliente = self.get_cliente()
-        if cliente is not None:
-            kwargs['initial'] = { 
-                "cliente": cliente 
-            }
-            kwargs['listadoInmueblesCliente'] = True   
-        return kwargs
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        cliente = self.get_cliente()
-
-        if cliente:
-            return queryset.filter(cliente=cliente)
-    
-        # Aplica otros filtros si es necesario, utilizando los datos del formulario.
-        #filtros = self.filtros(self.request.GET)
-        #if filtros.is_valid():
-        #    return queryset.filter(filtros)
-    
-        return queryset
-
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["cliente"] = self.get_cliente()
-        return context    
-
 class InmuebleCreateView(CreateView):
     model = Inmueble
-    #form_class = InmuebleForm
+    form_class = InmuebleForm
+    success_url = reverse_lazy('crearInmueble')
     template_name = "inmuebles/inmueble_form.html"
-    success_url = reverse_lazy('listarInmuebles')
-
-    def get_cliente(self):
-        pk = self.kwargs.get('pk')
-        if pk is not None:
-            return Cliente.objects.get(pk=pk)
-        else:
-            return None
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        cliente = self.get_cliente()
-        if cliente is not None:
-            kwargs['initial'] = { 
-                "cliente": cliente 
-            }   
-        return kwargs
-        
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        cliente = self.get_cliente()
-
-        if cliente:
-            return queryset.filter(cliente=cliente)
-    
-        # Aplica otros filtros si es necesario, utilizando los datos del formulario.
-        #filtros = self.filtros(self.request.GET)
-        #if filtros.is_valid():
-        #    return queryset.filter(filtros)
-    
-        return queryset
-
-    def get_form_class(self, *args, **kwargs):
-        cliente = self.get_cliente()
-        return InmuebleForm(cliente)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-
+    
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
     def form_valid(self, form):
-        #inmueble = form.save(commit=False)
-        #inmueble.cliente = self.get_cliente()
-        #inmueble.save()
         messages.success(self.request, 'El inmueble se ha creado exitosamente.')
-        #return inmueble
         return super().form_valid(form)
     
     

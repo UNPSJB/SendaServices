@@ -190,7 +190,7 @@ class InmuebleFiltrosForm(FiltrosForm):
 def InmuebleForm(cliente=None):  
     
     class InmuebleForm(ModelForm):
-
+        cliente = forms.ModelChoiceField(queryset=Cliente.objects.all())  # Agrega un queryset para seleccionar opciones de cliente
         class Meta:
             model = Inmueble
             fields = '__all__'
@@ -234,7 +234,6 @@ def InmuebleForm(cliente=None):
                     }
                 ),
                 'cliente': forms.Select(
-                    choices=Cliente.objects.all(),  # Agrega un queryset para seleccionar opciones de cliente
                     attrs={
                         'class': 'form-control',
                         'disabled': 'disabled' if cliente else False

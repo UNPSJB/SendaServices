@@ -277,3 +277,20 @@ input:checked+.slider:before {
 .custom-range-form div:last-child {
     margin-left: 10px;
 }
+
+.table .numberinput.form-control {
+    margin: 0
+}
+
+
+.tps-producto-input {
+    width: 60%
+}
+
+.tps-cantidad-input {
+    width: 30%
+}
+
+.tps-quitar-btn {
+    width: 10%
+}

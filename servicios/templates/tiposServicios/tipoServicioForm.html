@@ -12,6 +12,12 @@
   {% url 'servicios:crearTipoServicio' %}
 {% endblock %}
 
+{% block cform %}
+  {% crispy form form.helper %}
+  <div data-formset="tipoServicio_productos" id="productos" >
+    {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
+  </div>
+{% endblock %}
 
 <!-- Boton del formulario -->
 {% block btnform %}

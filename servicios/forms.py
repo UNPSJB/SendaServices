@@ -35,7 +35,7 @@ class TipoServicioProductoForm(forms.ModelForm):
         self.helper = FormHelper()
 
 
-# Presupuesto - Material - Inlines
+# Tipo Servicio - Producto - Inlines
 
 def TipoServicioProductoInline(extra=1):
     return forms.inlineformset_factory(
@@ -45,7 +45,7 @@ def TipoServicioProductoInline(extra=1):
         extra=extra,
     )
 
-# Presupuesto - Material - Form Helper
+# Tipo Servicio - Producto - Form Helper
 
 class TipoServicioProductoFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
@@ -82,10 +82,10 @@ class TipoServicioFiltrosForm(FiltrosForm):
     ]
 
     #Formulario de filtrado
-    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Codigo'}), max_length=30)
-    descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Descipcion'}), max_length=250)
-    costo = forms.DecimalField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Costo'}), decimal_places=2,max_digits=14)
-    unidadDeMedida = forms.CharField(label="Unidad de Medida",required=False, widget=forms.TextInput(attrs={'placeholder': 'Unidad de medida'}), max_length=30)
+    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': '12345'}), max_length=30)
+    descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'limpieza'}), max_length=250)
+    costo = forms.DecimalField(required=False, widget=forms.TextInput(attrs={'placeholder': '10000'}), decimal_places=2,max_digits=14)
+    unidadDeMedida = forms.CharField(label="Unidad de Medida",required=False, widget=forms.TextInput(attrs={'placeholder': 'M2'}), max_length=30)
         
     
 

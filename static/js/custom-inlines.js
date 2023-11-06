@@ -55,6 +55,7 @@ const updateElementIndex = function (el, prefix, ndx) {
   
   const inlineFormset = function ($context) {
     const prefix = $context.data('formset');
+    
     const row = $('.d-none.empty-form', $context).clone(true);
     const table = $('.d-none.empty-form', $context).parents('table');
     const tbody = $('tbody', table);
@@ -62,8 +63,8 @@ const updateElementIndex = function (el, prefix, ndx) {
     const agregarRenglon = $('<tfoot><tr><td colspan="4"><a class="btn btn-sm btn-outline-primary ">Agregar</a></td></tr></tfoot>');
     
     $('a', agregarRenglon).click(() => {
-      const totalForms = $('#id_' + prefix + '-TOTAL_FORMS').prop('autocomplete', 'off');
-      let nextIndex = Number(totalForms.val());
+      const totalForms = document.querySelector('input[name$=-TOTAL_FORMS]'); //.prop('autocomplete', 'off');
+      let nextIndex = Number($(totalForms).val());
       const newRow = row.clone(true);
   
       addInlineDeleteButton(newRow, prefix);
@@ -74,6 +75,7 @@ const updateElementIndex = function (el, prefix, ndx) {
   
       $(tbody).append(newRow);
       const trs = $('tr', tbody);
+      console.log(trs);
   
       $('#id_' + prefix + '-TOTAL_FORMS').val(trs.length);
     });
@@ -105,7 +107,7 @@ const updateElementIndex = function (el, prefix, ndx) {
   
   const bindFormSet =function (context) {
     $('[data-formset]', context).each(function (index, el) {
-        $('.checkboxinput',context).remove(); // quita el checkbox 
+        //$('.checkboxinput',context).remove(); // quita el checkbox 
         
         const prefix = inlineFormset($(el));
         addQuitarButton(prefix)

@@ -210,7 +210,7 @@ class InmuebleUpdateView(UpdateView):
 
 class ProductoListView(ListFilterView):
     #Cantidad de elementos por lista
-    paginate_by = 5
+    paginate_by = 2
     #Filtros de la lista
     filtros = ProductoFiltrosForm
     model = Producto #Nombre del modelo

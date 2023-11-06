@@ -22,6 +22,7 @@
             <div class="card flex-fill border-0">
                 <div class="card-body py-4">
                         {% crispy filtros filtros.helper %}
+                        {{ serialized }}
                 </div>
             </div>
         </div>
@@ -78,19 +79,20 @@
                         <ul class="pagination">
                             {% if page_obj.has_previous %}
                             <li class="page-link">
-                                <a href="?page=1{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}"  class="bi bi-arrow-bar-left"></a>
+                                
+                                <a href="?{{serialized_query_params}}&page=1"  class="bi bi-arrow-bar-left"></a>
                             </li>
                             <li class="page-link">
-                                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-left"></a>
+                                <a href="?{{serialized_query_params}}&page={{ page_obj.previous_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-left"></a>
                             </li>                            
                             {% endif %}
 
                             {% if page_obj.has_next %}
                             <li class="page-link">
-                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-right"></a>
+                                <a href="?{{serialized_query_params}}&page={{ page_obj.next_page_number }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-right"></a>
                             </li>
                             <li class="page-link">
-                                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-bar-right"></a>
+                                <a href="?{{serialized_query_params}}&page={{ page_obj.paginator.num_pages }}{% if request.GET.orden %}&orden={{ request.GET.orden }}{% endif %}" class="bi bi-arrow-bar-right"></a>
                             </li>
                             
                             {% endif %}

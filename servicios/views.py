@@ -39,11 +39,20 @@ class TipoServicioCreateView(CreateView):
     success_url = reverse_lazy('servicios:listarTipoServicio')
     template_name = "tiposServicios/tipoServicioForm.html"
 
+    def get_form(self, form_class=None):
+        """Return an instance of the form to be used in this view."""
+        form = super().get_form(form_class=form_class)
+        self.tipoServicio_producto_formset = TipoServicioProductoInline()(
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None
+        )
+        self.tipoServicio_producto_formset_helper = TipoServicioProductoFormSetHelper()
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['tipoServicio_producto_formset'] = TipoServicioProductoInline()()  # pasarle las lineas previas
-        context['tipoServicio_producto_formset_helper'] = TipoServicioProductoFormSetHelper()
+        context['tipoServicio_producto_formset'] = self.tipoServicio_producto_formset
+        context['tipoServicio_producto_formset_helper'] = self.tipoServicio_producto_formset_helper
         
         context['titulo'] = "Registrar Producto"
         #context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
@@ -52,13 +61,18 @@ class TipoServicioCreateView(CreateView):
     
     def form_valid(self, form):
         """If the form is valid, save the associated model."""
+        #self.object = form.save()
+        # tipoServicio_productos = self.tipoServicio_producto_formset.save(commit=False)
+        # for tps in tipoServicio_productos:            
+        #     tps.tipoServicio = self.object
+        #     tps.save()
+
         self.object = form.save()
         if self.tipoServicio_producto_formset.is_valid():
-            tipoServicio_productos = self.tipoServicio_producto_formset.save(commit=False)
-            #import pdb; pdb.set_trace()
-            for tps in tipoServicio_productos:
-                tps.tipoServicio = self.object
-                tps.save()
+            self.tipoServicio_producto_formset.instance = self.object
+            self.tipoServicio_producto_formset.save()
+
+
         messages.success(self.request, 'El tipo de servicio se ha creado exitosamente.')
         return super().form_valid(form)
 
@@ -72,8 +86,9 @@ class TipoServicioUpdateView(UpdateView):
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super().get_form(form_class=form_class)
-        initial_productos = [{'producto': tp.producto, "cantidad": tp.cantidad} for tp in self.get_object().productos_cantidad.all()]
-        self.tipoServicio_producto_formset = TipoServicioProductoInline(max(len(initial_productos),1))(initial=initial_productos, data=self.request.POST if self.request.method in ["POST", "PUT"] else None)  # pasarle las lineas previas
+        self.tipoServicio_producto_formset = TipoServicioProductoInline()(
+            instance=self.get_object(), 
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None)
         self.tipoServicio_producto_formset_helper = TipoServicioProductoFormSetHelper()
         return form
 
@@ -90,13 +105,8 @@ class TipoServicioUpdateView(UpdateView):
         """If the form is valid, save the associated model."""
         self.object = form.save()
         if self.tipoServicio_producto_formset.is_valid():
-            tipoServicio_productos = self.tipoServicio_producto_formset.save(commit=False)
-            #import pdb; pdb.set_trace()
-            for tps in tipoServicio_productos:
-                tps.tipoServicio = self.object
-                tps.save()
-                
-            
+            self.tipoServicio_producto_formset.instance = self.object
+            self.tipoServicio_producto_formset.save()
 
         messages.success(self.request, 'El tipo de servicio se ha modificado exitosamente.')
         return super().form_valid(form)

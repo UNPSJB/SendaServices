@@ -1,5 +1,6 @@
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, ValidationError
+from django.urls import reverse_lazy
 from .models import Producto, Cliente, Inmueble
 from .utils import FiltrosForm
 from crispy_forms.helper import FormHelper
@@ -29,7 +30,7 @@ class ClienteFiltrosForm(FiltrosForm):
     ]
 
     #Formulario de filtrado
-    cuil_cuit = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cuil/Cuit'}), max_length=45)
+    cuil_cuit = forms.CharField(label="CUIL/CUIT",required=False, widget=forms.TextInput(attrs={'placeholder': 'Cuil/Cuit'}), max_length=45)
     apellido = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Apellido'}), max_length=45)
     nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}), max_length=45)
     correo = forms.EmailField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Correo'}))
@@ -49,6 +50,7 @@ class ClienteFiltrosForm(FiltrosForm):
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
+
 
 class ClienteForm(ModelForm):
 
@@ -302,6 +304,7 @@ class ProductoForm(ModelForm):
     class Meta:
         model = Producto
         fields = '__all__'
+        exclude = ["baja"] 
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
             'codigo': 'Código',
@@ -354,4 +357,4 @@ class ProductoForm(ModelForm):
 class ProductoUpdateForm(ProductoForm):
 
     class Meta(ProductoForm.Meta):
-        exclude = ["stock", "codigo"]
+        exclude = ["stock", "codigo", "baja"]

@@ -1,4 +1,9 @@
 from django.db import models
+from servicios.models import (
+    DetalleServicio, 
+    Servicio, 
+    TipoServicio, 
+    TipoServicioProducto)
 
 class Cliente(models.Model):
     cuil_cuit= models.CharField("Cuil/Cuit",max_length=13, unique=True)
@@ -34,24 +39,54 @@ class Producto(models.Model):
     def __str__(self):
         return self.descripcion
     
-    def dar_de_baja(self):
+    def puedo_eliminar(self):
         # TODO: verificar que unicamente se marque con baja=True si el producto pasa todas las condiciones para hacerlo.
-        self.baja = True
+        # Que ningún detalle servicio de un servicio vigente, contenga un tipoServicio con el producto en cuestión.
+
+        tipos_servicio_producto = TipoServicioProducto.objects.filter(producto=self)
+        tipos_servicios = TipoServicio.objects.filter(tiposervicioproducto__in=tipos_servicio_producto)
+        detalles_servicios = DetalleServicio.objects.filter(tipoServicio__in=tipos_servicios)
+        # recuperar servicios y filtrar según estados "activos": ["presupuestado", "contratado", "pagado", "iniciado"]
+        # unicamente se podrá eliminar el producto si ninguno de los servicios anteriores lo contienen. 
+        return not Servicio.objects.filter(detalleservicio__in=detalles_servicios).exists() 
+
+    def dar_de_baja(self):
+        if self.puedo_eliminar():
+            self.baja = True
+            pk = self.pk
+            self.save()
+            return pk
+        return None        
+
+    def dar_de_alta(self):
+        self.baja = False
         self.save()
+
+    def delete(self, *args, **kwargs):
+        return self.dar_de_baja()
+
+        
+class CategoriaManager(models.Manager):
+    def media_jornada(self):
+        return self.get_queryset().filter(nombre=Categoria.MEDIA_JORNADA_NOMBRE).first()
     
+class Categoria(models.Model):
+    MEDIA_JORNADA_NOMBRE = "Media Jornada"
+    MEDIA_JORNADA_SUELDO = 58000
+    nombre = models.CharField(max_length=30)
+    sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
+    objects = CategoriaManager()
+
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, unique=True)
     nombreYapellido= models.CharField(max_length=90)
     correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)
+    categoria = models.ForeignKey(Categoria, related_name="empleados", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.apellido_y_nombre
     
-class Categoria(models.Model):
-    nombre= models.CharField(max_length=30)
-    sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
-
 
 
 

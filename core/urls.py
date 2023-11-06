@@ -57,7 +57,10 @@ urlpatterns = [
     path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
     path('inmuebles/cliente/<str:pk>/listar', InmuebleListView.as_view(), name='listarInmueblesDeCliente'),
 
-    # Gestion Productos
+    # Gestion Tipo Servicio
+    path('servicios/', include('servicios.urls',namespace='servicios')),
+    
+        # Gestion Productos
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
     path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
     path('productos/listar', ProductoListView.as_view(), name='listarProductos'),

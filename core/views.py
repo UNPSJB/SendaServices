@@ -2,6 +2,7 @@ from typing import Any
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
@@ -217,7 +218,7 @@ class InmuebleUpdateView(UpdateView):
 
 class ProductoListView(ListFilterView):
     #Cantidad de elementos por lista
-    paginate_by = 5
+    paginate_by = 2
     #Filtros de la lista
     filtros = ProductoFiltrosForm
     model = Producto #Nombre del modelo
@@ -236,6 +237,11 @@ class ProductoCreateView(CreateView):
         context['titulo'] = "Registrar Producto"
         return context
     
+    #Este form, es para cuando se envia se muestre el mensaje de producto creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El producto se creo exitosamente.')
+        return super().form_valid(form)
+    
 class ProductoUpdateView(UpdateView):
     model = Producto
     form_class = ProductoUpdateForm
@@ -249,10 +255,25 @@ class ProductoUpdateView(UpdateView):
         context['btnColor'] = "btn-primary"
         return context
     
-class ProductoDeleteView(DeleteView):
+    #Este form, es para cuando se envia se muestre el mensaje de producto modificado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El producto se modifico exitosamente.')
+        return super().form_valid(form)
+    
+class ProductoDeleteView(SuccessMessageMixin, DeleteView):
     model = Producto
+    context_object_name = "producto"
     success_url = reverse_lazy('listarProductos')
+    success_message = "El producto ha sido eliminado!"
     template_name = "core/producto_confirm_delete.html"
+    
+    def form_valid(self, form):
+        res = self.get_object().delete() # intento eliminar a mano
+        if res is None: # no pudo eliminar
+            messages.error(self.request, "El producto se encuentra asociado a un servicio activo.")
+            return redirect(self.success_url)
+        else:
+            return super().form_valid(form)
 
     def post(self, *args, **kwargs):
         producto = Producto.objects.get(pk=self.kwargs["pk"])

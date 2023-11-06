@@ -1,0 +1,31 @@
+{% extends 'basemodal.html' %}
+
+
+{% load crispy_forms_tags %}
+
+<!-- Titulo del modal -->
+{% block tmodal %}
+  Edicion Tipo servicio:
+{% endblock %}
+
+<!-- Objeto del titulo del modal -->
+{% block tobjectmodal %}
+  {{ object }}
+{% endblock %}
+
+<!-- Url del modal -->
+{% block url %}
+  {% url 'servicios:modificarTipoServicio' object.pk %}
+{% endblock %}
+
+{% block cmodal %}
+  {% crispy form form.helper %}
+  <div data-formset="productos_cantidad" id="productos">
+    {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
+  </div>
+{% endblock %}
+
+<!-- Boton del modal -->
+{% block btnmodal %}
+  Guardar
+{% endblock %}

@@ -14,25 +14,21 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Servicio',
+            name='DetalleServicio',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('codigo', models.CharField(max_length=30, unique=True)),
-                ('fechaEstimadaComienzo', models.DateField()),
-                ('fechaEstimadaFinalizacion', models.DateField()),
-                ('cantidadEstimadaEmpleados', models.IntegerField()),
-                ('importeTotalEstimado', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('importeTotal', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('metrosCuadrados', models.IntegerField()),
+                ('costoServicio', models.DecimalField(decimal_places=2, max_digits=10)),
+                ('cantidad', models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
             name='TipoServicio',
             fields=[
-                ('codigo', models.CharField(max_length=30, primary_key=True, serialize=False)),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('codigo', models.CharField(max_length=30, unique=True)),
                 ('descripcion', models.CharField(max_length=250)),
-                ('costo', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('unidadDeMedida', models.CharField(max_length=30)),
+                ('costo', models.DecimalField(decimal_places=2, max_digits=14)),
+                ('unidadDeMedida', models.CharField(max_length=30, verbose_name='Unidad de medida')),
             ],
         ),
         migrations.CreateModel(
@@ -41,13 +37,26 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('cantidad', models.PositiveIntegerField()),
                 ('producto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.producto')),
-                ('tipoServicio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='servicios.tiposervicio')),
+                ('tipoServicio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='productos_cantidad', to='servicios.tiposervicio')),
             ],
         ),
         migrations.AddField(
             model_name='tiposervicio',
             name='productos',
             field=models.ManyToManyField(through='servicios.TipoServicioProducto', to='core.producto'),
+        ),
+        migrations.CreateModel(
+            name='Servicio',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('codigo', models.CharField(max_length=30, unique=True)),
+                ('desde', models.DateTimeField()),
+                ('hasta', models.DateField(null=True)),
+                ('cantidadEstimadaEmpleados', models.IntegerField()),
+                ('ajuste', models.IntegerField()),
+                ('metrosCuadrados', models.IntegerField()),
+                ('detalleServicio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='servicio', to='servicios.detalleservicio')),
+            ],
         ),
         migrations.CreateModel(
             name='Estado',
@@ -61,14 +70,9 @@ class Migration(migrations.Migration):
                 'get_latest_by': 'timestamp',
             },
         ),
-        migrations.CreateModel(
-            name='DetalleServicio',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('costoServicio', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('cantidad', models.IntegerField()),
-                ('servicio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='servicios.servicio')),
-                ('tipoServicio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='servicios.tiposervicio')),
-            ],
+        migrations.AddField(
+            model_name='detalleservicio',
+            name='tipoServicio',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='detalles_servicio', to='servicios.tiposervicio'),
         ),
     ]

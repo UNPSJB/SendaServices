@@ -192,7 +192,9 @@ class InmuebleFiltrosForm(FiltrosForm):
 def InmuebleForm(cliente=None):  
     
     class InmuebleForm(ModelForm):
+
         cliente = forms.ModelChoiceField(queryset=Cliente.objects.all())
+
         class Meta:
             model = Inmueble
             fields = '__all__'

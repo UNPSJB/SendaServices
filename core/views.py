@@ -151,7 +151,7 @@ class InmuebleCreateView(CreateView):
     model = Inmueble
     #form_class = InmuebleForm
     template_name = "inmuebles/inmueble_form.html"
-    success_url = reverse_lazy('listarInmuebles')
+    #success_url = reverse_lazy('listarInmuebles')
 
     def get_cliente(self):
         pk = self.kwargs.get('pk')
@@ -169,7 +169,7 @@ class InmuebleCreateView(CreateView):
             }   
         return kwargs
         
-    def get_queryset(self):
+    """def get_queryset(self):
         queryset = super().get_queryset()
         cliente = self.get_cliente()
 
@@ -181,7 +181,7 @@ class InmuebleCreateView(CreateView):
         #if filtros.is_valid():
         #    return queryset.filter(filtros)
     
-        return queryset
+        return queryset"""
 
     def get_form_class(self, *args, **kwargs):
         cliente = self.get_cliente()
@@ -190,6 +190,13 @@ class InmuebleCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def get_success_url(self, **kwargs):
+        cliente = self.get_cliente()
+        if cliente is not None:
+            return reverse_lazy('listarInmueblesDeCliente')
+        else:
+            return reverse_lazy('listarInmuebles')
 
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
     def form_valid(self, form):

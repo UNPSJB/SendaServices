@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 
 <head>
-  {% load static %}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
@@ -12,9 +12,8 @@
   </title>
 
   <!--Boostrap, Iconos Boostrap-->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="{% static 'third-party/css/bootstrap.min.css'%}">
+  <link rel="stylesheet" href="{% static 'third-party/css/bootstrap-icons.css' %}"> 
   <!--Hoja de estilos-->
   <link rel="stylesheet" type="text/css" href='{% static "css/style.css" %}'>
   <!--Icono-->
@@ -106,7 +105,7 @@
 
             <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionProductos" data-bs-toggle="collapse"
               aria-expanded="false">
-              <i class="bi bi-person-lines-fill"></i> Gestion Productos
+              <i class="bi bi-box-seam"></i> Gestion Productos
             </a>
 
             <!--Productos-->
@@ -120,26 +119,37 @@
               </li>
             </ul>
           </li>
-
-
-
-          <!--Menu con caida cascada-->
+      
+          <!-- Menu clientes -->
           <li class="sidebar-item">
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse"
+
+            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionservicios" data-bs-toggle="collapse"
               aria-expanded="false">
-              <i class="bi bi-file-earmark"></i>Pages</a>
-            <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Page 1</a>
-              </li>
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Page 2</a>
-              </li>
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Page 3</a>
-              </li>
+              <i class="bi bi-file-earmark-text-fill"></i>Gestion de Servicios
+            </a>
+
+            <!--Clientes-->
+            <ul id="gestionservicios" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#tipoServicio" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-file-medical-fill"></i>
+                Tipo Servicio
+              </a>
+
+              <ul id="tipoServicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'servicios:crearTipoServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+                <li class="sidebar-item">
+                  <a href="{% url 'servicios:listarTipoServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
             </ul>
           </li>
+
+
 
           <li class="sidebar-item">
             <a href="#" class="sidebar-link collapsed" data-bs-target="#post" data-bs-toggle="collapse"
@@ -257,12 +267,12 @@
 
 
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="{% static 'third-party/js/jquery.min.js' %}"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-    crossorigin="anonymous"></script>
+  <script src="{% static 'third-party/js/bootstrap.bundle.min.js' %}"></script>
 
+  <script src="{% static 'js/custom-inlines.js' %}"></script>
+  <script src="{% static 'js/scripts.js' %}"></script>
   <script src="{% static 'js/tablas.js' %}"></script>
 
   <script src="{% static 'js/aside.js' %}"></script>

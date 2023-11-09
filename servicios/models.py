@@ -10,14 +10,13 @@ class TipoServicio(models.Model):
     codigo= models.CharField(max_length=30, unique=True)
     descripcion= models.CharField( max_length=250)
     costo= models.DecimalField(decimal_places=2,max_digits=14)
-    unidadDeMedida= models.CharField("Unidad de medida",max_length=30)
     productos= models.ManyToManyField("core.Producto", through='TipoServicioProducto')
 
     def __str__(self):
         return self.descripcion
     
     def importe(self):
-        return self.costo + sum([p.importe() for p in self.productos])
+        return self.costo + sum([p.importe() for p in self.productos_cantidad.all()])
 
 
 class DetalleServicio(models.Model):
@@ -166,8 +165,8 @@ Servicio.STRATEGIES.append(EstadoIniciado())
 
 class TipoServicioProducto(models.Model):
     tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE, related_name="productos_cantidad")
-    producto= models.ForeignKey("core.Producto",on_delete=models.CASCADE)
-    cantidad= models.PositiveIntegerField()
+    producto= models.ForeignKey("core.Producto",on_delete=models.CASCADE, related_name="productos_cantidad")
+    cantidad= models.PositiveIntegerField("Cantidad por m² ")
 
     def importe(self):
-        return self.cantidad * self.producto.costo
+        return self.cantidad * self.producto.precioUnitario

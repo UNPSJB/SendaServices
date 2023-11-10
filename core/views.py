@@ -20,7 +20,8 @@ from .forms import (
     ClienteFiltrosForm, 
     InmuebleForm,
     InmuebleUpdateForm, 
-    InmuebleFiltrosForm)
+    InmuebleFiltrosForm,
+    InmuebleCustomFiltrosForm)
 
 # Login
 
@@ -130,28 +131,22 @@ class InmuebleListView(ListFilterView):
     def get_queryset(self):
         queryset = super().get_queryset()
         cliente = self.get_cliente()
-
         if cliente:
             return queryset.filter(cliente=cliente)
-    
-        # Aplica otros filtros si es necesario, utilizando los datos del formulario.
-        #filtros = self.filtros(self.request.GET)
-        #if filtros.is_valid():
-        #    return queryset.filter(filtros)
-    
         return queryset
 
+    def get_filtros(self, *args, **kwargs):
+        return InmuebleFiltrosForm(*args, **kwargs) if not self.get_cliente() else InmuebleCustomFiltrosForm(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["cliente"] = self.get_cliente()
         return context    
 
+        
 class InmuebleCreateView(CreateView):
     model = Inmueble
-    #form_class = InmuebleForm
     template_name = "inmuebles/inmueble_form.html"
-    #success_url = reverse_lazy('listarInmuebles')
 
     def get_cliente(self):
         pk = self.kwargs.get('pk')
@@ -168,43 +163,29 @@ class InmuebleCreateView(CreateView):
                 "cliente": cliente 
             }   
         return kwargs
-        
-    """def get_queryset(self):
-        queryset = super().get_queryset()
-        cliente = self.get_cliente()
-
-        if cliente:
-            return queryset.filter(cliente=cliente)
-    
-        # Aplica otros filtros si es necesario, utilizando los datos del formulario.
-        #filtros = self.filtros(self.request.GET)
-        #if filtros.is_valid():
-        #    return queryset.filter(filtros)
-    
-        return queryset"""
 
     def get_form_class(self, *args, **kwargs):
         cliente = self.get_cliente()
         return InmuebleForm(cliente)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
     def get_success_url(self, **kwargs):
         cliente = self.get_cliente()
         if cliente is not None:
-            return reverse_lazy('listarInmueblesDeCliente')
+            return reverse_lazy('listarInmueblesDeCliente', kwargs={"pk": cliente.pk})
         else:
             return reverse_lazy('listarInmuebles')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filtros"] = filtros if not self.get_cliente() else InmuebleCustomFiltrosForm
+        return context
+
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
     def form_valid(self, form):
-        #inmueble = form.save(commit=False)
-        #inmueble.cliente = self.get_cliente()
-        #inmueble.save()
+        inmueble = form.save(commit=False)
+        inmueble.cliente = self.get_cliente()
+        inmueble.save()
         messages.success(self.request, 'El inmueble se ha creado exitosamente.')
-        #return inmueble
         return super().form_valid(form)
     
     

@@ -8,3 +8,26 @@
 
 <!--Boton del formulario-->
 {% block btnform %} Guardar {% endblock %}
+
+{% block extrajs %}
+
+<script type="text/javascript">
+  $(function() {
+  	
+    $("#save-inmueble").on("click", (e) => { 
+	    const select = $("#id_cliente[disabled]");
+	    if (select !== null){
+	        e.preventDefault();
+	        select.prop("disabled", false);
+	        //console.log($("#id-inmuebleForm"));
+	        //$("#id-inmuebleForm").trigger("submit");
+	        $("#id-inmuebleForm").trigger("submit");
+	    }
+
+     })
+
+  })
+
+</script>
+
+{% endblock %}

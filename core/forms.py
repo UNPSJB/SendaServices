@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ModelForm, ValidationError
+from django.forms import ModelForm, ValidationError, Select
 from django.urls import reverse_lazy
 from .models import Producto, Cliente, Inmueble
 from .utils import FiltrosForm
@@ -170,7 +170,7 @@ class InmuebleFiltrosForm(FiltrosForm):
     domicilio = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Domicilio'}), max_length=90)
     metrosCuadrados = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Metros Cuadrados'}))
     nroAmbientes = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cantidad de Ambientes'}))
-    tipo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Tipo'}))
+    tipo = forms.ChoiceField(required=False, choices=Inmueble.TIPOS)
     cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=False, label='Propietario') #filtrar inmuebles por cliente
 
 
@@ -189,22 +189,42 @@ class InmuebleFiltrosForm(FiltrosForm):
         )
 
 
-def InmuebleForm(cliente=None):  
-    
+class InmuebleCustomFiltrosForm(InmuebleFiltrosForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "domicilio","metrosCuadrados", "nroAmbientes", "tipo", #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
+InmuebleCustomFiltrosForm.base_fields.pop("cliente")
+
+
+def InmuebleForm(selected_client=None):  
+
     class InmuebleForm(ModelForm):
 
-        cliente = forms.ModelChoiceField(queryset=Cliente.objects.all())
+        cliente = forms.ModelChoiceField(
+            queryset=Cliente.objects.all(),
+            widget=forms.Select(attrs={'disabled':'disabled' if selected_client else False})
+            )
 
         class Meta:
             model = Inmueble
             fields = '__all__'
+            exclude = ["cliente", ]
             #Label se refiere la descripcion que esta al lado del formulario.
             labels = { 
                 'codigo': 'Domicilio',
                 'metrosCuadrados': 'Metros Cuadrados',
                 'nroAmbientes': 'Cantidad de Ambientes',
-                'tipo': 'Tipo',
-                'cliente': 'Cliente', 
+                'tipo': 'Tipo', 
             }
 
             #Referencia a los estilos con los que se renderizan los campos
@@ -231,29 +251,17 @@ def InmuebleForm(cliente=None):
 
                     }
                 ),
-                'tipo': forms.TextInput(
-                    attrs = {                    
-                        'class': 'form-control',
-                        'placeholder':'Ingrese el tipo del inmueble',
-                    }
-                ),
-                'cliente': forms.Select(
-                    attrs={
-                        'class': 'form-control',
-                        'disabled': 'disabled' if cliente else False
-                    }
-                ),
             }
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.helper = FormHelper()
+            self.helper.form_id = 'id-inmuebleForm'
+            self.helper.form_method = 'post'
+
+            self.helper.add_input(Submit('btn-submit-form', 'Guardar', css_class="btn btn-primary btn-block text-white w-100", css_id="save-inmueble"))
+
     return InmuebleForm
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_id = 'id-inmuebleForm'
-        self.helper.form_method = 'post'
-
-        self.helper.add_input(Submit('submit', 'Guardar'))
-
 
 class InmuebleUpdateForm(InmuebleForm()):
 

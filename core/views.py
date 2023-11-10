@@ -130,7 +130,7 @@ class ClienteInmuebleListView(ListFilterView):
 
 class ClienteListView(ListFilterView):
     #Cantidad de elementos por lista
-    paginate_by = 6
+    paginate_by = 2
     #Filtros de la lista
     filtros = ClienteFiltrosForm
     model = Cliente #Nombre del modelo
@@ -264,7 +264,7 @@ class ProductoUpdateView(UpdateView):
 
 class EmpleadoListView(ListFilterView):
     #Cantidad de elementos por lista
-    paginate_by = 6
+    paginate_by = 2
     #Filtros de la lista
     filtros = EmpleadoFiltrosForm
     model = Empleado #Nombre del modelo

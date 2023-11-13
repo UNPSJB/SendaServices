@@ -53,6 +53,7 @@ urlpatterns = [
     # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
     path('inmuebles/cliente/<str:pk>/crear', InmuebleCreateView.as_view(), name='crearInmuebleParaCliente'),
+    path('inmuebles/cliente/<str:cliente_pk>/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmuebleParaCliente'),    
     path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
     path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
     path('inmuebles/cliente/<str:pk>/listar', InmuebleListView.as_view(), name='listarInmueblesDeCliente'),

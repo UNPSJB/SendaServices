@@ -149,7 +149,6 @@ class InmuebleCreateView(CreateView):
     template_name = "inmuebles/inmueble_form.html"
 
     def get_cliente(self):
-        print("kwargs: ", self.kwargs)
         pk = self.kwargs.get('pk')
         if pk is not None:
             return Cliente.objects.get(pk=pk)
@@ -179,7 +178,6 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #context["filtros"] = InmuebleFiltrosForm if not self.get_cliente() else InmuebleCustomFiltrosForm
         return context
 
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
@@ -197,12 +195,34 @@ class InmuebleCreateView(CreateView):
 class InmuebleUpdateView(UpdateView):
     model = Inmueble
     form_class = InmuebleUpdateForm
-    success_url = reverse_lazy('listarInmuebles')
     template_name = "inmuebles/inmueble_modal.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def get_cliente(self):
+        pk = self.kwargs.get('cliente_pk')
+        if pk is not None:
+            return Cliente.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        cliente = self.get_cliente()
+        if cliente is not None:
+            kwargs['initial'] = { 
+                "cliente": cliente 
+            }   
+        return kwargs
+
+    def get_success_url(self, **kwargs):
+        cliente = self.get_cliente()
+        if cliente is not None:
+            return reverse_lazy('listarInmueblesDeCliente', kwargs={"pk": cliente.pk})
+        else:
+            return reverse_lazy('listarInmuebles')
     
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
     def form_valid(self, form):

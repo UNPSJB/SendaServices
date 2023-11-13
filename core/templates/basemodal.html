@@ -7,14 +7,12 @@
             <h4 class="mx-3">{% block tmodal %} {% endblock %} {% block tobjectmodal %} {% endblock %}</h4>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="{% block url %}  {% endblock %}" method="POST">
-        {% comment %}{% csrf_token %} {% endcomment %}
-
+        
         <div class="modal-body">
             {% block cform %}
                 {% crispy form form.helper %}
             {% endblock %}
-            <button type="button" class="btn btn-secondary mx-auto" data-bs-dismiss="modal">Cancelar</button>
+            <!--button type="button" class="btn btn-secondary mx-auto" data-bs-dismiss="modal">Cancelar</button-->
         </div>
     </div>
 </div>

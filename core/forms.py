@@ -104,7 +104,6 @@ class ClienteForm(ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar'))
 
 
-
 class ClienteModForm(ModelForm):
 
     class Meta:
@@ -209,21 +208,23 @@ def InmuebleForm(selected_client=None):
 
     class InmuebleForm(ModelForm):
 
-        cliente = forms.ModelChoiceField(
-            queryset=Cliente.objects.all(),
-            widget=forms.Select(attrs={'disabled':'disabled' if selected_client else False})
-            )
+        #if not selected_client:
+            #cliente = forms.ModelChoiceField(
+            #    queryset=Cliente.objects.all(),
+            #    widget=forms.Select(attrs={'disabled':'disabled' if selected_client else False})
+            #    )
+
+        #print(selected_client is None)
 
         class Meta:
             model = Inmueble
             fields = '__all__'
-            #exclude = ["cliente", ]
+            exclude = ["cliente", ] if selected_client else []
             #Label se refiere la descripcion que esta al lado del formulario.
             labels = { 
                 'codigo': 'Domicilio',
                 'metrosCuadrados': 'Metros Cuadrados',
                 'nroAmbientes': 'Cantidad de Ambientes',
-                #'tipo': 'Tipo', 
             }
 
             #Referencia a los estilos con los que se renderizan los campos
@@ -267,7 +268,35 @@ def InmuebleForm(selected_client=None):
 class InmuebleUpdateForm(InmuebleForm()):
 
     class Meta(InmuebleForm().Meta):
-        exclude = ["domicilio", "cliente"]
+        exclude = ["cliente"]
+
+        widgets = {
+            'domicilio': forms.TextInput(
+                #Permite estilizar los formularios
+                attrs = {
+                    'class': 'form-control',
+                    'readonly': 'readonly',
+                }
+            ), 
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        inmueble = kwargs["instance"] # nos da el modelo Inmueble
+        url_kwargs = {'pk': inmueble.pk}
+        url = "modificarInmueble"
+        if "initial" in kwargs:
+            if "cliente" in kwargs["initial"]:
+                cliente = kwargs["initial"]["cliente"] # nos da el modelo Inmueble
+                url = "modificarInmuebleParaCliente"
+                url_kwargs.update({'cliente_pk': cliente.pk})
+
+        self.helper.form_action = reverse_lazy(url, kwargs=url_kwargs)
+
+
+if "cliente" in InmuebleUpdateForm.base_fields:
+    InmuebleUpdateForm.base_fields.pop("cliente")
 
 
 class ProductoFiltrosForm(FiltrosForm):

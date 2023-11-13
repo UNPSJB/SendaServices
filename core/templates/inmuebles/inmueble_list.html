@@ -31,7 +31,11 @@
             <td>{{i.tipo}}</td>
             <td>{{i.cliente}}</td>
             <td>
-            <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarInmueble" i.pk %}')"></a>
+            {% if cliente %}
+                <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarInmuebleParaCliente" cliente_pk=i.cliente.pk pk=i.pk %}')"></a>
+            {% else %}
+                <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarInmueble" i.pk %}')"></a>
+            {% endif %}
             <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""></i></a>
             </td>
         </tr>

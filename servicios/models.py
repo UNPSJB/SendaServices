@@ -20,7 +20,7 @@ class Servicio(models.Model):
 class TipoServicio(models.Model):
     codigo= models.CharField(max_length=30,primary_key=True)
     descripcion= models.CharField( max_length=250)
-    costo= models.DecimalField(decimal_places=2,max_digits=14)
+    costo= models.DecimalField(decimal_places=2,max_digits=14)  #precio
     unidadDeMedida= models.CharField("Unidad de medida",max_length=30)
     productos= models.ManyToManyField(Producto,through='TipoServicioProducto')
 
@@ -36,7 +36,6 @@ class Estado(models.Model):
         return self.descripcion
     
 class DetalleServicio(models.Model):
-    costoServicio= models.DecimalField(decimal_places=2,max_digits=10)
     cantidad= models.IntegerField()
     servicio= models.ForeignKey(Servicio,on_delete=models.CASCADE)
     tipoServicio= models.ForeignKey(TipoServicio, on_delete=models.CASCADE)

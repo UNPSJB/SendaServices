@@ -20,6 +20,8 @@ class TipoServicio(models.Model):
     def importe(self):
         return self.costo + sum([p.importe() for p in self.productos_cantidad.all()])
 
+
+
 class Servicio(models.Model):
     class Tipo(models.IntegerChoices):
         EVENTUAL = 1, "Eventual"
@@ -87,12 +89,12 @@ class Servicio(models.Model):
         self.strategy().pagar(self, *args, **kwargs)
 
 class DetalleServicio(models.Model):
+    costoServicio= models.DecimalField(decimal_places=2,max_digits=10)
     cantidad= models.IntegerField()
-    tipoServicio = models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio")
-    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name="detalles_servicio")
+    tipoServicio= models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio")
 
     def __str__(self):
-        return self.servicio.codigo + "" + self.tipoServicio.descripcion 
+        return self.precio
     
     def importe(self):
         return self.cantidad * self.tipoServicio.importe()

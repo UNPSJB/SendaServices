@@ -8,7 +8,6 @@
 
     {% block thextras %}
         <th colspan="">Opciones</th>
-        <th colspan="">Informacion</th>
     {% endblock%}
     
     {% block tcuerpo %}
@@ -33,15 +32,12 @@
 
                 <td>
                     <!--Si queremos abrir un moda, se utiliza abrir-->
-                    <button onclick="abrir_modal('{% url "modificarCliente" c.cuil_cuit %}')"
-                        class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
-                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
+
+                    <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarCliente" c.cuil_cuit %}')"></a>
+                    <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""></i></a>
+                    <a href="{% url "inmueblesCliente" c.cuil_cuit %}" class="bi bi-building-fill text-success"></a>
                 </td>
 
-                <td>
-                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Inmuebles</a>
-                    <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Facturas</a>
-                </td>
             </tr>
             {% empty %}
                 <tr> <td> No hay clientes registrados </td> </tr>

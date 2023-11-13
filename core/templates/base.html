@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
     {% block title %}
-
+      
     {% endblock %}
   </title>
 
@@ -105,7 +105,7 @@
 
             <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionProductos" data-bs-toggle="collapse"
               aria-expanded="false">
-              <i class="bi bi-person-lines-fill"></i> Gestion Productos
+              <i class="bi bi-box-seam"></i> Gestion Productos
             </a>
 
             <!--Productos-->
@@ -208,10 +208,15 @@
     {% block nav %}
     <div class="main">
       <!--Contenido del nav-->
-      <nav class="navbar navbar-expand px-3 border-bottom bg-light nav-light">
+      <nav class="navbar navbar-expand px-3 border-bottom bg-light">
         <button class="btn" id="sidebar-toggle" type="button">
           <span class="navbar-toggler-icon"></span>
         </button>
+
+        {% block tnav %}
+          <div class="container-fluid"><h4 class="mt-2">{{ tnav }}</h4></div> 
+        {% endblock %}
+
         <div class="navbar-collapse navbar">
           <ul class="navbar-nav">
             <li class="nav-item dropdown">

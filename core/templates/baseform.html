@@ -24,22 +24,20 @@
         </h4>
         <div class="card">
           <div class="card-body">
-            <!--form action="{% block url %}
-              {% endblock %}"
-              method="POST" -->
               {% comment %}{% csrf_token %}{% endcomment %} 
               {% block cform %}
                 {% crispy form form.helper %}
               {% endblock %}
+            <!--form action="{% block url %} {% endblock %}" method="POST"-->
 
-              <!-- div class="d-grid gap-2">
+              <!--div class="d-grid gap-2">
                 <button type="submit" class="btn btn-primary btn-block text-white">
                   {% block btnform %}
 
                   {% endblock %}
                 </button>
               </div-->
-            <!--/form-->
+            <!-- form -->
           </div>
         </div>
       </div>

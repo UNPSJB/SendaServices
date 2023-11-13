@@ -173,7 +173,6 @@ class InmuebleFiltrosForm(FiltrosForm):
     tipo = forms.ChoiceField(required=False, choices=Inmueble.TIPOS)
     cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=False, label='Propietario') #filtrar inmuebles por cliente
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -218,13 +217,13 @@ def InmuebleForm(selected_client=None):
         class Meta:
             model = Inmueble
             fields = '__all__'
-            exclude = ["cliente", ]
+            #exclude = ["cliente", ]
             #Label se refiere la descripcion que esta al lado del formulario.
             labels = { 
                 'codigo': 'Domicilio',
                 'metrosCuadrados': 'Metros Cuadrados',
                 'nroAmbientes': 'Cantidad de Ambientes',
-                'tipo': 'Tipo', 
+                #'tipo': 'Tipo', 
             }
 
             #Referencia a los estilos con los que se renderizan los campos
@@ -258,10 +257,12 @@ def InmuebleForm(selected_client=None):
             self.helper = FormHelper()
             self.helper.form_id = 'id-inmuebleForm'
             self.helper.form_method = 'post'
-
+            if selected_client:
+                self.helper.form_action = reverse_lazy("crearInmuebleParaCliente", kwargs={"pk": selected_client.pk})
             self.helper.add_input(Submit('btn-submit-form', 'Guardar', css_class="btn btn-primary btn-block text-white w-100", css_id="save-inmueble"))
 
     return InmuebleForm
+
 
 class InmuebleUpdateForm(InmuebleForm()):
 

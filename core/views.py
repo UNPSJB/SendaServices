@@ -149,6 +149,7 @@ class InmuebleCreateView(CreateView):
     template_name = "inmuebles/inmueble_form.html"
 
     def get_cliente(self):
+        print("kwargs: ", self.kwargs)
         pk = self.kwargs.get('pk')
         if pk is not None:
             return Cliente.objects.get(pk=pk)
@@ -170,6 +171,7 @@ class InmuebleCreateView(CreateView):
 
     def get_success_url(self, **kwargs):
         cliente = self.get_cliente()
+        print(f"{cliente=}")
         if cliente is not None:
             return reverse_lazy('listarInmueblesDeCliente', kwargs={"pk": cliente.pk})
         else:
@@ -177,13 +179,16 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["filtros"] = filtros if not self.get_cliente() else InmuebleCustomFiltrosForm
+        #context["filtros"] = InmuebleFiltrosForm if not self.get_cliente() else InmuebleCustomFiltrosForm
         return context
 
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
     def form_valid(self, form):
         inmueble = form.save(commit=False)
-        inmueble.cliente = self.get_cliente()
+        cliente = self.get_cliente()
+        if cliente:
+            inmueble.cliente = cliente
+        #print('{}'.format(inmueble.cliente))
         inmueble.save()
         messages.success(self.request, 'El inmueble se ha creado exitosamente.')
         return super().form_valid(form)

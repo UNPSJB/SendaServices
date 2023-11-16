@@ -42,7 +42,7 @@ class DetalleServicio(models.Model):
     tipoServicio= models.ForeignKey(TipoServicio, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.precio
+        return self.costoServicio
     
 class TipoServicioProducto(models.Model):
     tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE)

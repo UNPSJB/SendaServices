@@ -36,8 +36,6 @@ class Producto(models.Model):
     precioUnitario= models.DecimalField("Precio unitario",decimal_places=2,max_digits=10)
     baja= models.BooleanField(default=False)
 
-    def getCosto(self):
-        return self.precioUnitario
 
     def __str__(self):
         return self.descripcion
@@ -79,6 +77,8 @@ class Categoria(models.Model):
     nombre = models.CharField(max_length=30)
     sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
     objects = CategoriaManager()
+    def __str__(self):
+        return self.nombre
 
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, unique=True)
@@ -88,10 +88,5 @@ class Empleado(models.Model):
     categoria = models.ForeignKey(Categoria, related_name="empleados", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.apellido_y_nombre
-    
-
-
-
-
+        return self.nombreYapellido
     

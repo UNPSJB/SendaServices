@@ -89,12 +89,12 @@ class Servicio(models.Model):
         self.strategy().pagar(self, *args, **kwargs)
 
 class DetalleServicio(models.Model):
-    costoServicio= models.DecimalField(decimal_places=2,max_digits=10)
+    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name="detalles_servicio")
     cantidad= models.IntegerField()
     tipoServicio= models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio")
 
     def __str__(self):
-        return self.precio
+        return self.servicio
     
     def importe(self):
         return self.cantidad * self.tipoServicio.importe()

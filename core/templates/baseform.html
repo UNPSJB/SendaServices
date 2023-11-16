@@ -18,26 +18,22 @@
     <div class="card flex-fill border-0">
       <div class="card-body py-4">
         <h4>
-          {% block tform %}
-
-          {% endblock %}
+          {% block tform %} {% endblock %}
         </h4>
         <div class="card">
           <div class="card-body">
-              {% comment %}{% csrf_token %}{% endcomment %} 
-              {% block cform %}
-                {% crispy form form.helper %}
-              {% endblock %}
-            <!--form action="{% block url %} {% endblock %}" method="POST"-->
-
-              <!--div class="d-grid gap-2">
+            {% comment %}{% csrf_token %}{% endcomment %} 
+            {% block cform %}
+              {% crispy form form.helper %}
+            {% endblock %}
+            <!--form action="{% block url %} {% endblock %}" method="POST">
+              <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-primary btn-block text-white">
                   {% block btnform %}
-
                   {% endblock %}
                 </button>
-              </div-->
-            <!-- form -->
+              </div>
+            < form -->
           </div>
         </div>
       </div>

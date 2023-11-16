@@ -28,7 +28,7 @@ class Servicio(models.Model):
     STRATEGIES = []
     codigo= models.CharField(max_length=30, unique=True)
     #Fecha cuando inicia el servicio
-    desde = models.DateTimeField()
+    desde = models.DateField()
     #Fecha cuando finaliza el servicio
     hasta = models.DateField(null=True)
     cantidadEstimadaEmpleados= models.IntegerField()

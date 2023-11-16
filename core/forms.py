@@ -144,6 +144,7 @@ class EmpleadoForm(ModelForm):
                     'min':0,
                     'class': 'form-control',
                     'placeholder':'Ingrese el cuil del empleado',
+                    'pattern': '([0-9]{11})', 'placeholder': '###########',
                 }
             ),
             'correo': forms.EmailInput(

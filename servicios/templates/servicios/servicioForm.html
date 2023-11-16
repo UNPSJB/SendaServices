@@ -1,0 +1,26 @@
+{% extends '../baseform.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+<!-- Titulo del formulario -->
+{% block tform %}
+  Registrar Servicio
+{% endblock %}
+
+<!-- Url del formulario -->
+{% block url %}
+  {% url 'servicios:crearServicio' %}
+{% endblock %}
+
+{% block cform %}
+  {% crispy form form.helper %}
+  <div data-formset="detalles_servicio" id="productos" >
+    {% crispy detalleServicio_formset detalleServicio_formset_helper %}
+  </div>
+{% endblock %}
+
+
+<!-- Boton del formulario -->
+{% block btnform %}
+  Guardar
+{% endblock %}

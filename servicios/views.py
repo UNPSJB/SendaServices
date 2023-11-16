@@ -4,8 +4,8 @@ from django.contrib import messages
 from core.utils import ListFilterView
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from .forms import TipoServicioForm, TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm
-from .models import TipoServicio
+from .forms import ServicioForm, DetalleServicioInline, DetalleServicioFormSetHelper, TipoServicioForm, TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm
+from .models import TipoServicio, Servicio
 
 
 # Create your views here.
@@ -113,7 +113,48 @@ class TipoServicioUpdateView(UpdateView):
 
 
 
+class ServicioCreateView(CreateView): 
+    model = Servicio
+    form_class = ServicioForm
+    template_name = "Servicios/ServicioForm.html"
 
+
+    def get_form(self, form_class=None):
+        """Return an instance of the form to be used in this view."""
+        form = super().get_form(form_class=form_class)
+        self.detalleServicio_formset = DetalleServicioInline()(
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None
+        )
+        self.detalleServicio_formset_helper = DetalleServicioFormSetHelper()
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['detalleServicio_formset'] = self.detalleServicio_formset
+        context['detalleServicio_formset_helper'] = self.detalleServicio_formset_helper
+        
+        context['titulo'] = "Registrar Detalle Servicio"
+        #context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
+
+        return context
+    
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        #self.object = form.save()
+        # tipoServicio_productos = self.tipoServicio_producto_formset.save(commit=False)
+        # for tps in tipoServicio_productos:            
+        #     tps.tipoServicio = self.object
+        #     tps.save()
+
+        self.object = form.save()
+        if self.detalleServicio_formset.is_valid():
+            self.detalleServicio_formset.instance = self.object
+            self.detalleServicio_formset.save()
+
+
+        messages.success(self.request, 'El servicio se ha creado exitosamente.')
+        return super().form_valid(form)
 
 
 

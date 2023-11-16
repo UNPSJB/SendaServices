@@ -1,9 +1,64 @@
 
 from django import forms 
-from .models import TipoServicio, TipoServicioProducto
+from .models import TipoServicio, TipoServicioProducto, Servicio, DetalleServicio
 from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
+
+
+
+class ServicioForm(forms.ModelForm):
+    class Meta:
+        model= Servicio
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+class DetalleServicioForm(forms.ModelForm):
+
+    class Meta:
+        model = DetalleServicio
+        fields = ("tipoServicio",
+                  "cantidad",
+                  )
+
+        widgets = {
+            'tipoServicio': forms.Select(attrs={'autocomplete': 'off'}),
+            'cantidad': forms.NumberInput(attrs={'min': 1})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+
+# Tipo Servicio - Producto - Inlines
+
+def DetalleServicioInline(extra=1):
+    return forms.inlineformset_factory(
+        Servicio,
+        DetalleServicio,
+        form=DetalleServicioForm,
+        extra=extra,
+    )
+
+
+# Tipo Servicio - Producto - Form Helper
+
+class DetalleServicioFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.form_tag = False
+        self.template = 'bootstrap5/table_inline_formset.html'
+        self.layout = Layout(
+            'tipoServicio',
+            'cantidad'
+        )
+        self.render_required_fields = True
 
 
 

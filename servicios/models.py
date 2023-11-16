@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 
 # Create your models here.
 
@@ -9,27 +10,15 @@ from django.core.exceptions import ValidationError
 class TipoServicio(models.Model):
     codigo= models.CharField(max_length=30, unique=True)
     descripcion= models.CharField( max_length=250)
-    costo= models.DecimalField(decimal_places=2,max_digits=14)
-    unidadDeMedida= models.CharField("Unidad de medida",max_length=30)
+    ganancia= models.DecimalField(decimal_places=2,max_digits=14)  #precio
+    #Costo fijo adicional
     productos= models.ManyToManyField("core.Producto", through='TipoServicioProducto')
 
     def __str__(self):
         return self.descripcion
     
     def importe(self):
-        return self.costo + sum([p.importe() for p in self.productos])
-
-
-class DetalleServicio(models.Model):
-    costoServicio= models.DecimalField(decimal_places=2,max_digits=10)
-    cantidad= models.IntegerField()
-    tipoServicio= models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio")
-
-    def __str__(self):
-        return self.precio
-    
-    def importe(self):
-        return self.cantidad * self.tipoServicio.importe()
+        return self.ganancia * sum([p.importe() for p in self.productos_cantidad.all()])
 
 class Servicio(models.Model):
     class Tipo(models.IntegerChoices):
@@ -46,17 +35,17 @@ class Servicio(models.Model):
 
     ajuste = models.IntegerField()
 
-    detalleServicio = models.ForeignKey(DetalleServicio, on_delete=models.CASCADE, related_name="servicio")
-    
-    metrosCuadrados= models.IntegerField()
+    #    def requiereSeña(self):
+    #   cliente
 
     def totalEstimado(self):
         #implementar
-        #tdetalles = sum([d.importe() for d in self.detalles_servicio])
+        detalles_servicio = self.detalles_servicio.all()
+        tdetalles = sum([d.importe() for d in detalles_servicio])
         #templeados = self.cantidadEstimadaEmpleados * (Categoria.objects.media_jornada().sueldBase / 2)
         #total = tdetalles + templeados
-        #return total + ((total * self.ajuste) / 100)
-        return 1000
+        total = tdetalles
+        return total + ((total * self.ajuste) / 100)
 
     def saldo(self):
         #implementar
@@ -96,7 +85,18 @@ class Servicio(models.Model):
 
     def pagar(self, *args, **kwargs):
         self.strategy().pagar(self, *args, **kwargs)
+
+class DetalleServicio(models.Model):
+    cantidad= models.IntegerField()
+    tipoServicio = models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio")
+    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name="detalles_servicio")
+
+    def __str__(self):
+        return self.servicio.codigo + "" + self.tipoServicio.descripcion 
     
+    def importe(self):
+        return self.cantidad * self.tipoServicio.importe()
+
 class Estado(models.Model):
     class Tipo(models.TextChoices):
         PRESUPUESTADO = "presupuestado", _("Presupuestado 👽")
@@ -136,15 +136,19 @@ class EstadoPresupuestado(EstadoStrategy):
     def contratar(self, servicio, monto = None, *args, **kwargs):
         if servicio.requiereSeña and not monto:
             raise ValidationError(_("El servicio requiere seña"))
+        #Preguntar si es tio de cliente
         if monto :
-            factura = self.facturar(servicio, monto)
-            self.pagar(servicio, factura)
+            seña = self.facturar(servicio, monto)
+            self.pagar(servicio, seña)
+        self.factura_servicio.all()
+        self.factura_servicio.append(seña)
         Estado.objects.create(servicio=servicio, tipo=Estado.Tipo.CONTRATADO)
 
     def pagar(self, servicio, factura=None, *args, **kwargs):
         #servicio.senia = monto
         #implementar
-        factura.fecha = datetime.now()
+        
+        factura.pago = datetime.now()
         factura.pagado = True
         factura.save()
 
@@ -163,11 +167,12 @@ class EstadoIniciado(EstadoStrategy):
     def facturar(self, servicio, *args, **kwargs):
         print("Facturando desde iniciado")
 Servicio.STRATEGIES.append(EstadoIniciado())
-
+    
 class TipoServicioProducto(models.Model):
     tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE, related_name="productos_cantidad")
-    producto= models.ForeignKey("core.Producto",on_delete=models.CASCADE)
-    cantidad= models.PositiveIntegerField()
+    producto= models.ForeignKey("core.Producto",on_delete=models.CASCADE, related_name="productos_cantidad")
+    cantidad= models.DecimalField("Cantidad por m² ", max_digits=10,
+        decimal_places=2, validators=[MinValueValidator(0)])
 
     def importe(self):
-        return self.cantidad * self.producto.costo
+        return self.cantidad * self.producto.precioUnitario

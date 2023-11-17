@@ -2,15 +2,14 @@ from django.db import models
 from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
-
+from django.core.validators import MinValueValidator,MaxValueValidator
+from decimal import Decimal
 # Create your models here.
 
 
 class TipoServicio(models.Model):
-    codigo= models.CharField(max_length=30, unique=True)
     descripcion= models.CharField( max_length=250)
-    ganancia= models.DecimalField(decimal_places=2,max_digits=14)  #precio
+    ganancia= models.IntegerField(default=1,validators=[MaxValueValidator(100),MinValueValidator(1)])  #precio
     #Costo fijo adicional
     productos= models.ManyToManyField("core.Producto", through='TipoServicioProducto')
 
@@ -18,7 +17,9 @@ class TipoServicio(models.Model):
         return self.descripcion
     
     def importe(self):
-        return self.ganancia * sum([p.importe() for p in self.productos_cantidad.all()])
+        ganancia_decimal = Decimal(str(self.ganancia))
+        total= (1+(ganancia_decimal/100)) * sum([p.importe() for p in self.productos_cantidad.all()])
+        return total.quantize(Decimal('0.00'))
 
 class Servicio(models.Model):
     class Tipo(models.IntegerChoices):

@@ -23,3 +23,12 @@
     </div>
 </div>
 
+<script>
+  {% if form.errors %}
+    <script>
+    $(function() {
+      $('#modal').modal({show: true});
+    });
+    </script>
+{% endif %}
+</script>

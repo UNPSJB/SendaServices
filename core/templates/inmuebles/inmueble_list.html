@@ -47,7 +47,7 @@
                                     <td>{{i.tipo}}</td>
                                     <td>{{i.cliente}}</td>
                                     <td>
-                                        <button onclick="abrir_modal('{% url "modificarInmueble" i.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button>
+                                        <a href="#" onclick="abrir_modal('{% url "modificarInmueble" i.pk %}')" class="bi bi-pencil-square text-primary"></button>
                                         {% comment %} <a href="/infoCliente/{{c.cuil_cuit}}" class="btn mx-2 mb-2 btn-sm btn-primary">Eliminar</a>{% endcomment %}
                                     </td>
                                 </tr>

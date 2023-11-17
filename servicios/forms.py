@@ -27,7 +27,7 @@ class TipoServicioProductoForm(forms.ModelForm):
 
         widgets = {
             'producto': forms.Select(attrs={'autocomplete': 'off'}),
-            'cantidad': forms.NumberInput(attrs={'min': 1})
+            'cantidad': forms.NumberInput(attrs={'min': 0})
         }
 
     def __init__(self, *args, **kwargs):
@@ -68,24 +68,18 @@ class TipoServicioProductoFormSetHelper(FormHelper):
 class TipoServicioFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
-        ("codigo", "Codigo"),
         ("descripcion", "Descripcion"),
-        ("costo", "Costo"),
-        ("unidadDeMedida", "Unidad de medida"),
+        ("ganancia", "Ganancia"),
     ]
     ATTR_CHOICES = [
-        ("codigo", "Codigo"),
         ("descripcion", "Descripcion"),
-        ("costo", "Costo"),
-        ("unidadDeMedida", "Unidad de medida"),
+        ("ganancia", "Ganancia"),
 
     ]
 
     #Formulario de filtrado
-    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': '12345'}), max_length=30)
     descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'limpieza'}), max_length=250)
-    costo = forms.DecimalField(required=False, widget=forms.TextInput(attrs={'placeholder': '10000'}), decimal_places=2,max_digits=14)
-    unidadDeMedida = forms.CharField(label="Unidad de Medida",required=False, widget=forms.TextInput(attrs={'placeholder': 'M2'}), max_length=30)
+    ganancia = forms.DecimalField(required=False, widget=forms.TextInput(attrs={'placeholder': '15'}), decimal_places=2,max_digits=14)
         
     
 
@@ -98,7 +92,7 @@ class TipoServicioFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "codigo","descripcion", "costo", "unidadDeMedida", #Remplazar campos formulario
+                "descripcion", "ganancia"
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

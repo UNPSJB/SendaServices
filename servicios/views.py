@@ -110,6 +110,11 @@ class TipoServicioUpdateView(UpdateView):
 
         messages.success(self.request, 'El tipo de servicio se ha modificado exitosamente.')
         return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+    
+
 
 
 

@@ -4,7 +4,8 @@ from .models import TipoServicio, TipoServicioProducto, Servicio, DetalleServici
 from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
-
+from datetime import datetime
+from django.core.exceptions import ValidationError
 
 
 class ServicioForm(forms.ModelForm):
@@ -12,10 +13,27 @@ class ServicioForm(forms.ModelForm):
         model= Servicio
         fields = '__all__'
 
+        widgets = {
+            'desde': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
+            'hasta': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+        self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        desde = cleaned_data.get('desde')
+        hasta = cleaned_data.get('hasta')
+
+        if desde and hasta and hasta < desde:
+            raise ValidationError("La fecha 'FIN' debe ser mayor o igual a la fecha 'INICIO'.")
+
+        return cleaned_data
 
 class DetalleServicioForm(forms.ModelForm):
 

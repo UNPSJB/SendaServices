@@ -1,7 +1,8 @@
 from django import forms
+<<<<<<< HEAD
 from django.forms import ModelForm, ValidationError, Select
 from django.urls import reverse_lazy
-from .models import Producto, Cliente, Inmueble
+from .models import Producto, Cliente, Inmueble, Empleado,Categoria
 from .utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
@@ -146,6 +147,235 @@ class ClienteModForm(ModelForm):
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Guardar'))
+
+
+class EmpleadoForm(ModelForm):
+
+    class Meta:
+        model = Empleado
+        fields = '__all__'
+        exclude = ["baja"]
+        #Label se refiere la descripcion que esta al lado del formulario.
+        labels = { 
+            'legajo': 'Legajo',
+            'apellido': 'Apellido',
+            'nombre': 'Nombre',
+            'cuil': 'Cuil',
+            'correo': 'Correo',
+        }
+        #Referencia a los estilos con los que se renderizan los campos
+        widgets = {
+            'legajo': forms.NumberInput(
+                #Permite estilizar los formularios
+                attrs = {
+                    'min':0,
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el legajo del empleado',
+                }
+            ),
+            'apellido': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el apellido del empleado',
+                }
+            ),
+            'nombre': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el nombre del empleado',
+
+                }
+            ),
+            'cuil': forms.NumberInput(
+                attrs = {
+                    'min':0,
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el cuil del empleado',
+                    'pattern': '([0-9]{11})', 'placeholder': '###########',
+                }
+            ),
+            'correo': forms.EmailInput(
+                attrs= {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el correo del empelado',
+                }
+            ),
+        
+        }
+
+class EmpleadoFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("legajo", "Legajo"),
+        ("apellido", "Apellido"),
+        ("nombre", "Nombre"),
+        ("correo", "Correo"),
+        ("cuil", "Cuil"),
+        ("categoria", "Categoria"),
+    ]
+    ATTR_CHOICES = [
+
+        ("legajo", "Legajo"),
+        ("apellido", "Apellido"),
+        ("nombre", "Nombre"),
+        ("correo", "Correo"),
+        ("cuil", "Cuil"),
+        ("categoria", "Categoria"),
+
+    ]
+
+    #Formulario de filtrado
+    legajo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Legajo'}), max_length=45)
+    apellido = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Apellido'}), max_length=45)
+    nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}), max_length=45)
+    correo = forms.EmailField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Correo'}))
+    cuil = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Cuil'}), max_length=45)
+    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=False, label='Categoria') 
+  
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "legajo","nombre", "apellido", "correo","cuil","categoria" #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
+class EmpleadoModForm(ModelForm):
+
+    class Meta:
+        model = Empleado
+        exclude= ("legajo", "baja","cuil",)
+
+        #Label se refiere la descripcion que esta al lado del formulario.
+        labels = { 
+            'apellido': 'Apellido',
+            'nombre': 'Nombre',
+            'correo': 'Correo',
+            'cuil': 'Cuil',
+            'categoria': 'Categoria',
+        }
+        #Referencia a los estilos con los que se renderizan los campos
+        widgets = {
+            'nombre': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el nombre del empleado',
+                }
+            ),
+            'apellido': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el apellido del empleado',
+
+                }
+            ),
+            'correo': forms.EmailInput(
+                attrs = {           
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el correo del empleado',
+                }
+            ),
+                 
+            'cuil': forms.NumberInput(
+                attrs = {           
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el cuil del empleado',
+                }
+            ),
+            'Categoria.numero': forms.NumberInput(
+                attrs = {           
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el numero de la categoria',
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'legajo-EmpleadoForm'
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Guardar'))
+
+
+class CategoriaForm(ModelForm):
+
+    class Meta:
+        model = Categoria
+        fields = '__all__'
+        #Label se refiere la descripcion que esta al lado del formulario.
+        labels = { 
+            'nombre':'Nombre',
+            'sueldoBase': 'Sueldo Base',
+            'empleado.legajo': 'Empleado',
+           
+        }
+        #Referencia a los estilos con los que se renderizan los campos
+        widgets = {
+            'nombre': forms.TextInput(
+                #Permite estilizar los formularios
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el nombre de la categoria',
+                }
+            ),
+            'sueldoBase': forms.NumberInput(
+                attrs = {
+                    'min': 0,
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el sueldo base de la categoria',
+                }
+            )
+            
+        }
+
+
+class CategoriaUpdateForm(CategoriaForm):
+
+    class Meta(CategoriaForm.Meta):
+        exclude = ["baja", "empleado.legajo"]
+
+
+
+class CategoriaFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("nombre", "Nombre"),
+        ("sueldoBase", "Sueldo Base"),
+    ]
+    ATTR_CHOICES = [
+        ("nombre", "Nombre"),
+        ("sueldoBase", "Sueldo Base"),
+    ]
+
+    #Formulario de filtrado
+
+    nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}))
+    sueldoBase = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Sueldo Base'}))
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "nombre", "sueldoBase"
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
 
 
 class InmuebleFiltrosForm(FiltrosForm):
@@ -345,6 +575,7 @@ class ProductoForm(ModelForm):
         model = Producto
         fields = '__all__'
         exclude = ["baja"] 
+
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
             'codigo': 'Código',
@@ -389,9 +620,11 @@ class ProductoForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-productoForm'
+
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Guardar'))
+
 
 
 class ProductoUpdateForm(ProductoForm):

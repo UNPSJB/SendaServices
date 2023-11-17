@@ -1,8 +1,6 @@
 from django.contrib import admin
-from .models import *
+from .models import Horario, Periodo, Asistencia
 # Register your models here.
-
-
 
 
 
@@ -16,4 +14,6 @@ class HorarioAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Horario,HorarioAdmin)
-
+admin.site.register(Horario)
+admin.site.register(Periodo)
+admin.site.register(Asistencia)

@@ -59,7 +59,6 @@ class FiltrosForm(forms.Form):
         return self.ATTR_CHOICES
     
     def serialize_query_params(self):
-        #if self.is_valid():
         return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
 
 # Lista Filtros - ListView
@@ -68,11 +67,19 @@ class ListFilterView(ListView):
     filtros = None
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         filtros = self.get_filtros(self.request.GET)
         if filtros is not None: 
             context['filtros'] = filtros
             context['serialized_query_params'] = filtros.serialize_query_params()
         context['query'] = self.get_queryset()
+
+        """if self.filtros:
+            filtros = self.filtros(self.request.GET)
+            context['filtros'] = filtros
+            context['serialized_query_params'] = filtros.serialize_query_params()
+            context['query'] = self.get_queryset()"""
+
         return context
 
     def get_queryset(self):
@@ -84,9 +91,16 @@ class ListFilterView(ListView):
         return self.filtros(*args, **kwargs) if self.filtros is not None else None
 
     def apply_filters_to_qs(self, qs):
+
         filtros = self.get_filtros(self.request.GET)
         if filtros is not None:
             return filtros.apply(qs)
+
+        """if self.filtros:
+            filtros = self.filtros(self.request.GET)
+            results = filtros.apply(qs)
+            return results"""
+
         return qs
     
 

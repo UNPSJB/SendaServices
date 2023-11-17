@@ -167,6 +167,8 @@ class EstadoIniciado(EstadoStrategy):
     def facturar(self, servicio, *args, **kwargs):
         print("Facturando desde iniciado")
 Servicio.STRATEGIES.append(EstadoIniciado())
+
+        #return self.costoServicio
     
 class TipoServicioProducto(models.Model):
     tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE, related_name="productos_cantidad")

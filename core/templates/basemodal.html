@@ -8,27 +8,21 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form action="{% block url %}  {% endblock %}" method="POST">
-        {% csrf_token %}
-
         <div class="modal-body " >
-          {%block cmodal%} 
-      
-            {{ form | crispy }}
-            {% endblock %}
-        </div>
-          <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">{% block btnmodal %} {% endblock %}</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            {% csrf_token %}
+            {%block cmodal%} 
+        
+              {{ form | crispy }}
+              {% endblock %}
           </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">{% block btnmodal %} {% endblock %}</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
     </div>
 </div>
 
-<script>
-  {% if form.errors %}
-    <script>
-    $(function() {
-      $('#modal').modal({show: true});
-    });
-    </script>
-{% endif %}
-</script>
+<script type="text/javascript" src="{% static 'js/modal_form_validation.js' %}"></script>
+{% block extrajs %}
+{% endblock %}

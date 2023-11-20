@@ -69,7 +69,6 @@ urlpatterns = [
     path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
     path('inmuebles/cliente/<str:pk>/listar', InmuebleListView.as_view(), name='listarInmueblesDeCliente'),
 
-<<<<<<< HEAD
     # Gestion Tipo Servicio
     path('servicios/', include('servicios.urls',namespace='servicios')),
     
@@ -77,7 +76,7 @@ urlpatterns = [
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
     path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
     path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
-    path('productos/eliminar/<str:pk>', ProductoDeleteView.as_view(), name='eliminarProducto')
+    path('productos/eliminar/<str:pk>', ProductoDeleteView.as_view(), name='eliminarProducto'),
     
     #Gestion Empleados
     path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),

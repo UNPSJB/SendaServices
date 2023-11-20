@@ -1,5 +1,4 @@
 from django import forms
-<<<<<<< HEAD
 from django.forms import ModelForm, ValidationError, Select
 from django.urls import reverse_lazy
 from .models import Producto, Cliente, Inmueble, Empleado,Categoria
@@ -203,6 +202,15 @@ class EmpleadoForm(ModelForm):
         
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-empleadoForm'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Guardar'))
+
+
 class EmpleadoFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
@@ -301,7 +309,7 @@ class EmpleadoModForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'legajo-EmpleadoForm'
+        self.helper.form_id = 'legajo-empleadoForm'
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Guardar'))
 
@@ -337,11 +345,20 @@ class CategoriaForm(ModelForm):
             
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-categoriaForm'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Guardar'))
+
 
 class CategoriaUpdateForm(CategoriaForm):
 
     class Meta(CategoriaForm.Meta):
-        exclude = ["baja", "empleado.legajo"]
+        pass
+        #exclude = ["baja", "empleado.legajo"]
 
 
 
@@ -498,7 +515,7 @@ def InmuebleForm(selected_client=None):
 class InmuebleUpdateForm(InmuebleForm()):
 
     class Meta(InmuebleForm().Meta):
-        exclude = ["cliente"]
+        exclude = ["domicilio","cliente"]
 
         widgets = {
             'domicilio': forms.TextInput(

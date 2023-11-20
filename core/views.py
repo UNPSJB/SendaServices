@@ -24,7 +24,7 @@ from .forms import (
     InmuebleForm,
     InmuebleUpdateForm, 
     InmuebleFiltrosForm,
-    InmuebleCustomFiltrosForm
+    InmuebleCustomFiltrosForm,
     EmpleadoForm,
     EmpleadoModForm,
     EmpleadoFiltrosForm,
@@ -47,6 +47,8 @@ def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
+        #username = request.POST.get("username")
+        #password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
@@ -265,7 +267,6 @@ class ProductoCreateView(CreateView):
         context['titulo'] = "Registrar Producto"
         return context
 
-    
     #Este form, es para cuando se envia se muestre el mensaje de producto creado en list
     def form_valid(self, form):
         messages.success(self.request, 'El producto se creo exitosamente.')
@@ -334,8 +335,8 @@ class EmpleadoCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Empleado"
         context['boton1'] = "Crear Empleado"
-        print(self.template_name)
-        print(context["form"].errors)
+        #print(self.template_name)
+        #print(context["form"].errors)
         return context
 
     

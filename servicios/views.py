@@ -4,7 +4,7 @@ from django.contrib import messages
 from core.utils import ListFilterView
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from .forms import ServicioForm, DetalleServicioInline, DetalleServicioFormSetHelper, TipoServicioForm, TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm
+from .forms import ServicioForm, DetalleServicioInline, ServiciosFiltrosForm, DetalleServicioFormSetHelper, TipoServicioForm, TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm
 from .models import TipoServicio, Servicio
 
 
@@ -156,5 +156,12 @@ class ServicioCreateView(CreateView):
         messages.success(self.request, 'El servicio se ha creado exitosamente.')
         return super().form_valid(form)
 
-
-
+class ServicioListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 5
+    #Filtros de la lista
+    filtros = ServiciosFiltrosForm 
+    model = Servicio #Nombre del modelo
+    template_name = "servicios/servicio_list.html" #Ruta del template
+    context_object_name = 'servicio' #Nombre de la lista usar ''
+    queryset = Servicio.objects.all()

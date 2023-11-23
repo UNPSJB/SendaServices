@@ -18,7 +18,7 @@ class TipoServicio(models.Model):
         return self.descripcion
     
     def importe(self):
-        return self.ganancia * sum([p.importe() for p in self.productos_cantidad.all()])
+        return round(self.ganancia * sum([p.importe() for p in self.productos_cantidad.all()]),2)
 
 class Servicio(models.Model):
     class Tipo(models.IntegerChoices):
@@ -31,7 +31,7 @@ class Servicio(models.Model):
     desde = models.DateField("Fecha Inicio",)
     #Fecha cuando finaliza el servicio
     hasta = models.DateField("Fecha Fin", null=True)
-    cantidadEstimadaEmpleados= models.IntegerField()
+    cantidadEstimadaEmpleados= models.IntegerField("Empleados Estimados")
 
     ajuste = models.IntegerField()
 
@@ -45,7 +45,7 @@ class Servicio(models.Model):
         #templeados = self.cantidadEstimadaEmpleados * (Categoria.objects.media_jornada().sueldBase / 2)
         #total = tdetalles + templeados
         total = tdetalles
-        return total + ((total * self.ajuste) / 100)
+        return round(total + ((total * self.ajuste) / 100), 2)
 
     def saldo(self):
         #implementar
@@ -63,6 +63,7 @@ class Servicio(models.Model):
         hoy = datetime.now()
         if self.estados.exists():
             return self.estados.filter(timestamp__lte=hoy).latest()
+
         
     def save(self, *args, **kwargs):
         esNuevo = self.pk is None
@@ -117,7 +118,7 @@ class Estado(models.Model):
         get_latest_by = 'timestamp'
 
     def __str__(self):
-        return f"{self.servicio} {self.get_tipo_display()}"
+        return f"{self.get_tipo_display()}"
 
 class EstadoStrategy():
     TIPO = ""

@@ -6,7 +6,7 @@
 
 
 
-    {% block tlista %} Listado de Tipos de servicio {% endblock %}
+    {% block tlista %} Listado de Servicios {% endblock %}
 
     {% block thextras %}
         <th colspan="">Opciones</th>
@@ -14,29 +14,28 @@
     {% endblock%}
     
     {% block tcuerpo %}
-    {% for t in tiposServicio %}
+    {% for s in servicio %}
     <tr>
         <td>{{forloop.counter}}</td>
-        <td>{{t.codigo}}</td>
-        <td>{{t.descripcion}}</td>
-        <td>{{t.costo}}</td>
-        <td>{{t.unidadDeMedida}}</td>
-
+        
+        <td>{{s.codigo}}</td>
+        <td>{{s.estado}}</td>
+        <td>{{s.desde}}</td>
+        <td>{{s.hasta}}</td>
+        <td>{{s.cantidadEstimadaEmpleados}}</td>
+        <td>{{s.totalEstimado}}</td>
 
 
 
         <td>
-            <a href="#" onclick="abrir_modal('{% url "servicios:modificarTipoServicio" pk=t.pk %}')" class="bi bi-pencil-square text-primary"> </a>
-
-
+        {% if s.estado.tipo == s.estado.Tipo.PRESUPUESTADO %}
+            <button type="button" class="btn btn-primary">Contratar</button>
+        {% endif %}
         </td>
-        <td>
-            <a href="/Productos/{{t.codigo}}" class="btn btn-link"><i class="bi bi-journal"></i></a>
-           
-        </td>
+
     </tr>
     {% empty %}
-    <tr> <td> No hay tipos de servicio registrados </td> </tr>
+    <tr> <td> No hay servicios registrados </td> </tr>
     {% endfor %}
     
 {% endblock %}

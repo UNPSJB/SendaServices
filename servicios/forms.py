@@ -6,7 +6,92 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
+
+class ServiciosFiltrosForm(FiltrosForm):
+    # Campos del modelo
+    ORDEN_CHOICES = [
+        ("codigo", "Codigo"),
+        ("estado", "Estado"),
+        ("desde", "Fecha Inicio"),
+        ("hasta", "Fecha Fin"),
+        ("cantidadEstimadaEmpleados", "Empleados Estimados"),
+        ("totalEstimado", "Total Estimado"),
+    ]
+
+    ATTR_CHOICES = [
+        ("codigo", "Codigo"),
+        ("estado", "Estado"),
+        ("desde", "Fecha Inicio"),
+        ("hasta", "Fecha Fin"),
+        ("cantidadEstimadaEmpleados", "Empleados Estimados"),
+        ("totalEstimado", "Total Estimado"),
+    ]
+
+    ESTADO_CHOICES = [
+        ("presupuestado", _("Presupuestado 👽")),
+        ("contratado", _("Contratado 🛸")),
+        ("vencido", _("Vencido 💀")),
+        ("cancelado", _("Cancelado 💩")),
+        ("pagado", _("Pagado 🤑")),
+        ("iniciado", _("Iniciado 😊")),
+        ("finalizado", _("Finalizado 😴")),
+    ]
+
+    # Formulario de filtrado
+    codigo = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': '########'}),
+        max_length=30
+    )
+
+    estado = forms.ChoiceField(
+        label=_("Estado"),
+        choices=ESTADO_CHOICES,
+        required=False  # Ajusta esto según tus necesidades
+    )
+
+    desde = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False,
+        label=_("Fecha Inicio")
+    )
+
+    hasta = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False,
+        label=_("Fecha Fin")
+    )
+
+    cantidadEstimadaEmpleados = forms.DecimalField(
+        label=_("Empleados Estimados"),
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': '10000'}),
+        decimal_places=2,
+        max_digits=14
+    )
+
+    totalEstimado = forms.DecimalField(
+        label=_("Total estimado"),
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': '10000'}),
+        decimal_places=2,
+        max_digits=14
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML('<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "codigo", "estado", "hasta", "desde", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
 
 class ServicioForm(forms.ModelForm):
     class Meta:
@@ -144,13 +229,11 @@ class TipoServicioFiltrosForm(FiltrosForm):
         ("codigo", "Codigo"),
         ("descripcion", "Descripcion"),
         ("costo", "Costo"),
-        ("unidadDeMedida", "Unidad de medida"),
     ]
     ATTR_CHOICES = [
         ("codigo", "Codigo"),
         ("descripcion", "Descripcion"),
         ("costo", "Costo"),
-        ("unidadDeMedida", "Unidad de medida"),
 
     ]
 
@@ -158,9 +241,6 @@ class TipoServicioFiltrosForm(FiltrosForm):
     codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': '12345'}), max_length=30)
     descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'limpieza'}), max_length=250)
     costo = forms.DecimalField(required=False, widget=forms.TextInput(attrs={'placeholder': '10000'}), decimal_places=2,max_digits=14)
-    unidadDeMedida = forms.CharField(label="Unidad de Medida",required=False, widget=forms.TextInput(attrs={'placeholder': 'M2'}), max_length=30)
-        
-    
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

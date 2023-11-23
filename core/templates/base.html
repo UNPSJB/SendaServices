@@ -145,6 +145,12 @@
                 
               </ul>
 
+              <ul id="Servicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'servicios:listarServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+              </ul>
 
               <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#tipoServicio" data-bs-toggle="collapse"
                 aria-expanded="false">
@@ -257,7 +263,7 @@
           <div class="d-flex pt-2 pb-2">
             
             {% block volver %}
-            <a class="" href="../"><i class="bi bi-arrow-left"></i></a>
+            <a class="" href="{% url "home" %}"><i class="bi bi-arrow-left"></i></a>
             {% endblock %}
 
             {% block tmain %}

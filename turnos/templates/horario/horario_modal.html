@@ -1,0 +1,13 @@
+{% extends "core/basemodal.html" %}
+
+<!--Titulo del modal-->
+{% block tmodal %} Edicion Turnos: {% endblock %}
+
+<!--Objeto del titulo del modal-->
+{% block tobjectmodal %} {{object}} {% endblock %}
+
+<!--Url del modal-->
+{% block url %} {% url 'modificarHorarios' object.pk %} {% endblock %}
+
+<!--Boton del modal-->
+{% block btnmodal %} Guardar {% endblock %} 

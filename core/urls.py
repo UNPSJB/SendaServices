@@ -20,6 +20,8 @@ from django.urls import path, include
 
 from django.contrib.auth.decorators import login_required
 
+from turnos import urls
+
 from .views import (
     salir, 
     index, 
@@ -88,5 +90,8 @@ urlpatterns = [
     path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),
     path('categoria/modificar/<str:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
     path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria'),  
+
+    #Gestion Turnos
+    path('horarios/', include('turnos.urls',namespace='horarios')),
     
 ]

@@ -312,7 +312,7 @@ class EmpleadoModForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = 'legajo-empleadoForm'
         self.helper.form_method = 'post'
-        empleado = kwargs["instance"] # nos da el modelo Inmueble
+        empleado = kwargs["instance"] 
         self.helper.form_action = reverse_lazy("modificarEmpleado", kwargs={"pk": empleado.legajo})
         self.helper.add_input(Submit('submit', 'Guardar'))
 

@@ -12,6 +12,10 @@ class TipoServicioForm(forms.ModelForm):
         model= TipoServicio
         exclude= ('productos',)
 
+        widgets= {
+            'ganancia': forms.NumberInput(attrs={'min':1,'max':100})
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()

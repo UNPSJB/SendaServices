@@ -1,6 +1,6 @@
 from django.db import models
 from servicios.models import Servicio
-from core.models import Empleado,Categoria
+from core.models import Empleado
 
 
 # Create your models here.
@@ -20,8 +20,8 @@ class Horario(models.Model):
         SÁBADO = 'sábado', 'Sábado'
         DOMINGO = 'domingo', 'Domingo'
 
-    turno= models.CharField(max_length=90, choices=Turno.choices)
-    diaSemana= models.CharField(max_length=90, choices=DiaSemana.choices)
+    turno= models.CharField(max_length=30,choices=Turno.choices)
+    diaSemana= models.CharField(max_length=30,choices=DiaSemana.choices)
     servicio= models.ForeignKey(Servicio, related_name="horarios", on_delete=models.CASCADE)
 
 class Periodo(models.Model): 
@@ -34,7 +34,6 @@ class Periodo(models.Model):
 class Asistencia(models.Model):
     periodo= models.ForeignKey(Periodo,on_delete=models.CASCADE,related_name="periodo")
     fecha= models.DateTimeField()
-
 
 
 

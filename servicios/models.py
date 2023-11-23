@@ -9,7 +9,7 @@ from decimal import Decimal
 
 class TipoServicio(models.Model):
     descripcion= models.CharField( max_length=250)
-    ganancia= models.IntegerField(default=1)  #,validators=[MaxValueValidator(100),MinValueValidator(1)]
+    ganancia= models.IntegerField(default=1, validators=[MaxValueValidator(100),MinValueValidator(1)])
     #Costo fijo adicional
     productos= models.ManyToManyField("core.Producto", through='TipoServicioProducto')
 

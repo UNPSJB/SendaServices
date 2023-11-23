@@ -15,6 +15,10 @@ class TipoServicioForm(forms.ModelForm):
         widgets= {
             'ganancia': forms.NumberInput(attrs={'min':1,'max':100})
         }
+        
+        labels = {
+            'ganancia': 'Ganancia (%)'
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

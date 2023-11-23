@@ -117,7 +117,7 @@ class ServicioCreateView(CreateView):
     model = Servicio
     form_class = ServicioForm
     template_name = "Servicios/ServicioForm.html"
-
+    success_url = reverse_lazy('servicios:listarServicio')
 
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""

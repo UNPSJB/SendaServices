@@ -8,6 +8,7 @@ import csv
 
 
 def dict_to_query(filtros_dict):
+    
     filtro = Q()
     for attr, value in filtros_dict.items():
         if not value:
@@ -20,6 +21,7 @@ def dict_to_query(filtros_dict):
                                                  {f'{attr}__icontains': prev_value})
             else:
                 attr = f'{attr}__icontains'
+                print(f"{attr=} {value=}")
                 filtro &= Q(**{attr: value})
         # elif isinstance(value, Model) or isinstance(value, int) or isinstance(value, Decimal):
         elif isinstance(value, (Model, int, Decimal, date)):
@@ -59,8 +61,9 @@ class FiltrosForm(forms.Form):
         return self.ATTR_CHOICES
     
     def serialize_query_params(self):
+        print("data: ", self.data)
         if self.is_valid():
-            return "&".join([f"{k}={v}" for k,v in self.cleaned_data.items() if v]) 
+            return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
 
 # Lista Filtros - ListView
 
@@ -77,12 +80,14 @@ class ListFilterView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        print(f"{qs=}")
         qs = self.apply_filters_to_qs(qs)
         return qs
 
     def apply_filters_to_qs(self, qs):
         if self.filtros:
             filtros = self.filtros(self.request.GET)
+            print(f"{filtros=}")
             return filtros.apply(qs)
         return qs
     

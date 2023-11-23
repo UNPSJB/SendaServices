@@ -1,6 +1,6 @@
 
 from django import forms 
-from .models import TipoServicio, TipoServicioProducto, Servicio, DetalleServicio
+from .models import TipoServicio, TipoServicioProducto, Servicio, DetalleServicio, TipoEstado
 from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
@@ -29,15 +29,15 @@ class ServiciosFiltrosForm(FiltrosForm):
         ("totalEstimado", "Total Estimado"),
     ]
 
-    ESTADO_CHOICES = [
-        ("presupuestado", _("Presupuestado 👽")),
-        ("contratado", _("Contratado 🛸")),
-        ("vencido", _("Vencido 💀")),
-        ("cancelado", _("Cancelado 💩")),
-        ("pagado", _("Pagado 🤑")),
-        ("iniciado", _("Iniciado 😊")),
-        ("finalizado", _("Finalizado 😴")),
-    ]
+    # ESTADO_CHOICES = [
+    #     ("presupuestado", _("Presupuestado 👽")),
+    #     ("contratado", _("Contratado 🛸")),
+    #     ("vencido", _("Vencido 💀")),
+    #     ("cancelado", _("Cancelado 💩")),
+    #     ("pagado", _("Pagado 🤑")),
+    #     ("iniciado", _("Iniciado 😊")),
+    #     ("finalizado", _("Finalizado 😴")),
+    # ]
 
     # Formulario de filtrado
     codigo = forms.CharField(
@@ -48,7 +48,7 @@ class ServiciosFiltrosForm(FiltrosForm):
 
     estado = forms.ChoiceField(
         label=_("Estado"),
-        choices=ESTADO_CHOICES,
+        choices=TipoEstado.choices,
         required=False  # Ajusta esto según tus necesidades
     )
 

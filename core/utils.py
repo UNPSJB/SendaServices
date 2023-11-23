@@ -59,6 +59,7 @@ class FiltrosForm(forms.Form):
         return self.ATTR_CHOICES
     
     def serialize_query_params(self):
+        #if self.is_valid():
         return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
 
 # Lista Filtros - ListView

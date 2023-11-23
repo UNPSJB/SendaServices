@@ -144,7 +144,8 @@ class ClienteModForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = 'id-clienteForm'
         self.helper.form_method = 'post'
-
+        cliente = kwargs["instance"] # nos da el modelo Inmueble
+        self.helper.form_action = reverse_lazy("modificarCliente", kwargs={"pk": cliente.pk})
         self.helper.add_input(Submit('submit', 'Guardar'))
 
 
@@ -311,8 +312,11 @@ class EmpleadoModForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = 'legajo-empleadoForm'
         self.helper.form_method = 'post'
+        empleado = kwargs["instance"] # nos da el modelo Inmueble
+        self.helper.form_action = reverse_lazy("modificarEmpleado", kwargs={"pk": empleado.legajo})
         self.helper.add_input(Submit('submit', 'Guardar'))
 
+            
 
 class CategoriaForm(ModelForm):
 
@@ -358,7 +362,18 @@ class CategoriaUpdateForm(CategoriaForm):
 
     class Meta(CategoriaForm.Meta):
         pass
+        #model = Categoria
+        #fields = '__all__'
         #exclude = ["baja", "empleado.legajo"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-categoriaForm'
+        self.helper.form_method = 'post'
+        categoria = kwargs["instance"] # nos da el modelo Inmueble
+        self.helper.form_action = reverse_lazy("modificarCategoria", kwargs={"pk": categoria.pk})
+        self.helper.add_input(Submit('submit', 'Guardar'))
 
 
 
@@ -648,3 +663,4 @@ class ProductoUpdateForm(ProductoForm):
 
     class Meta(ProductoForm.Meta):
         exclude = ["stock", "codigo", "baja"]
+    

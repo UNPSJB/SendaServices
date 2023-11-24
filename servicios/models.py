@@ -88,7 +88,7 @@ class Servicio(models.Model):
         if esNuevo:
             p = Estado.objects.create(servicio=self, tipo=TipoEstado.PRESUPUESTADO)
             v = Estado.objects.create(servicio=self, tipo=TipoEstado.VENCIDO)
-            v.timestamp=p.timestamp + timedelta(days=7)
+            v.timestamp=p.timestamp + timedelta(minutes=30000)
             self.estado = TipoEstado.PRESUPUESTADO
             v.save()
         

@@ -7,26 +7,28 @@ from django.views.generic.list import ListView
 import csv
 
 
-def dict_to_query(filtros_dict):
-    
-    filtro = Q()
+def filter_query_by(filtros_dict, queryset, form = None):
     for attr, value in filtros_dict.items():
         if not value:
             continue
-        if type(value) == str:
+        if form is not None and hasattr(form, f"get_{attr}"):
+            func = getattr(form, f"get_{attr}")
+            if callable(func):
+                queryset = func(queryset, value)
+        elif type(value) == str:
             if value.isdigit():
                 prev_value = value
                 value = int(value)
-                filtro &= Q(**{attr: value}) | Q(**
-                                                 {f'{attr}__icontains': prev_value})
+                queryset = queryset.filter(Q(**{attr: value}) | Q(**
+                                                 {f'{attr}__icontains': prev_value}))
             else:
                 attr = f'{attr}__icontains'
                 print(f"{attr=} {value=}")
-                filtro &= Q(**{attr: value})
+                queryset = queryset.filter(Q(**{attr: value}))
         # elif isinstance(value, Model) or isinstance(value, int) or isinstance(value, Decimal):
         elif isinstance(value, (Model, int, Decimal, date)):
-            filtro &= Q(**{attr: value})
-    return filtro
+            queryset = queryset.filter(Q(**{attr: value}))
+    return queryset
 
 # Filtros - Form
 
@@ -36,8 +38,8 @@ class FiltrosForm(forms.Form):
     orden = forms.CharField(required=False)
 
     def filter(self, qs, filters):
-        return qs.filter(dict_to_query(filters))  # aplicamos filtros
-
+        return filter_query_by(filters, qs, self)
+        
     def sort(self, qs, ordering):
         for o in ordering.split(','):
             if o != '':

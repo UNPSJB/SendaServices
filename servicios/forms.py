@@ -1,11 +1,13 @@
 
 from django import forms 
-from .models import TipoServicio, TipoServicioProducto, Servicio, DetalleServicio, TipoEstado
+from .models import TipoServicio, TipoServicioProducto, Servicio, DetalleServicio, TipoEstado, Estado
 from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models import Q, Subquery, OuterRef
 from django.utils.translation import gettext_lazy as _
 
 
@@ -93,6 +95,14 @@ class ServiciosFiltrosForm(FiltrosForm):
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
 
+    def get_estado(self, qs, value):
+        q = Q(estados__timestamp=Subquery(
+            Estado.objects.filter(servicio=OuterRef("id"), timestamp__lte=datetime.now())
+            .order_by("-timestamp")
+            .values("timestamp")[:1]
+        )) & Q(estados__tipo=value)
+        return qs.filter(q)
+        
 class ServicioForm(forms.ModelForm):
     class Meta:
         model= Servicio

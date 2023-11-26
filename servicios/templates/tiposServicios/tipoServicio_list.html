@@ -9,6 +9,7 @@
     {% block tlista %} Listado de Tipos de servicio {% endblock %}
 
     {% block thextras %}
+        <th colspan="">Importe</th>
         <th colspan="">Opciones</th>
     {% endblock%}
     
@@ -18,6 +19,7 @@
         <td>{{forloop.counter}}</td>
         <td>{{t.descripcion}}</td>
         <td>{{t.ganancia}}</td>
+        <td>{{t.importe}}</td>
 
 
 

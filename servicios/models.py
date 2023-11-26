@@ -29,12 +29,12 @@ class Servicio(models.Model):
     STRATEGIES = []
     codigo= models.CharField(max_length=30, unique=True)
     #Fecha cuando inicia el servicio
-    desde = models.DateField()
+    desde = models.DateField("Fecha Inicio",)
     #Fecha cuando finaliza el servicio
-    hasta = models.DateField(null=True)
-    cantidadEstimadaEmpleados= models.IntegerField()
+    hasta = models.DateField("Fecha Fin", null=True)
+    cantidadEstimadaEmpleados= models.IntegerField("Empleados Estimados", validators=[MaxValueValidator(200),MinValueValidator(1)])
 
-    ajuste = models.IntegerField()
+    ajuste = models.IntegerField(validators=[MaxValueValidator(100),MinValueValidator(1)])
 
     #    def requiereSeña(self):
     #   cliente
@@ -46,7 +46,7 @@ class Servicio(models.Model):
         #templeados = self.cantidadEstimadaEmpleados * (Categoria.objects.media_jornada().sueldBase / 2)
         #total = tdetalles + templeados
         total = tdetalles
-        return total + ((total * self.ajuste) / 100)
+        return round(total + ((total * self.ajuste) / 100), 2)
 
     def saldo(self):
         #implementar
@@ -64,6 +64,7 @@ class Servicio(models.Model):
         hoy = datetime.now()
         if self.estados.exists():
             return self.estados.filter(timestamp__lte=hoy).latest()
+
         
     def save(self, *args, **kwargs):
         esNuevo = self.pk is None
@@ -88,12 +89,12 @@ class Servicio(models.Model):
         self.strategy().pagar(self, *args, **kwargs)
 
 class DetalleServicio(models.Model):
-    cantidad= models.IntegerField()
-    tipoServicio = models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio")
+    cantidad= models.IntegerField("Cantidad de m²", validators=[MinValueValidator(1)])
+    tipoServicio = models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio", verbose_name="Tipo Servicio")
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name="detalles_servicio")
 
     def __str__(self):
-        return self.servicio.codigo + "" + self.tipoServicio.descripcion 
+        return self.tipoServicio.descripcion 
     
     def importe(self):
         return self.cantidad * self.tipoServicio.importe()
@@ -118,7 +119,7 @@ class Estado(models.Model):
         get_latest_by = 'timestamp'
 
     def __str__(self):
-        return f"{self.servicio} {self.get_tipo_display()}"
+        return f"{self.get_tipo_display()}"
 
 class EstadoStrategy():
     TIPO = ""

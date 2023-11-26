@@ -9,16 +9,16 @@
     {% block tlista %} Listado de Tipos de servicio {% endblock %}
 
     {% block thextras %}
+        <th colspan="">Importe</th>
         <th colspan="">Opciones</th>
-        <th colspan="">Informacion</th>
     {% endblock%}
     
     {% block tcuerpo %}
     {% for t in tiposServicio %}
     <tr>
         <td>{{forloop.counter}}</td>
-        <td>{{t.codigo}}</td>
         <td>{{t.descripcion}}</td>
+        <td>{{t.ganancia}}</td>
         <td>{{t.importe}}</td>
 
 
@@ -27,12 +27,8 @@
         <td>
             <a href="#" onclick="abrir_modal('{% url "servicios:modificarTipoServicio" pk=t.pk %}')" class="bi bi-pencil-square text-primary"> </a>
 
+        </td>
 
-        </td>
-        <td>
-            <a href="/Productos/{{t.codigo}}" class="btn btn-link"><i class="bi bi-journal"></i></a>
-           
-        </td>
     </tr>
     {% empty %}
     <tr> <td> No hay tipos de servicio registrados </td> </tr>

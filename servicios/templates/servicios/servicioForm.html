@@ -26,3 +26,25 @@
 {% block btnform %}
   Guardar
 {% endblock %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Obtén los elementos de los campos desde y hasta
+    var desde = document.getElementById("id_desde");
+    var hasta = document.getElementById("id_hasta");
+  
+    // Agrega un evento de cambio al campo desde
+    desde.addEventListener("change", function() {
+      // Obtén el valor seleccionado en el campo desde
+      var valorDesde = desde.value;
+  
+      // Establece la fecha mínima en el campo hasta
+      hasta.min = valorDesde;
+  
+      // Si el valor actual en hasta es menor que el nuevo mínimo, restablécelo
+      if (hasta.value < valorDesde) {
+        hasta.value = valorDesde;
+      }
+    });
+  });
+  </script>

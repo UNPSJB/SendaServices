@@ -2,15 +2,14 @@ from django.db import models
 from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
-
+from django.core.validators import MinValueValidator,MaxValueValidator
+from decimal import Decimal
 # Create your models here.
 
 
 class TipoServicio(models.Model):
-    codigo= models.CharField(max_length=30, unique=True)
     descripcion= models.CharField( max_length=250)
-    ganancia= models.DecimalField(decimal_places=2,max_digits=14)  #precio
+    ganancia= models.IntegerField(default=1, validators=[MaxValueValidator(100),MinValueValidator(1)])
     #Costo fijo adicional
     productos= models.ManyToManyField("core.Producto", through='TipoServicioProducto')
 
@@ -18,7 +17,9 @@ class TipoServicio(models.Model):
         return self.descripcion
     
     def importe(self):
-        return round(self.ganancia * sum([p.importe() for p in self.productos_cantidad.all()]),2)
+        ganancia_decimal = Decimal(str(self.ganancia))
+        total= (1+(ganancia_decimal/100)) * sum([p.importe() for p in self.productos_cantidad.all()])
+        return total.quantize(Decimal('0.00'))
 
 
 class TipoEstado (models.TextChoices):
@@ -43,9 +44,10 @@ class Servicio(models.Model):
     desde = models.DateField("Fecha Inicio",)
     #Fecha cuando finaliza el servicio
     hasta = models.DateField("Fecha Fin", null=True)
-    cantidadEstimadaEmpleados= models.IntegerField("Empleados Estimados")
+
     estado = models.CharField(max_length=20, null=False, choices=TipoEstado.choices, default=TipoEstado.PRESUPUESTADO)
-    ajuste = models.IntegerField()
+    cantidadEstimadaEmpleados= models.IntegerField("Empleados Estimados", validators=[MaxValueValidator(200),MinValueValidator(1)])
+    ajuste = models.IntegerField(validators=[MaxValueValidator(100),MinValueValidator(1)])
 
     #    def requiereSeña(self):
     #   cliente
@@ -105,7 +107,7 @@ class Servicio(models.Model):
         self.strategy().pagar(self, *args, **kwargs)
 
 class DetalleServicio(models.Model):
-    cantidad= models.IntegerField("Cantidad de m²")
+    cantidad= models.IntegerField("Cantidad de m²", validators=[MinValueValidator(1)])
     tipoServicio = models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio", verbose_name="Tipo Servicio")
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name="detalles_servicio")
 

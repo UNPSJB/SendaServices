@@ -49,7 +49,7 @@ class HorarioForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'id-HorarioForm'
+        self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
 
         self.helper.add_input(Submit('submit', 'Guardar'))
@@ -99,8 +99,8 @@ class HorarioModForm(ModelForm):
 
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
-            'turno': 'turno',
-            'diaSemana': 'dia de la semana',
+            'turno': 'Turno',
+            'diaSemana': 'Dia de la semana',
             'servicio': 'Servicio',
         }
         #Referencia a los estilos con los que se renderizan los campos
@@ -108,7 +108,7 @@ class HorarioModForm(ModelForm):
             'turno': forms.CheckboxInput(
                 attrs = {
                     'class': 'form-control',
-                    'placeholder':'Ingrese el turno del turno',
+                    'placeholder':'Ingrese el turno del horario',
                 }
             ),
             'diaServicio': forms.CheckboxInput(
@@ -130,7 +130,7 @@ class HorarioModForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'pk-HorarioForm'
+        self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
         horario = kwargs["instance"] 
         self.helper.form_action = reverse_lazy("modificarHorario", kwargs={"pk": horario.pk})

@@ -64,7 +64,7 @@ class HorarioUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Modificar Turnos"
-        #print(self.template_name)
+        print(self.template_name)
         return context
     
     #Este form, es para cuando se envia se muestre el mensaje de empleado modificado en list

@@ -92,6 +92,6 @@ urlpatterns = [
     path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria'),  
 
     #Gestion Turnos
-    path('horarios/', include('turnos.urls',namespace='horarios')),
+    path('turnos/', include('turnos.urls',namespace='turnos')),
     
 ]

@@ -13,7 +13,7 @@ class HorarioAdmin(admin.ModelAdmin):
     ]
 
 
-"""admin.site.register(Horario,HorarioAdmin)
-admin.site.register(Horario)
+admin.site.register(Horario,HorarioAdmin)
+#admin.site.register(Horario)
 admin.site.register(Periodo)
-admin.site.register(Asistencia)"""
+admin.site.register(Asistencia)	

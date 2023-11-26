@@ -82,14 +82,12 @@ class ListFilterView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        print(f"{qs=}")
         qs = self.apply_filters_to_qs(qs)
         return qs
 
     def apply_filters_to_qs(self, qs):
         if self.filtros:
             filtros = self.filtros(self.request.GET)
-            print(f"{filtros=}")
             return filtros.apply(qs)
         return qs
     
@@ -136,4 +134,4 @@ def export_list(request, Modelo, Filtros): # Metodo utilizado para la exportar l
                 valores.append(valor) # adjunto el valor justo con los demas valores que conforman la fila
             writer.writerow(valores) # escribo la fila
 
-    return response
+        return response

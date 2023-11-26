@@ -1,10 +1,6 @@
 from django.contrib import admin
 from .models import *
 
-class ServicioAdmin(admin.ModelAdmin):
-    list_display = ("codigo", "estado")
-
-
 class TipoServicioProductoInline(admin.TabularInline):
     model = TipoServicioProducto
 
@@ -18,6 +14,7 @@ class DetalleServicioInline(admin.TabularInline):
     model = DetalleServicio
 
 class ServicioAdmin(admin.ModelAdmin):
+    list_display = ("codigo", "estado")
     inlines=[
         DetalleServicioInline
     ]

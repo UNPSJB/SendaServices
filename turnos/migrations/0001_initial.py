@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('core', '0001_initial'),
-        ('servicios', '0005_alter_servicio_desde'),
+        ('servicios', '0001_initial'),
     ]
 
     operations = [

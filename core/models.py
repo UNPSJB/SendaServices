@@ -30,7 +30,6 @@ class Inmueble(models.Model):
 
 
 class Producto(models.Model):
-    codigo= models.CharField(max_length=30, unique=True)
     descripcion= models.CharField( max_length=250)
     stock= models.IntegerField()
     precioUnitario= models.DecimalField("Precio unitario",decimal_places=2,max_digits=10)
@@ -39,17 +38,18 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.descripcion
+
     
     def puedo_eliminar(self):
         # TODO: verificar que unicamente se marque con baja=True si el producto pasa todas las condiciones para hacerlo.
         # Que ningún detalle servicio de un servicio vigente, contenga un tipoServicio con el producto en cuestión.
 
         tipos_servicio_producto = TipoServicioProducto.objects.filter(producto=self)
-        tipos_servicios = TipoServicio.objects.filter(tiposervicioproducto__in=tipos_servicio_producto)
+        tipos_servicios = TipoServicio.objects.filter(productos_cantidad__in=tipos_servicio_producto)
         detalles_servicios = DetalleServicio.objects.filter(tipoServicio__in=tipos_servicios)
         # recuperar servicios y filtrar según estados "activos": ["presupuestado", "contratado", "pagado", "iniciado"]
         # unicamente se podrá eliminar el producto si ninguno de los servicios anteriores lo contienen. 
-        return not Servicio.objects.filter(detalleservicio__in=detalles_servicios).exists() 
+        return not Servicio.objects.filter(detalles_servicio__in=detalles_servicios).exists() 
 
     def dar_de_baja(self):
         if self.puedo_eliminar():
@@ -80,13 +80,27 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
+
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, unique=True)
-    nombreYapellido= models.CharField(max_length=90)
+    nombre= models.CharField(max_length=45)
+    apellido= models.CharField(max_length=45)
     correo= models.EmailField(max_length=90)
     cuil= models.CharField(max_length=30)
-    categoria = models.ForeignKey(Categoria, related_name="empleados", on_delete=models.CASCADE)
+    categoria=models.ForeignKey(Categoria,on_delete=models.CASCADE)
+    baja= models.BooleanField(default=False)
 
     def __str__(self):
-        return self.nombreYapellido
+        return f"{self.apellido}{self.nombre}"
+
+    def dar_de_baja(self):
+        # TODO: verificar que unicamente se marque con baja=True si el producto pasa todas las condiciones para hacerlo.
+        self.baja = True
+        self.save()
+    
+
+
+
+
+
     

@@ -51,6 +51,57 @@
               Home
             </a>
           </li>
+
+          <!-- Menu empleados -->
+          <li class="sidebar-item">
+
+            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionempleado" data-bs-toggle="collapse"
+              aria-expanded="false">
+              <i class="bi bi-person-lines-fill"></i> Gestion Empleados
+            </a>
+
+            <!--Empleados-->
+            <ul id="gestionempleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#empleado" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-person-fill"></i>
+                Empleados
+              </a>
+
+              <ul id="empleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'crearEmpleado' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+                <li class="sidebar-item">
+                  <a href="{% url 'listarEmpleado' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
+            </ul>
+
+            <!--Categorias-->
+            <ul id="gestionempleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#categoria" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-person-fill"></i>
+                Categorias
+              </a>
+
+              <ul id="categoria" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'crearCategoria' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+                <li class="sidebar-item">
+                  <a href="{% url 'listarCategoria' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
+            </ul>            
+
+          </li>   
+
           <!-- Menu clientes -->
           <li class="sidebar-item">
 
@@ -100,6 +151,7 @@
             </ul>
           </li> 
 
+         
           <!-- Menu productos -->
           <li class="sidebar-item">
 

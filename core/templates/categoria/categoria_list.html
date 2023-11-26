@@ -1,0 +1,34 @@
+{% extends "../baselist.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block tmain %}
+<h4 class="mx-3">{{ titulo }}</h4>
+{% endblock %}
+
+    {% block tlista %} Listado de Categorias {% endblock %}
+
+    {% block thextras %}
+        <th colspan="">Opciones</th>
+    {% endblock%}
+    
+    {% block tcuerpo %}
+        {% for c in categoria %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{c.nombre}}</td>
+                <td>{{c.sueldoBase}}</td>
+            
+
+                <td>
+                    <!--Si queremos abrir un moda, se utiliza abrir-->
+
+                    <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarCategoria" c.pk %}')"></a>
+                    
+                </td>
+
+            </tr>
+            {% empty %}
+                <tr> <td> No hay categorias registradas </td> </tr>
+    {% endfor %}
+{% endblock %}

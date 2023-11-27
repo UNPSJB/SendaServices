@@ -192,6 +192,12 @@ class InmuebleListView(ListFilterView):
     context_object_name = 'inmuebles' #Nombre de la lista usar ''
     queryset = Inmueble.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Inmuebles"
+        return context
+
 class InmuebleCreateView(CreateView):
     model = Inmueble
     form_class = InmuebleForm
@@ -200,6 +206,8 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Inmuebles"
         return context
     
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
@@ -233,6 +241,12 @@ class ProductoListView(ListFilterView):
     context_object_name = 'productos' #Nombre de la lista usar ''
     queryset = Producto.objects.filter(baja=False)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Productos"
+        return context
+
 class ProductoCreateView(CreateView):
     model = Producto
     form_class = ProductoForm
@@ -242,6 +256,12 @@ class ProductoCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Producto"
+        return context
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Productos"
         return context
 
     
@@ -296,6 +316,7 @@ class EmpleadoCreateView(CreateView):
         context['boton1'] = "Crear Empleado"
         print(self.template_name)
         print(context["form"].errors)
+        context['tnav'] = "Gestion de Empleado"
         return context
 
     
@@ -354,6 +375,7 @@ class CategoriaCreateView(CreateView):
         context['boton1'] = "Crear Categoria"
         print(self.template_name)
         print(context["form"].errors)
+        context['tnav'] = "Gestion de Categoria"
         return context
 
     

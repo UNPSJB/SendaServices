@@ -2,6 +2,10 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
+{% block title %}
+Buscar Inmuebles
+{% endblock %}
+
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
@@ -34,3 +38,4 @@
             <tr><td> {{i.cliente}} no tiene inmuebles registrados. </td></tr>
         {% endfor %}
 {% endblock %}
+

@@ -7,24 +7,28 @@ from django.views.generic.list import ListView
 import csv
 
 
-def dict_to_query(filtros_dict):
-    filtro = Q()
+def filter_query_by(filtros_dict, queryset, form = None):
     for attr, value in filtros_dict.items():
         if not value:
             continue
-        if type(value) == str:
+        if form is not None and hasattr(form, f"get_{attr}"):
+            func = getattr(form, f"get_{attr}")
+            if callable(func):
+                queryset = func(queryset, value)
+        elif type(value) == str:
             if value.isdigit():
                 prev_value = value
                 value = int(value)
-                filtro &= Q(**{attr: value}) | Q(**
-                                                 {f'{attr}__icontains': prev_value})
+                queryset = queryset.filter(Q(**{attr: value}) | Q(**
+                                                 {f'{attr}__icontains': prev_value}))
             else:
                 attr = f'{attr}__icontains'
-                filtro &= Q(**{attr: value})
+                print(f"{attr=} {value=}")
+                queryset = queryset.filter(Q(**{attr: value}))
         # elif isinstance(value, Model) or isinstance(value, int) or isinstance(value, Decimal):
         elif isinstance(value, (Model, int, Decimal, date)):
-            filtro &= Q(**{attr: value})
-    return filtro
+            queryset = queryset.filter(Q(**{attr: value}))
+    return queryset
 
 # Filtros - Form
 
@@ -34,8 +38,8 @@ class FiltrosForm(forms.Form):
     orden = forms.CharField(required=False)
 
     def filter(self, qs, filters):
-        return qs.filter(dict_to_query(filters))  # aplicamos filtros
-
+        return filter_query_by(filters, qs, self)
+        
     def sort(self, qs, ordering):
         for o in ordering.split(','):
             if o != '':
@@ -60,7 +64,10 @@ class FiltrosForm(forms.Form):
     
     def serialize_query_params(self):
         #if self.is_valid():
-        return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
+        #return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
+        print("data: ", self.data)
+        if self.is_valid():
+            return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
 
 # Lista Filtros - ListView
 
@@ -85,6 +92,7 @@ class ListFilterView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        print(f"{qs=}")
         qs = self.apply_filters_to_qs(qs)
         return qs
 
@@ -95,6 +103,9 @@ class ListFilterView(ListView):
 
         filtros = self.get_filtros(self.request.GET)
         if filtros is not None:
+        # if self.filtros:
+        #     filtros = self.filtros(self.request.GET)
+        #     print(f"{filtros=}")
             return filtros.apply(qs)
 
         """if self.filtros:
@@ -147,4 +158,4 @@ def export_list(request, Modelo, Filtros): # Metodo utilizado para la exportar l
                 valores.append(valor) # adjunto el valor justo con los demas valores que conforman la fila
             writer.writerow(valores) # escribo la fila
 
-    return response
+        return response

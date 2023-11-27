@@ -112,7 +112,6 @@ class ClienteUpdateView(UpdateView):
         messages.success(self.request, 'El cliente se ha modificado exitosamente.')
         return super().form_valid(form)
     
-
 #Gestion Inmueble
 
 class InmuebleListView(ListFilterView):

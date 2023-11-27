@@ -1,0 +1,65 @@
+
+
+{% extends "../baselist.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+
+    {% block tlista %} Listado de Servicios {% endblock %}
+
+    {% block thextras %}
+        <th colspan="">Opciones</th>
+        <th colspan="">Informacion</th>
+    {% endblock%}
+    
+    {% block tcuerpo %}
+    {% for s in servicio %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        
+        <td>{{s.codigo}}</td>
+        <td>{{s.estado_actual}}</td>
+        <td>{{s.desde}}</td>
+        <td>{{s.hasta}}</td>
+        <td>{{s.cantidadEstimadaEmpleados}}</td>
+        <td>{{s.totalEstimado}}</td>
+
+
+
+        <td>
+        {% if s.estado.tipo == s.estado.Tipo.PRESUPUESTADO %}
+            <button type="button" class="btn btn-primary">Contratar</button>
+        {% endif %}
+        </td>
+
+        
+        <td>
+            <a href="#" onclick="abrir_modal('{% url "servicios:modificarServicio" pk=s.pk %}')" class="bi bi-pencil-square text-primary"> </a>
+        </td>
+
+    </tr>
+
+    
+
+    {% empty %}
+    <tr> <td> No hay servicios registrados </td> </tr>
+    {% endfor %}
+
+    
+{% endblock %}
+
+
+
+{% block extrajs %}
+<!--Modal-->
+<script type="text/javascript">
+var $ = jQuery.noConflict();
+function abrir_modal(url){
+    $('#modal').load(url, function(){
+        $(this).modal('show');
+        bindFormSet($('#modal'));
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends '../baseform.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+<!-- Titulo del formulario -->
+{% block tform %}
+  Registrar Servicio
+{% endblock %}
+
+<!-- Url del formulario -->
+{% block url %}
+  {% url 'servicios:crearServicio' %}
+{% endblock %}
+
+{% block cform %}
+  
+
+  {% crispy form form.helper %}
+  <div data-formset="detalles_servicio" id="productos" >
+    {% crispy detalleServicio_formset detalleServicio_formset_helper %}
+  </div>
+{% endblock %}
+
+
+<!-- Boton del formulario -->
+{% block btnform %}
+  Guardar
+{% endblock %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Obtén los elementos de los campos desde y hasta
+    var desde = document.getElementById("id_desde");
+    var hasta = document.getElementById("id_hasta");
+  
+    // Agrega un evento de cambio al campo desde
+    desde.addEventListener("change", function() {
+      // Obtén el valor seleccionado en el campo desde
+      var valorDesde = desde.value;
+  
+      // Establece la fecha mínima en el campo hasta
+      hasta.min = valorDesde;
+  
+      // Si el valor actual en hasta es menor que el nuevo mínimo, restablécelo
+      if (hasta.value < valorDesde) {
+        hasta.value = valorDesde;
+      }
+    });
+  });
+  </script>

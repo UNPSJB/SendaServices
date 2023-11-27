@@ -36,8 +36,6 @@ class Producto(models.Model):
     precioUnitario= models.DecimalField("Precio unitario",decimal_places=2,max_digits=10)
     baja= models.BooleanField(default=False)
 
-    def getCosto(self):
-        return self.precioUnitario
 
     def __str__(self):
         return self.descripcion
@@ -74,6 +72,9 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre   
 
+    # objects = CategoriaManager()
+    # def __str__(self):
+    #     return self.nombre
 
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, primary_key=True)

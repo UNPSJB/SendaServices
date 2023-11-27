@@ -5,7 +5,7 @@
 
 <!-- Titulo del modal -->
 {% block tmodal %}
-  Edicion Tipo servicio:
+  Edicion de servicio:
 {% endblock %}
 
 <!-- Objeto del titulo del modal -->
@@ -15,15 +15,15 @@
 
 <!-- Url del modal -->
 {% block url %}
-  {% url 'servicios:modificarTipoServicio' object.pk %}
+  {% url 'servicios:modificarServicio' object.pk %}
 {% endblock %}
 
 {% block cmodal %}
-  <div id="tipo-servicio-form-wrapper">
+  <div id="servicio-form-wrapper">
     {% crispy form form.helper %}
   </div>
-  <div data-formset="productos_cantidad" id="productos">
-    {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
+  <div data-formset="detalles" id="detalles">
+    {% crispy detalle_servicio_formset detalle_servicio_formset_helper %}
   </div>
 {% endblock %}
 
@@ -43,7 +43,7 @@
     e.preventDefault();
 
     // Seteamos la url a la view de validación del form que está dentro del modal
-    const url = "{% url 'servicios:validarTipoServicioFormAjax' object.pk %}";
+    const url = "{% url 'servicios:validarServicioFormAjax' object.pk %}";
 
     // Obtenemos los datos cargados en el form para enviarlos a validar
     const form = document.querySelector(".modal form");
@@ -52,8 +52,8 @@
     // Configuramos los selectores para reemplazar el contenido html sin/con los errores
     // junto a sus respectivas "claves" dentro del objeto response que viene de la view de validación
     const config = {
-      '#tipo-servicio-form-wrapper' : 'form_html',
-      '#productos': 'productos_html'
+      '#servicio-form-wrapper' : 'form_html',
+      '#detalles': 'detalles_html'
     }
     
     // Invocamos a la función que maneja la validación.

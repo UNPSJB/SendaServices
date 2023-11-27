@@ -14,7 +14,6 @@ from django.utils.translation import gettext_lazy as _
 class ServiciosFiltrosForm(FiltrosForm):
     # Campos del modelo
     ORDEN_CHOICES = [
-        ("codigo", "Codigo"),
         ("estado", "Estado"),
         ("desde", "Fecha Inicio"),
         ("hasta", "Fecha Fin"),
@@ -23,7 +22,6 @@ class ServiciosFiltrosForm(FiltrosForm):
     ]
 
     ATTR_CHOICES = [
-        ("codigo", "Codigo"),
         ("estado", "Estado"),
         ("desde", "Fecha Inicio"),
         ("hasta", "Fecha Fin"),
@@ -42,12 +40,6 @@ class ServiciosFiltrosForm(FiltrosForm):
     # ]
 
     # Formulario de filtrado
-    codigo = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': '########'}),
-        max_length=30
-    )
-
     estado = forms.ChoiceField(
         label=_("Estado"),
         choices=TipoEstado.choices,
@@ -131,22 +123,25 @@ class ServicioForm(forms.ModelForm):
         return cleaned_data
     
 
+from django import forms
+from django.core.exceptions import ValidationError
+from .models import Servicio
+from datetime import datetime
+from crispy_forms.helper import FormHelper
 
 class ServicioUpdateForm(forms.ModelForm):
 
     class Meta:
-        model= Servicio
-        exclude = ('estado', )
+        model = Servicio
+        exclude = ('estado', 'inmueble', )
 
-    widgets = {
-        'desde': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
-        'hasta': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
-    }
+    desde = forms.DateField(widget=forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'text'}))
+    hasta = forms.DateField(widget=forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'text'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
-        self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+        self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%d/%m/%Y')
+        self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%d/%m/%Y')
         self.helper = FormHelper()
         self.helper.form_tag = False
 
@@ -159,7 +154,6 @@ class ServicioUpdateForm(forms.ModelForm):
             raise ValidationError("La fecha 'FIN' debe ser mayor o igual a la fecha 'INICIO'.")
 
         return cleaned_data
-
 
 class DetalleServicioForm(forms.ModelForm):
 

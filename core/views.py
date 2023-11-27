@@ -126,8 +126,7 @@ class InmuebleListView(ListFilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
-        context['tnav'] = "Gestion de Inmuebles"
+        context["cliente"] = self.get_cliente()
         return context
 
     def get_cliente(self):
@@ -191,8 +190,8 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
-        context['tnav'] = "Gestion de Inmuebles"
+        #print(self.template_name)
+        #context['tnav'] = "Gestion de Inmuebles"
         return context
 
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list

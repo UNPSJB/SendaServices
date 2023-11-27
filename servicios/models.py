@@ -39,7 +39,6 @@ class Servicio(models.Model):
         DETERMINADO = 2, "Por Tiempo Determinado"
 
     STRATEGIES = []
-    codigo= models.CharField(max_length=30, unique=True)
     #Fecha cuando inicia el servicio
     desde = models.DateField("Fecha Inicio",)
     #Fecha cuando finaliza el servicio
@@ -71,7 +70,7 @@ class Servicio(models.Model):
         return self.hasta == None
 
     def __str__(self):
-        return self.codigo
+        return "servicio"
     
     def set_estado(self, tipo_estado):
         self.estado = tipo_estado

@@ -28,9 +28,13 @@
             {% endif %}
 
             <form method="post" action="">
+                {% comment %} {% csrf_token %} 
+                {{ form | crispy }} {% endcomment %}
                 {% csrf_token %}
                 {{ form | crispy }}
-
+                {% comment %}{% block cform %}
+                    {% crispy form form.helper %}
+                {% endblock %}{% endcomment %}
                 <button type="submit" class="btn btn-success w-100 mt-2" value="Ingresar">Ingresar</button>
             </form>
         </div>

@@ -171,8 +171,28 @@
               </li>
             </ul>
           </li>
-      
-          <!-- Menu clientes -->
+
+      <!-- Menu turnos -->
+      <li class="sidebar-item">
+
+        <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionHorarios" data-bs-toggle="collapse"
+          aria-expanded="false">
+          <i class="bi bi-box-seam"></i> Gestion Turnos
+        </a>
+
+        <!--Turnos-->
+        <ul id="gestionHorarios" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+          <li class="sidebar-item">
+            <a href="{% url 'turnos:crearHorario' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+          </li>
+          
+          <li class="sidebar-item">
+            <a href="{% url 'turnos:listarHorarios' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+          </li>
+        </ul>
+      </li>
+            
+          <!-- Menu servicios -->
           <li class="sidebar-item">
 
             <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionservicios" data-bs-toggle="collapse"
@@ -180,7 +200,7 @@
               <i class="bi bi-file-medical-fill"></i> Gestion de Servicios
             </a>
 
-            <!--Clientes-->
+            <!--Servicios-->
             <ul id="gestionservicios" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
 
 

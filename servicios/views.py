@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from .forms import (
-    ServicioForm, DetalleServicioInline, ServiciosFiltrosForm, 
+    ServicioForm, ServicioUpdateForm, DetalleServicioInline, ServiciosFiltrosForm, 
     DetalleServicioFormSetHelper, TipoServicioForm, 
     TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm)
 from .models import TipoServicio, Servicio
@@ -244,7 +244,7 @@ class ServicioCreateView(CreateView):
     
 class ServicioUpdateView(UpdateView):
     model = Servicio
-    form_class = ServicioForm
+    form_class = ServicioUpdateForm
     success_url = reverse_lazy("servicios:listarServicio")
     template_name = "servicios/servicio_modal.html"
 

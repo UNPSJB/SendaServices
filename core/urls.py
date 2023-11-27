@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required
 
+from turnos import urls
+
 from .views import (
     salir, 
     index, 
@@ -25,24 +27,23 @@ from .views import (
     ClienteListView, 
     ClienteCreateView, 
     ClienteUpdateView, 
-    ClienteInmuebleListView,
-    ClienteInmuebleCreateView,
-    ClienteInmuebleUpdateView,
+    #ClienteInmuebleListView,
+    #ClienteInmuebleCreateView,
+    #ClienteInmuebleUpdateView,
     InmuebleCreateView,
     InmuebleListView,
     InmuebleUpdateView,
     ProductoCreateView,
     ProductoListView,
     ProductoUpdateView,
+    ProductoDeleteView,
     EmpleadoCreateView,
     EmpleadoListView,
     EmpleadoUpdateView,
     EmpleadoDeleteView,
     CategoriaCreateView,
     CategoriaListView,
-    CategoriaUpdateView,
-    ProductoDeleteView
-
+    CategoriaUpdateView
 )
 
 
@@ -59,14 +60,14 @@ urlpatterns = [
     path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
-    path('cliente/<str:pk>/inmuebles', ClienteInmuebleListView.as_view(), name="inmueblesCliente"),
-    path('cliente/<str:pk>/inmuebles/crear', ClienteInmuebleCreateView.as_view(), name="crearInmuebleCliente"),
-    path('clientes/<str:pk>/inmuebles/modificar', ClienteInmuebleUpdateView.as_view(), name="modificarInmuebleCliente"),
-
+    
     # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
+    path('inmuebles/cliente/<str:pk>/crear', InmuebleCreateView.as_view(), name='crearInmuebleParaCliente'),
+    path('inmuebles/cliente/<str:cliente_pk>/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmuebleParaCliente'),    
     path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
     path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
+    path('inmuebles/cliente/<str:pk>/listar', InmuebleListView.as_view(), name='listarInmueblesDeCliente'),
 
     # Gestion Tipo Servicio
     path('servicios/', include('servicios.urls',namespace='servicios')),
@@ -87,7 +88,9 @@ urlpatterns = [
     #Gestion Categoria
     path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),
     path('categoria/modificar/<str:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
-    path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria'),
+    path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria'),  
 
+    #Gestion Turnos
+    path('turnos/', include('turnos.urls',namespace='turnos')),
+    
 ]
-

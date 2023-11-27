@@ -6,7 +6,7 @@ from servicios.models import (
     TipoServicioProducto)
 
 class Cliente(models.Model):
-    cuil_cuit= models.CharField("Cuil/Cuit",max_length=11, unique=True)
+    cuil_cuit= models.CharField("Cuil/Cuit",max_length=13, unique=True)
     apellido= models.CharField(max_length=45)
     nombre= models.CharField(max_length=45)
     correo= models.EmailField(max_length=45)
@@ -80,6 +80,9 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
+    # objects = CategoriaManager()
+    # def __str__(self):
+    #     return self.nombre
 
 class Empleado(models.Model):
     legajo= models.CharField(max_length=30, unique=True)
@@ -97,7 +100,6 @@ class Empleado(models.Model):
         # TODO: verificar que unicamente se marque con baja=True si el producto pasa todas las condiciones para hacerlo.
         self.baja = True
         self.save()
-    
 
 
 

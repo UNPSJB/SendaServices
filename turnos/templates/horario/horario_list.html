@@ -1,0 +1,40 @@
+{% extends 'baselist.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+    {% block tlista %} Listado de Turnos {% endblock %}
+
+    {% block thextras %}
+        <th colspan="">Opciones</th>
+    {% endblock%}
+    
+    {% block tcuerpo %}
+    {% for h in horario %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{h.turno}}</td>
+        <td>{{h.diaSemana}}</td>
+        <td>{{h.servicio}}</td>
+        <td>
+            <!--Si queremos abrir un moda, se utiliza abrir-->
+            <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "turnos:modificarHorario" pk=h.pk %}')"></a>
+                <!--a href='{% url "turnos:listarHorarios" %}' class="bi bi-building-fill text-success"></a-->
+        </td>
+    </tr>
+    {% empty %}
+        <tr> <td> No hay turnos registrados </td> </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block extrajs %}
+<!--Modal-->
+<script type="text/javascript">
+var $ = jQuery.noConflict();
+function abrir_modal(url){
+    $('#modal').load(url, function(){
+        $(this).modal('show');
+        bindFormSet($('#modal'));
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,2 @@
+CONFLICT (modify/delete): servicios/migrations/0004_rename_costo_tiposervicio_ganancia.py deleted in HEAD and modified in fd032ebfb087de9bbfe87c065da3f89d95f876cb.  Version fd032ebfb087de9bbfe87c065da3f89d95f876cb of servicios/migrations/0004_rename_costo_tiposervicio_ganancia.py left in tree.
+

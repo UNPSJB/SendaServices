@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator,MaxValueValidator
 from decimal import Decimal
+
 # Create your models here.
 
 
@@ -47,6 +48,8 @@ class Servicio(models.Model):
     estado = models.CharField(max_length=20, null=False, choices=TipoEstado.choices, default=TipoEstado.PRESUPUESTADO)
     cantidadEstimadaEmpleados= models.IntegerField("Empleados Estimados", validators=[MaxValueValidator(200),MinValueValidator(1)])
     ajuste = models.IntegerField(validators=[MaxValueValidator(100),MinValueValidator(1)])
+
+    inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
 
     #    def requiereSeña(self):
     #   cliente

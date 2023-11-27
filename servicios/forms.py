@@ -106,7 +106,7 @@ class ServiciosFiltrosForm(FiltrosForm):
 class ServicioForm(forms.ModelForm):
     class Meta:
         model= Servicio
-        fields = '__all__'
+        exclude = ('estado',)
 
         widgets = {
             'desde': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
@@ -136,7 +136,7 @@ class ServicioUpdateForm(forms.ModelForm):
 
     class Meta:
         model= Servicio
-        fields = '__all__'
+        exclude = ('estado', )
 
     widgets = {
         'desde': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),

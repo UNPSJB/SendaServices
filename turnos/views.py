@@ -46,9 +46,11 @@ class HorarioCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Horario"
         context['boton1'] = "Crear Horario"
+        context['tnav'] = "Gestion de Horarios"
         #print(self.template_name)
         #print(context["form"].errors)
         return context
+    
 
     #Este form, es para cuando se envia se muestre el mensaje de empleado creado en list
     def form_valid(self, form):

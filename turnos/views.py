@@ -39,7 +39,7 @@ class HorarioListView(ListFilterView):
 class HorarioCreateView(CreateView):
     model = Horario
     form_class = HorarioForm
-    success_url = reverse_lazy('listarHorarios')
+    success_url = reverse_lazy('turnos:listarHorarios')
     template_name = "horario/horario_form.html"
 
     def get_context_data(self, **kwargs):
@@ -58,7 +58,7 @@ class HorarioCreateView(CreateView):
 class HorarioUpdateView(UpdateView):
     model = Horario
     form_class = HorarioModForm
-    success_url = reverse_lazy('listarHorarios')
+    success_url = reverse_lazy('turnos:listarHorarios')
     template_name = "horario/horario_modal.html"
 
     def get_context_data(self, **kwargs):

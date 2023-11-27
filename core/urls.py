@@ -62,13 +62,15 @@ urlpatterns = [
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
     
     # Gestion Inmuebles
+    
+    # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
     path('inmuebles/cliente/<str:pk>/crear', InmuebleCreateView.as_view(), name='crearInmuebleParaCliente'),
     path('inmuebles/cliente/<str:cliente_pk>/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmuebleParaCliente'),    
     path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
     path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
     path('inmuebles/cliente/<str:pk>/listar', InmuebleListView.as_view(), name='listarInmueblesDeCliente'),
-
+    
     # Gestion Tipo Servicio
     path('servicios/', include('servicios.urls',namespace='servicios')),
     
@@ -82,12 +84,12 @@ urlpatterns = [
     #Gestion Empleados
     path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),
     path('empleadoList/', EmpleadoListView.as_view(), name="listarEmpleado"),
-    path('empleadoModificar/<str:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
+    path('empleadoModificar/<int:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
     path('empleado/eliminar/<str:pk>', EmpleadoDeleteView.as_view(), name='eliminarEmpleado'),
     
     #Gestion Categoria
     path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),
-    path('categoria/modificar/<str:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
+    path('categoria/modificar/<int:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
     path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria'),  
 
     #Gestion Turnos

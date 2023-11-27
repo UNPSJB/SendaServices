@@ -7,7 +7,7 @@
 {% block tobjectmodal %} {{object}} {% endblock %}
 
 <!--Url del modal-->
-{% block url %} {% url 'modificarEmpleado' object.legajo%} {% endblock %}
+{% block url %} {% url 'modificarEmpleado' object.pk%} {% endblock %}
 
 <!--Boton del modal-->
 {% comment %}{% block btnmodal %} Guardar {% endblock %}{% endcomment %} 

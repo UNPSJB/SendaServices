@@ -410,6 +410,7 @@ class CategoriaFiltrosForm(FiltrosForm):
 
 
 
+
 class InmuebleFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
@@ -640,10 +641,10 @@ class ProductoForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-productoForm'
-        self.helper.form_tag = False
-        #self.helper.form_method = 'post'
+        #self.helper.form_tag = False
+        self.helper.form_method = 'post'
 
-        #self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.add_input(Submit('submit', 'Guardar'))
 
 
 

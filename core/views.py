@@ -113,6 +113,7 @@ class ClienteUpdateView(UpdateView):
         return super().form_valid(form)
     
 #Gestion Inmueble
+    
 
 class InmuebleListView(ListFilterView):
     #Cantidad de elementos por lista
@@ -123,6 +124,7 @@ class InmuebleListView(ListFilterView):
     template_name = "inmuebles/inmueble_list.html" #Ruta del template
     context_object_name = 'inmuebles' #Nombre de la lista usar ''
     queryset = Inmueble.objects.all()
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -155,6 +157,12 @@ class InmuebleListView(ListFilterView):
 
     def get_filtros(self, *args, **kwargs):
         return InmuebleFiltrosForm(*args, **kwargs) if not self.get_cliente() else InmuebleCustomFiltrosForm(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["cliente"] = self.get_cliente()
+        return context    
+
         
 class InmuebleCreateView(CreateView):
     model = Inmueble
@@ -190,8 +198,11 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+<<<<<<< HEAD
         #print(self.template_name)
         #context['tnav'] = "Gestion de Inmuebles"
+=======
+>>>>>>> ee5db4b2fe8a9b9e6782eb3311ac22d2d48b12b5
         return context
 
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
@@ -248,7 +259,7 @@ class InmuebleUpdateView(UpdateView):
 
 class ProductoListView(ListFilterView):
     #Cantidad de elementos por lista
-    paginate_by = 2
+    paginate_by = 10
     #Filtros de la lista
     filtros = ProductoFiltrosForm
     model = Producto #Nombre del modelo

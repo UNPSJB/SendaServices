@@ -47,6 +47,9 @@ class Servicio(models.Model):
 
     estado = models.CharField(max_length=20, null=False, choices=TipoEstado.choices, default=TipoEstado.PRESUPUESTADO)
     cantidadEstimadaEmpleados= models.IntegerField("Empleados Estimados", validators=[MaxValueValidator(200),MinValueValidator(1)])
+    
+    diasSemana = models.IntegerField("Dias por semana estimados", validators=[MaxValueValidator(7),MinValueValidator(1)])
+    
     ajuste = models.IntegerField(validators=[MaxValueValidator(100),MinValueValidator(1)])
 
     inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
@@ -55,13 +58,15 @@ class Servicio(models.Model):
     #   cliente
 
     def totalEstimado(self):
-        #implementar
+        # Implementar
+        semanas = Decimal(((self.hasta - self.desde).days) / 7)
+        diasTotales =  Decimal((semanas * self.diasSemana)) # Obtener las semanas
         detalles_servicio = self.detalles_servicio.all()
-        tdetalles = sum([d.importe() for d in detalles_servicio])
-        #templeados = self.cantidadEstimadaEmpleados * (Categoria.objects.media_jornada().sueldBase / 2)
-        #total = tdetalles + templeados
-        total = tdetalles
-        return round(total + ((total * self.ajuste) / 100), 2)
+        tdetalles = sum([float(d.importe()) for d in detalles_servicio])
+
+        total = Decimal(tdetalles) * diasTotales
+
+        return round((total + ((total * self.ajuste) / 100) * semanas), 2)
 
     def saldo(self):
         #implementar
@@ -186,7 +191,7 @@ Servicio.STRATEGIES.append(EstadoIniciado())
 class TipoServicioProducto(models.Model):
     tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE, related_name="productos_cantidad")
     producto= models.ForeignKey("core.Producto",on_delete=models.CASCADE, related_name="productos_cantidad")
-    cantidad= models.DecimalField("Cantidad por m² ", max_digits=10,
+    cantidad= models.DecimalField("Cantidad de m² por dia ", max_digits=10,
         decimal_places=2, validators=[MinValueValidator(0)])
 
     def importe(self):

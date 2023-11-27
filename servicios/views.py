@@ -25,7 +25,7 @@ def dummy_view(request):
 
 def validar_servicio_form_en_modal(request, pk):
     instance = Servicio.objects.get(pk=pk)
-    form = ServicioForm(request.POST or None)
+    form = ServicioUpdateForm(request.POST or None)
     detalle_servicio_formset = DetalleServicioInline()(
         instance=instance, data=request.POST or None
     )
@@ -251,6 +251,8 @@ class ServicioUpdateView(UpdateView):
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super().get_form(form_class=form_class)
+        print(form)
+        
         self.detalle_servicio_formset = DetalleServicioInline()(
             instance=self.get_object(),
             data=self.request.POST if self.request.method in ["POST", "PUT"] else None,

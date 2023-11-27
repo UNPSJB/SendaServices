@@ -23,20 +23,20 @@ class HorarioForm(ModelForm):
         }
         #Referencia a los estilos con los que se renderizan los campos
         widgets = {
-            'turno': forms.CheckboxInput(
+            'turno': forms.Select(
                 #Permite estilizar los formularios
                 attrs = {
                     'class': 'form-control',
                     'placeholder':'Ingrese el turno del turno',
                 }
             ),
-            'diaSemana': forms.CheckboxInput(
+            'diaSemana': forms.Select(
                 attrs = {
                     'class': 'form-control',
                     'placeholder':'Ingrese el dia de la semana del turno',
                 }
             ),
-            'servicio': forms.CheckboxInput(
+            'servicio': forms.Select(
                 attrs = {
                     'class': 'form-control',
                     'placeholder':'Ingrese el servicio del turno',
@@ -71,13 +71,14 @@ class HorarioFiltrosForm(FiltrosForm):
     ]
 
     #Formulario de filtrado
-    turno = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Turno'}), max_length=30)
-    diaSemana = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'dia de la semana'}), max_length=30)
+    turno = forms.ChoiceField(required=False, choices=Horario.Turno.choices)
+    diaSemana = forms.ChoiceField(required=False, choices=Horario.DiaSemana.choices)
     #servicio = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Servicio'}))
-    servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Propietario')
+    servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Servicio')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        #self.initial['turno'] = '' 
         self.helper = FormHelper()
         self.helper.form_method = 'get'
         self.helper.layout = Layout(
@@ -85,7 +86,7 @@ class HorarioFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "turno","diaSemana",  #Remplazar campos formulario
+                "turno","diaSemana","servicio",  #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
@@ -101,24 +102,24 @@ class HorarioModForm(ModelForm):
         labels = { 
             'turno': 'Turno',
             'diaSemana': 'Dia de la semana',
-            'servicio': 'Servicio',
+            #'servicio': 'Servicio',
         }
         #Referencia a los estilos con los que se renderizan los campos
         widgets = {
-            'turno': forms.CheckboxInput(
+            'turno': forms.TextInput(
                 attrs = {
                     'class': 'form-control',
                     'placeholder':'Ingrese el turno del horario',
                 }
             ),
-            'diaServicio': forms.CheckboxInput(
+            'diaServicio': forms.TextInput(
                 attrs = {
                     'class': 'form-control',
                     'placeholder':'Ingrese el dia de la semana del turno',
 
                 }
             ),
-            'servicio.pk': forms.TextInput(
+            'servicio.pk': forms.Select(
                 attrs = {           
                     'class': 'form-control',
                     'placeholder':'Ingrese el servicio del turno',
@@ -133,7 +134,7 @@ class HorarioModForm(ModelForm):
         self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
         horario = kwargs["instance"] 
-        self.helper.form_action = reverse_lazy("modificarHorario", kwargs={"pk": horario.pk})
+        self.helper.form_action = reverse_lazy("turnos:modificarHorario", kwargs={"pk": horario.pk})
         self.helper.add_input(Submit('submit', 'Guardar'))
 
 

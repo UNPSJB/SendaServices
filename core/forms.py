@@ -657,6 +657,5 @@ class ProductoUpdateForm(ProductoForm):
         self.helper = FormHelper()
         self.helper.form_id = 'id-productoForm'
         self.helper.form_method = 'post'
-        #categoria = kwargs["instance"] # nos da el modelo Inmueble
         self.helper.form_action = reverse_lazy("modificarProducto", kwargs={"pk": Producto.pk})
         self.helper.add_input(Submit('submit', 'Guardar'))

@@ -59,14 +59,17 @@ class Servicio(models.Model):
 
     def totalEstimado(self):
         # Implementar
-        semanas = Decimal(((self.hasta - self.desde).days) / 7)
+        if self.esEventual:
+            semanas = 1
+        else:
+            semanas = Decimal(((self.hasta - self.desde).days) / 7)
         diasTotales =  Decimal((semanas * self.diasSemana)) # Obtener las semanas
         detalles_servicio = self.detalles_servicio.all()
         tdetalles = sum([float(d.importe()) for d in detalles_servicio])
 
         total = Decimal(tdetalles) * diasTotales
 
-        return round((total + ((total * self.ajuste) / 100) * semanas), 2)
+        return round((total + ((total * self.ajuste) / 100)), 2)
 
     def saldo(self):
         #implementar
@@ -75,11 +78,11 @@ class Servicio(models.Model):
     
     @property
     def esEventual(self):
-        return self.hasta == None
+        return self.hasta == self.desde
 
     def __str__(self):
-        return "servicio"
-    
+        return f"{self.desde} - {self.inmueble} - {self.inmueble.cliente}"
+
     def set_estado(self, tipo_estado):
         self.estado = tipo_estado
         self.save()

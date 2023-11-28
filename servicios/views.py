@@ -202,7 +202,7 @@ class TipoServicioUpdateView(UpdateView):
 class ServicioCreateView(CreateView): 
     model = Servicio
     form_class = ServicioForm
-    template_name = "Servicios/ServicioForm.html"
+    template_name = "servicios/servicioForm.html"
     success_url = reverse_lazy('servicios:listarServicio')
 
     def get_form(self, form_class=None):

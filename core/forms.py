@@ -564,7 +564,6 @@ if "cliente" in InmuebleUpdateForm.base_fields:
 class ProductoFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
-        ("codigo", "Código"),
         ("descripcion", "Descripción"),
         ("stock", "Stock"),
         ("precioUnitario", "Precio Unitario"),
@@ -572,7 +571,6 @@ class ProductoFiltrosForm(FiltrosForm):
     ATTR_CHOICES = ORDEN_CHOICES
 
     #Formulario de filtrado
-    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'EJ000'}), max_length=45)
     descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Lavandina'}), max_length=45)
     stock__gte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Mínimo', 'min': 1}), required=False)
     stock__lte = forms.DecimalField(label="", widget=forms.NumberInput(attrs={'placeholder': 'Máximo', 'min': 1}), required=False)
@@ -588,7 +586,6 @@ class ProductoFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "codigo",
                 "descripcion", 
                 HTML(
                     '<label class="form-label">Stock</label>'),
@@ -607,10 +604,8 @@ class ProductoForm(ModelForm):
         model = Producto
         fields = '__all__'
         exclude = ["baja"] 
-
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
-            'codigo': 'Código',
             'descripcion': 'Descripción',
             'stock': 'Stock',
             'precioUnitario': 'Precio Unitario',
@@ -618,13 +613,6 @@ class ProductoForm(ModelForm):
         }
         #Referencia a los estilos con los que se renderizan los campos
         widgets = {
-            'codigo': forms.TextInput(
-                #Permite estilizar los formularios
-                attrs = {
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el codigo del producto',
-                }
-            ),
             'descripcion': forms.TextInput(
                 attrs = {
                     'class': 'form-control',
@@ -652,10 +640,10 @@ class ProductoForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-productoForm'
+        self.helper.form_tag = False
+        #self.helper.form_method = 'post'
 
-        self.helper.form_method = 'post'
-
-        self.helper.add_input(Submit('submit', 'Guardar'))
+        #self.helper.add_input(Submit('submit', 'Guardar'))
 
 
 

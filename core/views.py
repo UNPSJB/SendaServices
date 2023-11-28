@@ -131,15 +131,15 @@ class InmuebleListView(ListFilterView):
         else:
             return None
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        cliente = self.get_cliente()
-        if cliente is not None:
-            kwargs['initial'] = { 
-                "cliente": cliente 
-            }
-            kwargs['listadoInmueblesCliente'] = True   
-        return kwargs
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     cliente = self.get_cliente()
+    #     if cliente is not None:
+    #         kwargs['initial'] = { 
+    #             "cliente": cliente 
+    #         }
+    #         kwargs['listadoInmueblesCliente'] = True   
+    #     return kwargs
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -191,6 +191,8 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Inmuebles"
         return context
 
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list
@@ -255,10 +257,16 @@ class ProductoListView(ListFilterView):
     context_object_name = 'productos' #Nombre de la lista usar ''
     queryset = Producto.objects.filter(baja=False)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.template_name)
+        context['tnav'] = "Gestion de Productos"
+        return context
+
 class ProductoCreateView(CreateView):
     model = Producto
     form_class = ProductoForm
-    success_url = reverse_lazy('crearProducto')
+    success_url = reverse_lazy('listarProductos')
     template_name = "core/producto_form.html"
 
     def get_context_data(self, **kwargs):

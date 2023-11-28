@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator,MaxValueValidator
 from decimal import Decimal
 
+
 # Create your models here.
 
 
@@ -162,7 +163,9 @@ class EstadoPresupuestado(EstadoStrategy):
     TIPO = TipoEstado.PRESUPUESTADO
 
     def facturar(self, servicio, monto, *args, **kwargs):
-        print("Facturando desde presupuestado")
+        
+        factura = Factura(servicio=servicio, monto=monto)
+        return factura
 
     def contratar(self, servicio, monto = None, *args, **kwargs):
         if servicio.requiereSeña and not monto:

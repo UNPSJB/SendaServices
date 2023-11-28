@@ -30,7 +30,7 @@ Buscar Servicio
 
         <td>
         {% if s.estado.tipo == s.estado.Tipo.PRESUPUESTADO %}
-            <button type="button" class="btn btn-primary">Contratar</button>
+            <button type="button" class="btn btn-primary" id="contratar-btn" data-servicio-id="{{ s.id }}">Contratar</button>
         {% endif %}
         </td>
 
@@ -64,3 +64,4 @@ function abrir_modal(url){
 }
 </script>
 {% endblock %}
+

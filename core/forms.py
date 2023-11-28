@@ -313,7 +313,7 @@ class EmpleadoModForm(ModelForm):
         self.helper.form_id = 'legajo-empleadoForm'
         self.helper.form_method = 'post'
         empleado = kwargs["instance"] 
-        self.helper.form_action = reverse_lazy("modificarEmpleado", kwargs={"pk": empleado.legajo})
+        self.helper.form_action = reverse_lazy("modificarEmpleado", kwargs={"pk": empleado.pk})
         self.helper.add_input(Submit('submit', 'Guardar'))
 
             
@@ -546,12 +546,13 @@ class InmuebleUpdateForm(InmuebleForm()):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        print("llegue al form de inmuebleUpdate")
         inmueble = kwargs["instance"] # nos da el modelo Inmueble
         url_kwargs = {'pk': inmueble.pk}
         url = "modificarInmueble"
         if "initial" in kwargs:
             if "cliente" in kwargs["initial"]:
-                cliente = kwargs["initial"]["cliente"] # nos da el modelo Inmueble
+                cliente = kwargs["initial"]["cliente"] # nos da el Cliente del Inmueble
                 url = "modificarInmuebleParaCliente"
                 url_kwargs.update({'cliente_pk': cliente.pk})
 

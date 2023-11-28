@@ -132,15 +132,15 @@ class InmuebleListView(ListFilterView):
         else:
             return None
 
-    # def get_form_kwargs(self):
-    #     kwargs = super().get_form_kwargs()
-    #     cliente = self.get_cliente()
-    #     if cliente is not None:
-    #         kwargs['initial'] = { 
-    #             "cliente": cliente 
-    #         }
-    #         kwargs['listadoInmueblesCliente'] = True   
-    #     return kwargs
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        cliente = self.get_cliente()
+        if cliente is not None:
+            kwargs['initial'] = { 
+                "cliente": cliente 
+            }
+            kwargs['listadoInmueblesCliente'] = True   
+        return kwargs
 
     def get_queryset(self):
         queryset = super().get_queryset()

@@ -1,5 +1,10 @@
 {% extends "../baselist.html" %}
 
+{% block title %}
+Buscar Producto
+{% endblock %}
+
+
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
@@ -14,7 +19,6 @@
     {% for p in productos %}
     <tr>
         <td>{{forloop.counter}}</td>
-        <td>{{p.codigo}}</td>
         <td>{{p.descripcion}}</td>
         <td>{{p.stock}}</td>
         <td>{{p.precioUnitario}}</td>

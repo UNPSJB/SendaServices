@@ -30,7 +30,6 @@ class Inmueble(models.Model):
 
 
 class Producto(models.Model):
-    codigo= models.CharField(max_length=30, unique=True)
     descripcion= models.CharField( max_length=250)
     stock= models.IntegerField()
     precioUnitario= models.DecimalField("Precio unitario",decimal_places=2,max_digits=10)
@@ -46,11 +45,11 @@ class Producto(models.Model):
         # Que ningún detalle servicio de un servicio vigente, contenga un tipoServicio con el producto en cuestión.
 
         tipos_servicio_producto = TipoServicioProducto.objects.filter(producto=self)
-        tipos_servicios = TipoServicio.objects.filter(tiposervicioproducto__in=tipos_servicio_producto)
+        tipos_servicios = TipoServicio.objects.filter(productos_cantidad__in=tipos_servicio_producto)
         detalles_servicios = DetalleServicio.objects.filter(tipoServicio__in=tipos_servicios)
         # recuperar servicios y filtrar según estados "activos": ["presupuestado", "contratado", "pagado", "iniciado"]
         # unicamente se podrá eliminar el producto si ninguno de los servicios anteriores lo contienen. 
-        return not Servicio.objects.filter(detalleservicio__in=detalles_servicios).exists() 
+        return not Servicio.objects.filter(detalles_servicio__in=detalles_servicios).exists() 
 
     def dar_de_baja(self):
         if self.puedo_eliminar():
@@ -64,20 +63,29 @@ class Producto(models.Model):
         self.baja = False
         self.save()
 
+    def delete(self, *args, **kwargs):
+        return self.dar_de_baja()
 
+        
+class CategoriaManager(models.Manager):
+    def media_jornada(self):
+        return self.get_queryset().filter(nombre=Categoria.MEDIA_JORNADA_NOMBRE).first()
+    
 class Categoria(models.Model):
-    nombre= models.CharField(max_length=30)
+    MEDIA_JORNADA_NOMBRE = "Media Jornada"
+    MEDIA_JORNADA_SUELDO = 58000
+    nombre = models.CharField(max_length=30)
     sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
-   
+    #objects = CategoriaManager()
     def __str__(self):
-        return self.nombre   
+        return self.nombre
 
     # objects = CategoriaManager()
     # def __str__(self):
     #     return self.nombre
 
 class Empleado(models.Model):
-    legajo= models.CharField(max_length=30, primary_key=True)
+    legajo= models.CharField(max_length=30, unique=True)
     nombre= models.CharField(max_length=45)
     apellido= models.CharField(max_length=45)
     correo= models.EmailField(max_length=90)

@@ -1,15 +1,28 @@
+{% extends 'basemodal.html' %}
+
+
 {% load crispy_forms_tags %}
 
-<div class="modal-dialog"  role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h4 class="mx-3">Modificar Producto</h4>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+<!-- Titulo del modal -->
+{% block tmodal %}
+    Modificar Producto:
+{% endblock %}
 
-        <div class="modal-body">
-            {% crispy form form.helper %}
-        </div>
+<!-- Objeto del titulo del modal -->
+{% block tobjectmodal %}
+  {{ object }}
+{% endblock %}
 
-    </div>
-  </div>
+<!-- Url del modal -->
+{% block url %}
+  {% url 'modificarProducto' object.pk %}
+{% endblock %}
+
+{% block cmodal %}
+    {% crispy form form.helper %}
+{% endblock %}
+
+<!-- Boton del modal -->
+{% block btnmodal %}
+  Guardar
+{% endblock %}

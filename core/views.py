@@ -198,11 +198,6 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-<<<<<<< HEAD
-        #print(self.template_name)
-        #context['tnav'] = "Gestion de Inmuebles"
-=======
->>>>>>> ee5db4b2fe8a9b9e6782eb3311ac22d2d48b12b5
         return context
 
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list

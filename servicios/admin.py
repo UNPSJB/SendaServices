@@ -14,7 +14,7 @@ class DetalleServicioInline(admin.TabularInline):
     model = DetalleServicio
 
 class ServicioAdmin(admin.ModelAdmin):
-    list_display = ("codigo", "estado")
+    list_display = ('estado',)
     inlines=[
         DetalleServicioInline
     ]

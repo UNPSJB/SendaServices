@@ -13,18 +13,21 @@
   {{ object }}
 {% endblock %}
 
-<!-- Url del modal -->
-{% block url %}
-  {% url 'servicios:modificarServicio' object.pk %}
-{% endblock %}
-
-{% block cmodal %}
+{% block cform %}
+<form action="{% url 'servicios:modificarServicio' object.pk %}" method="POST">
+  {% csrf_token %}
   <div id="servicio-form-wrapper">
     {% crispy form form.helper %}
   </div>
   <div data-formset="detalles" id="detalles">
     {% crispy detalle_servicio_formset detalle_servicio_formset_helper %}
   </div>
+
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+  </div>
+</form>
 {% endblock %}
 
 <!-- Boton del modal -->

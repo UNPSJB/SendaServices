@@ -1,2 +1,0 @@
-Auto-merging servicios/models.py
-CONFLICT (content): Merge conflict in servicios/models.py

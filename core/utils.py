@@ -23,7 +23,7 @@ def filter_query_by(filtros_dict, queryset, form = None):
                                                  {f'{attr}__icontains': prev_value}))
             else:
                 attr = f'{attr}__icontains'
-                print(f"{attr=} {value=}")
+                #print(f"{attr=} {value=}")
                 queryset = queryset.filter(Q(**{attr: value}))
         # elif isinstance(value, Model) or isinstance(value, int) or isinstance(value, Decimal):
         elif isinstance(value, (Model, int, Decimal, date)):
@@ -63,9 +63,7 @@ class FiltrosForm(forms.Form):
         return self.ATTR_CHOICES
     
     def serialize_query_params(self):
-        #if self.is_valid():
-        #return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
-        print("data: ", self.data)
+        #print("data: ", self.data)
         if self.is_valid():
             return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
 

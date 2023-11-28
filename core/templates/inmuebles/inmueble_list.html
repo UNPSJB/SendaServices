@@ -2,10 +2,6 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
-{% block title %}
-Buscar Inmuebles
-{% endblock %}
-
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
@@ -52,14 +48,14 @@ Buscar Inmuebles
     
 {% endblock %}
 
-{% comment %} {% block extrajs %}
+{% block extrajs %}
 <!--Modal-->
-<script type="text/javascript">
+<!--script type="text/javascript">
     var $ = jQuery.noConflict();
     function abrir_modal_edicion(url){
         $('#modificar').load(url, function(){
             $(this).modal('show');
         });
     }
-</script> 
-{% endblock %}{% endcomment %}
+</script--> 
+{% endblock %}

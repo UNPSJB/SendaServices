@@ -1,10 +1,14 @@
 {% extends "baseform.html" %}
 
+{% block title %}
+Crear Turno
+{% endblock %}
+
 <!--Titulo del formulario-->
 {% block tform %} Crear Turnos {% endblock %}
 
 <!--Url del formulario-->
-{% block url %} {% url 'crearHorario' %} {% endblock %}
+{% block url %} {% url 'turnos:crearHorario' %} {% endblock %}
 
 <!--Boton del formulario-->
 {% block btnform %} Guardar {% endblock %}

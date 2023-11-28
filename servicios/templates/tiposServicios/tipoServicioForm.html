@@ -13,15 +13,23 @@ Crear Tipo de Servicio
 {% endblock %}
 
 <!-- Url del formulario -->
-{% block url %}
-  {% url 'servicios:crearTipoServicio' %}
-{% endblock %}
 
 {% block cform %}
-  {% crispy form form.helper %}
-  <div data-formset="productos_cantidad" id="productos" >
-    {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
-  </div>
+
+  <form action="{% url 'servicios:crearTipoServicio' %}" method="POST">
+    {% csrf_token %}   
+    {% crispy form form.helper %}
+    <div data-formset="productos_cantidad" id="productos" >
+      {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
+    </div>
+
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-primary btn-block text-white">
+        Guardar
+      </button>
+    </div>
+  </form>
+  
 {% endblock %}
 
 <!-- Boton del formulario -->

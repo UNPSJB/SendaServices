@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from .forms import (
-    ServicioForm, DetalleServicioInline, ServiciosFiltrosForm, 
+    ServicioForm, ServicioUpdateForm, DetalleServicioInline, ServiciosFiltrosForm, 
     DetalleServicioFormSetHelper, TipoServicioForm, 
     TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm)
 from .models import TipoServicio, Servicio
@@ -25,7 +25,7 @@ def dummy_view(request):
 
 def validar_servicio_form_en_modal(request, pk):
     instance = Servicio.objects.get(pk=pk)
-    form = ServicioForm(request.POST or None)
+    form = ServicioUpdateForm(request.POST or None)
     detalle_servicio_formset = DetalleServicioInline()(
         instance=instance, data=request.POST or None
     )
@@ -244,13 +244,15 @@ class ServicioCreateView(CreateView):
     
 class ServicioUpdateView(UpdateView):
     model = Servicio
-    form_class = ServicioForm
+    form_class = ServicioUpdateForm
     success_url = reverse_lazy("servicios:listarServicio")
     template_name = "servicios/servicio_modal.html"
 
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super().get_form(form_class=form_class)
+        print(form)
+        
         self.detalle_servicio_formset = DetalleServicioInline()(
             instance=self.get_object(),
             data=self.request.POST if self.request.method in ["POST", "PUT"] else None,

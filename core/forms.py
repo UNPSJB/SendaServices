@@ -409,6 +409,7 @@ class CategoriaFiltrosForm(FiltrosForm):
 
 
 
+
 class InmuebleFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [

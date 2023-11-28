@@ -1,28 +1,13 @@
-{% extends 'basemodal.html' %}
+{% extends "basemodal.html" %}
 
+<!--Titulo del modal-->
+{% block tmodal %} Edicion Producto: {% endblock %}
 
-{% load crispy_forms_tags %}
+<!--Objeto del titulo del modal-->
+{% block tobjectmodal %} {{object}} {% endblock %}
 
-<!-- Titulo del modal -->
-{% block tmodal %}
-    Modificar Producto:
-{% endblock %}
+<!--Url del modal-->
+{% block url %} {% url 'modificarProducto' object.pk %} {% endblock %}
 
-<!-- Objeto del titulo del modal -->
-{% block tobjectmodal %}
-  {{ object }}
-{% endblock %}
-
-<!-- Url del modal -->
-{% block url %}
-  {% url 'modificarProducto' object.pk %}
-{% endblock %}
-
-{% block cmodal %}
-    {% crispy form form.helper %}
-{% endblock %}
-
-<!-- Boton del modal -->
-{% block btnmodal %}
-  Guardar
-{% endblock %}
+<!--Boton del modal-->
+{% block btnmodal %} Guardar {% endblock %} 

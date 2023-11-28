@@ -285,6 +285,8 @@ class ProductoCreateView(CreateView):
         messages.success(self.request, 'El producto se creo exitosamente.')
         return super().form_valid(form)
     
+
+
 class ProductoUpdateView(UpdateView):
     model = Producto
     form_class = ProductoUpdateForm
@@ -296,8 +298,18 @@ class ProductoUpdateView(UpdateView):
         context['titulo'] = "Modificar Producto"
         context['boton'] = "Actualizar" 
         context['btnColor'] = "btn-primary"
-        return context
 
+        # Obtener el objeto Producto para pasarlo al contexto
+        producto = self.get_object()
+        context['object'] = producto  # Añadir el objeto Producto al contexto
+
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'El producto se modificó exitosamente.')
+        return super().form_valid(form)
+
+    
 #Gestion Empleado
 
 
@@ -396,7 +408,7 @@ class CategoriaCreateView(CreateView):
     
 class CategoriaUpdateView(UpdateView):
     model = Categoria
-    form_class = CategoriaForm
+    form_class = CategoriaUpdateForm
     success_url = reverse_lazy('listarCategoria')
     template_name = "categoria/categoria_modal.html"
 

@@ -318,7 +318,7 @@ class EmpleadoListView(ListFilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
+        #print(self.template_name)
         context['tnav'] = "Gestion de Empleado"
         return context
 
@@ -334,11 +334,14 @@ class EmpleadoCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Empleado"
         context['boton1'] = "Crear Empleado"
-        print(self.template_name)
-        print(context["form"].errors)
+        #print(self.template_name)
+        #print(context["form"].errors)
         context['tnav'] = "Gestion de Empleado"
         return context
 
+    def form_valid(self, form):
+        messages.success(self.request, 'El empleado se ha creado exitosamente.')
+        return super().form_valid(form)
     
 class EmpleadoUpdateView(UpdateView):
     model = Empleado
@@ -349,9 +352,12 @@ class EmpleadoUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Modificar Empleado"
-        print(self.template_name)
+        #print(self.template_name)
         return context
-    
+
+    def form_valid(self, form):
+        messages.success(self.request, 'El inmueble se ha modificado exitosamente.')
+        return super().form_valid(form)
 
 class EmpleadoDeleteView(DeleteView):
     model = Empleado

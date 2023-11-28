@@ -84,7 +84,7 @@ urlpatterns = [
     #Gestion Empleados
     path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),
     path('empleadoList/', EmpleadoListView.as_view(), name="listarEmpleado"),
-    path('empleadoModificar/<int:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
+    path('empleadoModificar/<str:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
     path('empleado/eliminar/<str:pk>', EmpleadoDeleteView.as_view(), name='eliminarEmpleado'),
     
     #Gestion Categoria

@@ -310,7 +310,7 @@ class EmpleadoModForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'legajo-empleadoForm'
+        self.helper.form_id = 'id-empleadoForm'
         self.helper.form_method = 'post'
         empleado = kwargs["instance"] 
         self.helper.form_action = reverse_lazy("modificarEmpleado", kwargs={"pk": empleado.pk})

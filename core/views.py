@@ -86,7 +86,7 @@ class ClienteCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
+        # print(self.template_name)
         context['tnav'] = "Gestion de Clientes"
         return context
     
@@ -104,7 +104,7 @@ class ClienteUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
+        # print(self.template_name)
         return context
     
     #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
@@ -326,7 +326,7 @@ class EmpleadoListView(ListFilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
+        # print(self.template_name)
         context['tnav'] = "Gestion de Empleado"
         return context
 

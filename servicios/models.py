@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator,MaxValueValidator
 from decimal import Decimal
 
+
 # Create your models here.
 
 
@@ -54,8 +55,9 @@ class Servicio(models.Model):
 
     inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
 
-    #    def requiereSeña(self):
-    #   cliente
+    @property
+    def requiereSeña(self):
+        return not self.inmueble.cliente.habitual
 
     def totalEstimado(self):
         # Implementar
@@ -63,19 +65,26 @@ class Servicio(models.Model):
             semanas = 1
         else:
             semanas = Decimal(((self.hasta - self.desde).days) / 7)
+        
+        empleados =   Decimal((self.cantidadEstimadaEmpleados * 58000) * 1.5)
+
         diasTotales =  Decimal((semanas * self.diasSemana)) # Obtener las semanas
         detalles_servicio = self.detalles_servicio.all()
         tdetalles = sum([float(d.importe()) for d in detalles_servicio])
 
-        total = Decimal(tdetalles) * diasTotales
+        total = (Decimal(tdetalles) * diasTotales) + empleados 
 
-        return round((total + ((total * self.ajuste) / 100)), 2)
+        return round((((total *  Decimal((self.ajuste / 100) + 1)))), 2)
 
     def saldo(self):
         #implementar
-        #return self.total - sum([f.total for f in self.facturas if self.factura.pagada])
-        return 1000
-    
+        facturas = self.facturas_servicio.all()
+        if len(facturas) != 0:
+            return self.totalEstimado() - sum([f.total() for f in facturas if self.factura.pagada])
+        else:
+            return self.totalEstimado()
+
+
     @property
     def esEventual(self):
         return self.hasta == self.desde
@@ -154,7 +163,9 @@ class EstadoPresupuestado(EstadoStrategy):
     TIPO = TipoEstado.PRESUPUESTADO
 
     def facturar(self, servicio, monto, *args, **kwargs):
-        print("Facturando desde presupuestado")
+        
+        factura = Factura(servicio=servicio, monto=monto)
+        return factura
 
     def contratar(self, servicio, monto = None, *args, **kwargs):
         if servicio.requiereSeña and not monto:

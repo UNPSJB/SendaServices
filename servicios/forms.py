@@ -1,6 +1,6 @@
 
 from django import forms 
-from .models import TipoServicio, TipoServicioProducto, Servicio, DetalleServicio, TipoEstado, Estado
+from .models import Servicio, TipoServicio, TipoServicioProducto, Servicio, DetalleServicio, TipoEstado, Estado
 from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
@@ -121,13 +121,6 @@ class ServicioForm(forms.ModelForm):
             raise ValidationError("La fecha 'FIN' debe ser mayor o igual a la fecha 'INICIO'.")
 
         return cleaned_data
-    
-
-from django import forms
-from django.core.exceptions import ValidationError
-from .models import Servicio
-from datetime import datetime
-from crispy_forms.helper import FormHelper
 
 class ServicioUpdateForm(forms.ModelForm):
 

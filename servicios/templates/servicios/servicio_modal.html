@@ -13,6 +13,9 @@
   {{ object }}
 {% endblock %}
 
+<label for="chec" class="form-check-label mb-3">Servicio Eventual</label>
+<input name="chec" class="form-check-input" type="checkbox" id="chec" onchange="comprobar();"/>
+
 {% block cform %}
 <form action="{% url 'servicios:modificarServicio' object.pk %}" method="POST">
   {% csrf_token %}

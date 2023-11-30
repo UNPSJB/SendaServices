@@ -122,31 +122,39 @@ class ServicioForm(forms.ModelForm):
 
         return cleaned_data
 
+from django import forms
+from django.core.exceptions import ValidationError
+from django.forms import ModelForm
+from datetime import datetime
+
 class ServicioUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Servicio
         exclude = ('estado', 'inmueble', )
-
-    desde = forms.DateField(widget=forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'text'}))
-    hasta = forms.DateField(widget=forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'text'}))
+    
+    desde = forms.DateField(widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}))
+    hasta = forms.DateField(widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%d/%m/%Y')
-        self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%d/%m/%Y')
         self.helper = FormHelper()
         self.helper.form_tag = False
 
-    def clean(self):
-        cleaned_data = super().clean()
-        desde = cleaned_data.get('desde')
-        hasta = cleaned_data.get('hasta')
 
-        if desde and hasta and hasta < desde:
-            raise ValidationError("La fecha 'FIN' debe ser mayor o igual a la fecha 'INICIO'.")
+class ServicioContratarForm(forms.ModelForm):
 
-        return cleaned_data
+    class Meta:
+        model = Servicio
+        #fields = '__all__' 
+        exclude = ('estado', 'inmueble', 'desde', 'hasta', 'ajuste', )
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
 
 class DetalleServicioForm(forms.ModelForm):
 

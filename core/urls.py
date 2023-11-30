@@ -46,6 +46,7 @@ from .views import (
     CategoriaUpdateView
 )
 
+print("llegue a las url de modificar inmueble")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -79,8 +80,7 @@ urlpatterns = [
     path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
     path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
     path('productos/eliminar/<str:pk>', ProductoDeleteView.as_view(), name='eliminarProducto'),
-
-  
+    
     #Gestion Empleados
     path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),
     path('empleadoList/', EmpleadoListView.as_view(), name="listarEmpleado"),
@@ -89,7 +89,7 @@ urlpatterns = [
     
     #Gestion Categoria
     path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),
-    path('categoria/modificar/<int:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
+    path('categoria/modificar/<str:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
     path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria'),  
 
     #Gestion Turnos

@@ -7,8 +7,11 @@ app_name= "servicios"
 
 urlpatterns = [
     path('servicio/crear/',ServicioCreateView.as_view(),name="crearServicio"),
+    path('servicios/cliente/<str:pk>/crear', ServicioCreateView.as_view(), name='crearServicioParaCliente'), 
     path('servicio/listar/',ServicioListView.as_view(), name='listarServicio'),
+    path('servicios/cliente/<str:pk>/listar', ServicioListView.as_view(), name='listarServiciosDeCliente'),
     path('servicio/modificar/<int:pk>/',ServicioUpdateView.as_view(), name='modificarServicio'),
+    path('servicios/cliente/<str:cliente_pk>/modificar/<int:pk>', ServicioUpdateView.as_view(), name='modificarServicioParaCliente'),
     path('servicio/validar_form/<int:pk>',validar_servicio_form_en_modal,name="validarServicioFormAjax"),   
 
     path('tipo-servicio/crear/',TipoServicioCreateView.as_view(),name="crearTipoServicio"),

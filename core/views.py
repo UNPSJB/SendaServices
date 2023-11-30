@@ -86,7 +86,7 @@ class ClienteCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
+        # print(self.template_name)
         context['tnav'] = "Gestion de Clientes"
         return context
     
@@ -104,7 +104,7 @@ class ClienteUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
+        # print(self.template_name)
         return context
     
     #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
@@ -124,12 +124,6 @@ class InmuebleListView(ListFilterView):
     template_name = "inmuebles/inmueble_list.html" #Ruta del template
     context_object_name = 'inmuebles' #Nombre de la lista usar ''
     queryset = Inmueble.objects.all()
-
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["cliente"] = self.get_cliente()
-        return context
 
     def get_cliente(self):
         pk = self.kwargs.get('pk')
@@ -278,12 +272,6 @@ class ProductoCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Producto"
         return context
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        print(self.template_name)
-        context['tnav'] = "Gestion de Productos"
-        return context
 
     #Este form, es para cuando se envia se muestre el mensaje de producto creado en list
     def form_valid(self, form):
@@ -303,126 +291,6 @@ class ProductoUpdateView(UpdateView):
         context['btnColor'] = "btn-primary"
         return context
 
-#Gestion Empleado
-
-
-class EmpleadoListView(ListFilterView):
-    #Cantidad de elementos por lista
-    paginate_by = 2
-    #Filtros de la lista
-    filtros = EmpleadoFiltrosForm
-    model = Empleado #Nombre del modelo
-    template_name = "empleado/empleado_list.html" #Ruta del template
-    context_object_name = 'empleado' #Nombre de la lista usar ''
-    queryset = Empleado.objects.filter(baja=False)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        #print(self.template_name)
-        context['tnav'] = "Gestion de Empleado"
-        return context
-
-
-
-class EmpleadoCreateView(CreateView):
-    model = Empleado
-    form_class = EmpleadoForm
-    success_url = reverse_lazy('listarEmpleado')
-    template_name = "empleado/empleado_form.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Empleado"
-        context['boton1'] = "Crear Empleado"
-        #print(self.template_name)
-        #print(context["form"].errors)
-        context['tnav'] = "Gestion de Empleado"
-        return context
-
-    def form_valid(self, form):
-        messages.success(self.request, 'El empleado se ha creado exitosamente.')
-        return super().form_valid(form)
-    
-class EmpleadoUpdateView(UpdateView):
-    model = Empleado
-    form_class = EmpleadoModForm
-    success_url = reverse_lazy('listarEmpleado')
-    template_name = "empleado/empleado_modal.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Empleado"
-        #print(self.template_name)
-        return context
-
-    def form_valid(self, form):
-        messages.success(self.request, 'El inmueble se ha modificado exitosamente.')
-        return super().form_valid(form)
-
-class EmpleadoDeleteView(DeleteView):
-    model = Empleado
-    success_url = reverse_lazy('listarEmpleado')
-    template_name = "empleado/empleado_confirm_delete.html"
-
-    def post(self, *args, **kwargs):
-        empleado = Empleado.objects.get(pk=self.kwargs["pk"])
-        empleado.dar_de_baja()
-        return redirect(self.success_url)
-
-
-#Gestion Categoria
-
-
-class CategoriaListView(ListFilterView):
-    #Cantidad de elementos por lista
-    paginate_by = 2
-    #Filtros de la lista
-    filtros = CategoriaFiltrosForm
-    model = Categoria #Nombre del modelo
-    template_name = "categoria/categoria_list.html" #Ruta del template
-    context_object_name = 'categoria' #Nombre de la lista usar ''
-    queryset = Categoria.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        print(self.template_name)
-        context['tnav'] = "Gestion de Categoria"
-        return context
-
-class CategoriaCreateView(CreateView):
-    model = Categoria
-    form_class = CategoriaForm
-    success_url = reverse_lazy('listarCategoria')
-    template_name = "categoria/categoria_form.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Categoria"
-        context['boton1'] = "Crear Categoria"
-        print(self.template_name)
-        print(context["form"].errors)
-        context['tnav'] = "Gestion de Categoria"
-        return context
-
-    
-class CategoriaUpdateView(UpdateView):
-    model = Categoria
-    form_class = CategoriaForm
-    success_url = reverse_lazy('listarCategoria')
-    template_name = "categoria/categoria_modal.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Categoria"
-        print(self.template_name)
-        return context
-    
-    
-    #Este form, es para cuando se envia se muestre el mensaje de producto modificado en list
-    def form_valid(self, form):
-        messages.success(self.request, 'El producto se modifico exitosamente.')
-        return super().form_valid(form)
-    
 class ProductoDeleteView(SuccessMessageMixin, DeleteView):
     model = Producto
     context_object_name = "producto"
@@ -442,3 +310,123 @@ class ProductoDeleteView(SuccessMessageMixin, DeleteView):
         producto = Producto.objects.get(pk=self.kwargs["pk"])
         producto.dar_de_baja()
         return redirect(self.success_url)
+
+
+#Gestion Empleado
+
+class EmpleadoListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 2
+    #Filtros de la lista
+    filtros = EmpleadoFiltrosForm
+    model = Empleado #Nombre del modelo
+    template_name = "empleado/empleado_list.html" #Ruta del template
+    context_object_name = 'empleado' #Nombre de la lista usar ''
+    queryset = Empleado.objects.filter(baja=False)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # print(self.template_name)
+        context['tnav'] = "Gestion de Empleado"
+        return context
+
+
+class EmpleadoCreateView(CreateView):
+    model = Empleado
+    form_class = EmpleadoForm
+    success_url = reverse_lazy('listarEmpleado')
+    template_name = "empleado/empleado_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Registrar Empleado"
+        context['boton1'] = "Crear Empleado"
+        #print(self.template_name)
+        #print(context["form"].errors)
+        return context
+
+    #Este form, es para cuando se envia se muestre el mensaje de empleado creado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El empleado se ha creado exitosamente.')
+        return super().form_valid(form)
+    
+class EmpleadoUpdateView(UpdateView):
+    model = Empleado
+    form_class = EmpleadoModForm
+    success_url = reverse_lazy('listarEmpleado')
+    template_name = "empleado/empleado_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Empleado"
+        #print(self.template_name)
+        return context
+    
+    #Este form, es para cuando se envia se muestre el mensaje de empleado modificado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'El empleado se ha modificado exitosamente.')
+        return super().form_valid(form)
+
+class EmpleadoDeleteView(DeleteView):
+    model = Empleado
+    success_url = reverse_lazy('listarEmpleado')
+    template_name = "empleado/empleado_confirm_delete.html"
+
+    def post(self, *args, **kwargs):
+        empleado = Empleado.objects.get(pk=self.kwargs["pk"])
+        empleado.dar_de_baja()
+        return redirect(self.success_url)
+
+
+#Gestion Categoria
+
+class CategoriaListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 2
+    #Filtros de la lista
+    filtros = CategoriaFiltrosForm
+    model = Categoria #Nombre del modelo
+    template_name = "categoria/categoria_list.html" #Ruta del template
+    context_object_name = 'categoria' #Nombre de la lista usar ''
+    queryset = Categoria.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #print(self.template_name)
+        context['tnav'] = "Gestion de Categoria"
+        return context
+
+
+class CategoriaCreateView(CreateView):
+    model = Categoria
+    form_class = CategoriaForm
+    success_url = reverse_lazy('listarCategoria')
+    template_name = "categoria/categoria_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Registrar Categoria"
+        context['boton1'] = "Crear Categoria"
+        #print(self.template_name)
+        #print(context["form"].errors)
+        return context
+
+    
+class CategoriaUpdateView(UpdateView):
+    model = Categoria
+    form_class = CategoriaUpdateForm
+    success_url = reverse_lazy('listarCategoria')
+    template_name = "categoria/categoria_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = "Modificar Categoria"
+        #print(self.template_name)
+        return context
+    
+    #Este form, es para cuando se envia se muestre el mensaje de producto modificado en list
+    def form_valid(self, form):
+        messages.success(self.request, 'La categoria se modifico exitosamente.')
+        return super().form_valid(form)
+    
+

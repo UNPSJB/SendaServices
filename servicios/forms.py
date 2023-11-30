@@ -218,6 +218,26 @@ class TipoServicioForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
+
+class TipoServicioUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = TipoServicio
+        exclude= ('productos',)
+
+        widgets= {
+            'ganancia': forms.NumberInput(attrs={'min':1,'max':100})
+        }
+        
+        labels = {
+            'ganancia': 'Ganancia (%)'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
 class TipoServicioProductoForm(forms.ModelForm):
 
     class Meta:

@@ -10,7 +10,7 @@ from crispy_forms.utils import render_crispy_form
 from .forms import (
     ServicioForm, ServicioUpdateForm, DetalleServicioInline, ServiciosFiltrosForm, 
     DetalleServicioFormSetHelper, TipoServicioForm, 
-    TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm)
+    TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm,TipoServicioUpdateForm)
 from .models import TipoServicio, Servicio
 
 
@@ -62,7 +62,7 @@ def validar_servicio_form_en_modal(request, pk):
 
 def validar_tipo_servicio_form_en_modal(request, pk):
     instance = TipoServicio.objects.get(pk=pk)
-    form = TipoServicioForm(request.POST or None)
+    form = TipoServicioUpdateForm(request.POST or None)
     tipo_servicio_producto_formset = TipoServicioProductoInline()(
         instance=instance, data=request.POST or None
     )
@@ -160,7 +160,7 @@ class TipoServicioCreateView(CreateView):
 
 class TipoServicioUpdateView(UpdateView):
     model = TipoServicio
-    form_class = TipoServicioForm
+    form_class = TipoServicioUpdateForm
     success_url = reverse_lazy("servicios:listarTipoServicio")
     template_name = "tiposServicios/tipoServicio_modal.html"
 

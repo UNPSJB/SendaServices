@@ -262,6 +262,7 @@ class ProductoListView(ListFilterView):
         context['tnav'] = "Gestion de Productos"
         return context
 
+
 class ProductoCreateView(CreateView):
     model = Producto
     form_class = ProductoForm
@@ -285,7 +286,6 @@ class ProductoCreateView(CreateView):
         return super().form_valid(form)
     
 
-
 class ProductoUpdateView(UpdateView):
     model = Producto
     form_class = ProductoUpdateForm
@@ -294,20 +294,15 @@ class ProductoUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Producto"
-        context['boton'] = "Actualizar" 
-        context['btnColor'] = "btn-primary"
-
-        # Obtener el objeto Producto para pasarlo al contexto
-        producto = self.get_object()
-        context['object'] = producto  # Añadir el objeto Producto al contexto
-
+        context['titulo'] = "Modificar producto"
+        print(self.template_name)
         return context
-    
+
     def form_valid(self, form):
         messages.success(self.request, 'El producto se modificó exitosamente.')
         return super().form_valid(form)
-
+    
+    
     
 #Gestion Empleado
 
@@ -329,7 +324,6 @@ class EmpleadoListView(ListFilterView):
         return context
 
 
-
 class EmpleadoCreateView(CreateView):
     model = Empleado
     form_class = EmpleadoForm
@@ -344,7 +338,6 @@ class EmpleadoCreateView(CreateView):
         print(context["form"].errors)
         context['tnav'] = "Gestion de Empleado"
         return context
-
     
 class EmpleadoUpdateView(UpdateView):
     model = Empleado
@@ -357,6 +350,11 @@ class EmpleadoUpdateView(UpdateView):
         context['titulo'] = "Modificar Empleado"
         print(self.template_name)
         return context
+
+    def form_valid(self, form):
+        messages.success(self.request, 'El empleado se modificó exitosamente.')
+        return super().form_valid(form)
+    
     
 
 class EmpleadoDeleteView(DeleteView):

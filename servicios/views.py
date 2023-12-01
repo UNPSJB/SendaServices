@@ -108,10 +108,13 @@ class TipoServicioListView(ListFilterView):
     context_object_name = "tiposServicio"  # Nombre de la lista usar ''
     queryset = TipoServicio.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tnav'] = "Gestion de Tipo Servicios"
+        return context
 
 class TipoServicioDetailView(DetailView):
     model = TipoServicio
-
 
 class TipoServicioCreateView(CreateView):
     model = TipoServicio
@@ -137,6 +140,7 @@ class TipoServicioCreateView(CreateView):
         ] = self.tipoServicio_producto_formset_helper
 
         context["titulo"] = "Registrar Producto"
+        context['tnav'] = "Gestion de Tipos Servicios"
         # context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
 
         return context
@@ -221,6 +225,7 @@ class ServicioCreateView(CreateView):
         context['detalleServicio_formset_helper'] = self.detalleServicio_formset_helper
         
         context['titulo'] = "Registrar Detalle Servicio"
+        context['tnav'] = "Gestion de Servicios"
         #context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
 
         return context
@@ -292,3 +297,8 @@ class ServicioListView(ListFilterView):
     template_name = "servicios/servicio_list.html" #Ruta del template
     context_object_name = 'servicio' #Nombre de la lista usar ''
     queryset = Servicio.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tnav'] = "Gestion de Servicios"
+        return context

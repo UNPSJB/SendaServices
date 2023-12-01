@@ -85,7 +85,6 @@ class Categoria(models.Model):
     #     return self.nombre
 
 class Empleado(models.Model):
-    legajo= models.CharField(max_length=30, unique=True)
     nombre= models.CharField(max_length=45)
     apellido= models.CharField(max_length=45)
     correo= models.EmailField(max_length=90)

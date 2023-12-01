@@ -165,6 +165,7 @@ class EstadoPresupuestado(EstadoStrategy):
     def facturar(self, servicio, monto, *args, **kwargs):
         
         factura = Factura(servicio=servicio, monto=monto)
+        
         return factura
 
     def contratar(self, servicio, monto = None, *args, **kwargs):

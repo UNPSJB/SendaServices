@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from .forms import (
-    ServicioForm, ServicioUpdateForm, DetalleServicioInline, ServiciosFiltrosForm, 
+    ServicioForm, ServicioUpdateForm, ServicioContratarForm, DetalleServicioInline, ServiciosFiltrosForm, 
     DetalleServicioFormSetHelper, TipoServicioForm, 
     TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm)
 from .models import TipoServicio, Servicio
@@ -287,6 +287,34 @@ class ServicioUpdateView(UpdateView):
             self.request, "El servicio se ha modificado exitosamente."
         )
         return super().form_valid(form)
+
+    
+class ServicioContratarView(UpdateView):
+    model = Servicio
+    form_class = ServicioContratarForm
+    success_url = reverse_lazy("servicios:listarServicio")
+    template_name = "servicios/contratar_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["titulo"] = "Modificar Servicio"
+        context["boton"] = "Actualizar"
+        context["btnColor"] = "btn-primary"
+        return context
+
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        self.object = form.save()
+        messages.success(
+            self.request, "El servicio se ha modificado exitosamente."
+        )
+        return super().form_valid(form)
+
+
+#def contratar_servicio(request, pk):
+    #implementar
+
+
 
 class ServicioListView(ListFilterView):
     #Cantidad de elementos por lista

@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator,MaxValueValidator
 from decimal import Decimal
+from facturas.models import Factura
 
 
 # Create your models here.
@@ -51,9 +52,11 @@ class Servicio(models.Model):
     
     diasSemana = models.IntegerField("Dias por semana estimados", validators=[MaxValueValidator(7),MinValueValidator(1)])
     
-    ajuste = models.IntegerField(validators=[MaxValueValidator(100),MinValueValidator(1)])
+    ajuste = models.IntegerField(validators=[MaxValueValidator(100),MinValueValidator(0)])
 
     inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
+
+    total = models.DecimalField(decimal_places=2,max_digits=10, default=0.)
 
     @property
     def requiereSeña(self):
@@ -77,17 +80,14 @@ class Servicio(models.Model):
         return round((((total *  Decimal((self.ajuste / 100) + 1)))), 2)
 
     def saldo(self):
-        #implementar
-        facturas = self.facturas_servicio.all()
-        if len(facturas) != 0:
-            return self.totalEstimado() - sum([f.total() for f in facturas if self.factura.pagada])
-        else:
-            return self.totalEstimado()
-
-
+        return self.totalEstimado() - self.total_pagado()
+        
     @property
     def esEventual(self):
         return self.hasta == self.desde
+
+    def total_pagado(self):
+        return sum([f.total for f in self.facturas.filter(pago__isnull=False)])
 
     def __str__(self):
         return f"{self.desde} - {self.inmueble} - {self.inmueble.cliente}"
@@ -114,7 +114,7 @@ class Servicio(models.Model):
             v.save()
         
     def strategy(self):
-        estrategias = [s for s in self.STRATEGIES if s.TIPO == self.estado.tipo]
+        estrategias = [s for s in self.STRATEGIES if s.TIPO == self.estado_actual.tipo]
         if len(estrategias) == 1:
             return estrategias[0]
         return EstadoStrategy()
@@ -124,6 +124,9 @@ class Servicio(models.Model):
 
     def pagar(self, *args, **kwargs):
         self.strategy().pagar(self, *args, **kwargs)
+
+    def contratar(self, *args, **kwargs):
+        self.strategy().contratar(self, *args, **kwargs)
 
 class DetalleServicio(models.Model):
     cantidad= models.IntegerField("Cantidad de m²", validators=[MinValueValidator(1)])
@@ -159,33 +162,30 @@ class EstadoStrategy():
     def pagar(self, servicio, *args, **kwargs):
         raise ValidationError(_("El servicio no se puede pagar en este estado"))
 
+    def contratar(self, servicio, *args, **kwargs):
+        raise ValidationError(_("El servicio no se puede contratar en este estado"))
+
+class EstadoVencido(EstadoStrategy):
+    TIPO = TipoEstado.VENCIDO
+
 class EstadoPresupuestado(EstadoStrategy):
     TIPO = TipoEstado.PRESUPUESTADO
 
-    def facturar(self, servicio, monto, *args, **kwargs):
-        
-        factura = Factura(servicio=servicio, monto=monto)
-        
+    def facturar(self, servicio, monto):
+        factura = Factura(servicio=servicio, total=monto, pago=datetime.now())        
         return factura
 
-    def contratar(self, servicio, monto = None, *args, **kwargs):
+    def contratar(self, servicio, monto = None):
         if servicio.requiereSeña and not monto:
             raise ValidationError(_("El servicio requiere seña"))
-        #Preguntar si es tio de cliente
         if monto :
             seña = self.facturar(servicio, monto)
-            self.pagar(servicio, seña)
-        self.factura_servicio.all()
-        self.factura_servicio.append(seña)
-        servicio.set_estado(TipoEstado.CONTRATADO)
-
-    def pagar(self, servicio, factura=None, *args, **kwargs):
-        #servicio.senia = monto
-        #implementar
         
-        factura.pago = datetime.now()
-        factura.pagado = True
-        factura.save()
+        if servicio.esEventual:
+            servicio.set_estado(TipoEstado.CONTRATADO)
+        else:
+            servicio.set_estado(TipoEstado.INICIADO)
+
 
 Servicio.STRATEGIES.append(EstadoPresupuestado())
 

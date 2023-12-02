@@ -22,29 +22,45 @@ Buscar Servicio
         <td>{{s.desde}}</td>
         <td>{{s.hasta}}</td>
         <td>{{s.cantidadEstimadaEmpleados}}</td>
-        <td>{{s.totalEstimado}}</td>
+        <td>{{s.total}}</td>
 
 
 
         <td>
-        {% if s.estado.tipo == s.estado.Tipo.PRESUPUESTADO %}
-            <a href="#" 
-            onclick="abrir_modal('{% url "servicios:contratarServicio" pk=s.pk %}')" 
-            class="bi bi-file-earmark-check text-success fs-5" 
+        {% if s.estado_actual.tipo == "presupuestado" %}
+            <a 
+            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
+            class="bi bi-calendar-date text-info fs-5" 
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
-            title="Contratar Servicio">
+            title="Añadir horarios">
             </a>
-        
+
+    
+        {% elif s.estado_actual.tipo == "contratado" %}
+            <a href="#" 
+            onclick="abrir_modal('{% url "servicios:facturarServicio" pk=s.pk %}')" 
+            class="bi bi-cash-stack text-success fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Facturar Servicio">
+            </a>
+            <a href="#" 
+            onclick="abrir_modal('{% url "servicios:cancelarServicio" pk=s.pk %}')" 
+            class="bi bi-x-octagon text-danger fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Cancelar Servicio">
+            </a>
         {% endif %}
 
-            <a href="#" 
+            <!--a href="#" 
                onclick="abrir_modal('{% url "servicios:modificarServicio" pk=s.pk %}')" 
                class="bi bi-pencil-square text-primary fs-5 " 
                data-bs-toggle="tooltip" 
                data-bs-placement="top" 
                title="Modificar Servicio">
-            </a>
+            </a-->
         </td>
         
 

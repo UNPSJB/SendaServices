@@ -9,7 +9,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, Subquery, OuterRef
 from django.utils.translation import gettext_lazy as _
-
+from django.forms import ModelForm
+from datetime import datetime
+from turnos.models import Horario
 
 class ServiciosFiltrosForm(FiltrosForm):
     # Campos del modelo
@@ -82,7 +84,7 @@ class ServiciosFiltrosForm(FiltrosForm):
             Fieldset(
                 "",
                 HTML('<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "codigo", "estado", "hasta", "desde", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
+                "estado", "hasta", "desde", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
@@ -98,7 +100,7 @@ class ServiciosFiltrosForm(FiltrosForm):
 class ServicioForm(forms.ModelForm):
     class Meta:
         model= Servicio
-        exclude = ('estado',)
+        exclude = ('estado','total')
 
         widgets = {
             'desde': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
@@ -112,6 +114,12 @@ class ServicioForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
+    def save(self, commit=True):
+        servicio = super().save(commit)
+        servicio.total = servicio.totalEstimado()
+        servicio.save()
+        return servicio
+
     def clean(self):
         cleaned_data = super().clean()
         desde = cleaned_data.get('desde')
@@ -122,10 +130,7 @@ class ServicioForm(forms.ModelForm):
 
         return cleaned_data
 
-from django import forms
-from django.core.exceptions import ValidationError
-from django.forms import ModelForm
-from datetime import datetime
+
 
 class ServicioUpdateForm(forms.ModelForm):
 
@@ -149,6 +154,13 @@ class ServicioContratarForm(forms.ModelForm):
         #fields = '__all__' 
         exclude = ('estado', 'inmueble', 'desde', 'hasta', 'ajuste', )
     
+        widgets = {
+            "diasSemana": forms.NumberInput(attrs={"min": 1, "max": 7}),
+            "cantidadEstimadaEmpleados": forms.NumberInput(attrs={"min": 1, "max": 200})
+        }
+
+    def save(self, commit=False):
+        self.save(commit=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -298,5 +310,3 @@ class TipoServicioFiltrosForm(FiltrosForm):
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
-
-

@@ -63,7 +63,7 @@ class FiltrosForm(forms.Form):
         return self.ATTR_CHOICES
     
     def serialize_query_params(self):
-        print("data: ", self.data)
+        #print("data: ", self.data)
         if self.is_valid():
             return "&".join([f"{k}={v}" for k,v in self.data.items() if v]) 
 

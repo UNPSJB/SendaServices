@@ -6,7 +6,14 @@
 Buscar Turno
 {% endblock %}
 
-    {% block tlista %} Listado de Turnos {% endblock %}
+    {% block tlista %} Listado de {% if servicio %} Turnos para servicio {% else %} Turnos {% endif %} {% endblock %}
+
+    {% block tExtras %}     
+        {% if servicio %}
+            <a href="{% url 'turnos:crearHorarioParaServicio' servicio.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+        {% endif %}
+    {% endblock %}
+
 
     {% block thextras %}
         <th colspan="">Opciones</th>
@@ -29,6 +36,13 @@ Buscar Turno
         <tr> <td> No hay turnos registrados </td> </tr>
     {% endfor %}
 {% endblock %}
+
+{% block custom_actions %}
+    <div class="d-flex justify-content-end">
+        <a href="{% url 'servicios:contratarServicio' servicio.pk %}" class="btn btn-success">Confirmar</a>
+    </div>
+{% endblock %}
+
 
 {% block extrajs %}
 <!--Modal-->

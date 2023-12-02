@@ -74,7 +74,7 @@ class CategoriaManager(models.Manager):
 class Categoria(models.Model):
     MEDIA_JORNADA_NOMBRE = "Media Jornada"
     MEDIA_JORNADA_SUELDO = 58000
-    nombre = models.CharField(max_length=30)
+    nombre = models.CharField(max_length=30, unique=True)
     sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
     #objects = CategoriaManager()
     def __str__(self):
@@ -85,7 +85,6 @@ class Categoria(models.Model):
     #     return self.nombre
 
 class Empleado(models.Model):
-    legajo= models.CharField(max_length=30, unique=True)
     nombre= models.CharField(max_length=45)
     apellido= models.CharField(max_length=45)
     correo= models.EmailField(max_length=90)

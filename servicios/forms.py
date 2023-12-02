@@ -1,6 +1,6 @@
 
 from django import forms 
-from .models import TipoServicio, TipoServicioProducto, Servicio, DetalleServicio, TipoEstado, Estado
+from .models import Servicio, TipoServicio, TipoServicioProducto, Servicio, DetalleServicio, TipoEstado, Estado
 from core.utils import FiltrosForm
 from core.models import Inmueble
 from crispy_forms.helper import FormHelper
@@ -11,7 +11,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, Subquery, OuterRef
 from django.utils.translation import gettext_lazy as _
-
+from django.forms import ModelForm
+from datetime import datetime
+from turnos.models import Horario
 
 class ServiciosFiltrosForm(FiltrosForm):
     # Campos del modelo
@@ -84,7 +86,7 @@ class ServiciosFiltrosForm(FiltrosForm):
             Fieldset(
                 "",
                 HTML('<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "codigo", "estado", "hasta", "desde", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
+                "estado", "hasta", "desde", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
@@ -100,7 +102,7 @@ class ServiciosFiltrosForm(FiltrosForm):
 class ServicioForm(forms.ModelForm):
     class Meta:
         model= Servicio
-        exclude = ('estado',)
+        exclude = ('estado','total')
 
         widgets = {
             'desde': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
@@ -123,7 +125,11 @@ class ServicioForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
-        #self.helper.form_action = reverse_lazy(url, kwargs=url_kwargs)
+    def save(self, commit=True):
+        servicio = super().save(commit)
+        servicio.total = servicio.totalEstimado()
+        servicio.save()
+        return servicio
 
     def clean(self):
         cleaned_data = super().clean()
@@ -140,14 +146,12 @@ class ServicioUpdateForm(forms.ModelForm):
     class Meta:
         model = Servicio
         exclude = ('estado', 'inmueble', )
-
-    desde = forms.DateField(widget=forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'text'}))
-    hasta = forms.DateField(widget=forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'text'}))
+    
+    desde = forms.DateField(widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}))
+    hasta = forms.DateField(widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%d/%m/%Y')
-        self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%d/%m/%Y')
         self.helper = FormHelper()
         self.helper.form_tag = False
         #print(f"{kwargs=}")
@@ -164,15 +168,27 @@ class ServicioUpdateForm(forms.ModelForm):
         #print(f"{url=}, {url_kwargs=}")
         self.helper.form_action = reverse_lazy(url, kwargs=url_kwargs)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        desde = cleaned_data.get('desde')
-        hasta = cleaned_data.get('hasta')
 
-        if desde and hasta and hasta < desde:
-            raise ValidationError("La fecha 'FIN' debe ser mayor o igual a la fecha 'INICIO'.")
+class ServicioContratarForm(forms.ModelForm):
 
-        return cleaned_data
+    class Meta:
+        model = Servicio
+        #fields = '__all__' 
+        exclude = ('estado', 'inmueble', 'desde', 'hasta', 'ajuste', )
+    
+        widgets = {
+            "diasSemana": forms.NumberInput(attrs={"min": 1, "max": 7}),
+            "cantidadEstimadaEmpleados": forms.NumberInput(attrs={"min": 1, "max": 200})
+        }
+
+    def save(self, commit=False):
+        self.save(commit=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
 
 class DetalleServicioForm(forms.ModelForm):
 
@@ -222,6 +238,26 @@ class DetalleServicioFormSetHelper(FormHelper):
 class TipoServicioForm(forms.ModelForm):
     class Meta:
         model= TipoServicio
+        exclude= ('productos',)
+
+        widgets= {
+            'ganancia': forms.NumberInput(attrs={'min':1,'max':100})
+        }
+        
+        labels = {
+            'ganancia': 'Ganancia (%)'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+
+class TipoServicioUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = TipoServicio
         exclude= ('productos',)
 
         widgets= {
@@ -316,5 +352,3 @@ class TipoServicioFiltrosForm(FiltrosForm):
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
-
-

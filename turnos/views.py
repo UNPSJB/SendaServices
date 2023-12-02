@@ -12,10 +12,14 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.urls import reverse_lazy, reverse
 from .models import Horario
+from servicios.models import Servicio
 from .forms import (
     HorarioForm, 
     HorarioModForm,
     HorarioFiltrosForm,
+    HorarioCustomFiltrosForm,
+    PeriodoInline,
+    PeriodoInlineFormSetHelper
   )
 
 # Create your views here.s
@@ -28,34 +32,45 @@ class HorarioListView(ListFilterView):
     template_name = "horario/horario_list.html" #Ruta del template
     context_object_name = 'horario' #Nombre de la lista usar ''
   
+    def get_servicio(self):
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return Servicio.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_filtros(self, *args, **kwargs):
+        return HorarioFiltrosForm(*args, **kwargs) if not self.get_servicio() else HorarioCustomFiltrosForm(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #print(self.template_name)
-        context['tnav'] = "Gestion de Horarios"
+        servicio = self.get_servicio()
+        context['tnav'] = "Gestion de Horarios" if not servicio else f"Gestion de horarios: {servicio}"
+        context["servicio"] = servicio
         return context
 
 
-class HorarioCreateView(CreateView):
-    model = Horario
-    form_class = HorarioForm
-    success_url = reverse_lazy('turnos:listarHorarios')
-    template_name = "horario/horario_form.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['titulo'] = "Registrar Horario"
-        context['boton1'] = "Crear Horario"
-        context['tnav'] = "Gestion de Horarios"
-        #print(self.template_name)
-        #print(context["form"].errors)
-        return context
+# class HorarioCreateView(CreateView):
+#     model = Horario
+#     form_class = HorarioForm
+#     success_url = reverse_lazy('turnos:listarHorarios')
+#     template_name = "horario/horario_form.html"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['titulo'] = "Registrar Horario"
+#         context['boton1'] = "Crear Horario"
+#         context['tnav'] = "Gestion de Horarios"
+#         #print(self.template_name)
+#         #print(context["form"].errors)
+#         return context
     
 
-    #Este form, es para cuando se envia se muestre el mensaje de empleado creado en list
-    def form_valid(self, form):
-        messages.success(self.request, 'El turno se ha creado exitosamente.')
-        return super().form_valid(form)
+#     #Este form, es para cuando se envia se muestre el mensaje de empleado creado en list
+#     def form_valid(self, form):
+#         messages.success(self.request, 'El turno se ha creado exitosamente.')
+#         return super().form_valid(form)
     
 class HorarioUpdateView(UpdateView):
     model = Horario
@@ -63,13 +78,105 @@ class HorarioUpdateView(UpdateView):
     success_url = reverse_lazy('turnos:listarHorarios')
     template_name = "horario/horario_modal.html"
 
+    def get_horario(self):
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return Horario.objects.get(pk=pk)
+        else:
+            return 
+        
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     kwargs["horario"] = self.get_horario()
+    #     return kwargs
+
+    def get_form(self, form_class=None):
+        """Return an instance of the form to be used in this view."""
+        form = super().get_form(form_class=form_class)
+        self.periodo_formset = PeriodoInline()(
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None
+        )
+        self.peridodo_formset_helper = PeriodoInlineFormSetHelper()
+        #print(f"periodo.formset={self.periodo_formset}")
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['titulo'] = "Modificar Turnos"
-        #print(self.template_name)
+        horario = self.get_horario()
+        context["periodo_formset"] = self.periodo_formset
+        context["periodo_formset_helper"] = self.peridodo_formset_helper
+        context["titulo"] = "Registrar Horario"
+        context["horario"] = horario
+        #context['tnav'] = "Gestion de turnos"
+        # context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
         return context
-    
-    #Este form, es para cuando se envia se muestre el mensaje de empleado modificado en list
+
     def form_valid(self, form):
-        messages.success(self.request, 'El turno se ha modificado exitosamente.')
+        """If the form is valid, save the associated model."""
+        #form = self.get_form(form_class=self.get_form_class())
+        self.object = form.save()
+        #self.object.horario = self.get_horario()
+        #self.object.save()
+
+        if self.periodo_formset.is_valid():
+            self.periodo_formset.instance = self.object
+            self.periodo_formset.save()
+
+        messages.success(self.request, "El turno se ha modificado exitosamente.")
+        return super().form_valid(form)
+
+
+class HorarioCreateView(CreateView):
+    model = Horario
+    form_class = HorarioForm
+    #success_url = reverse_lazy("servicios:listarHorarios") # TODO: definir a donde ir
+    template_name = "horario/horario_form.html"
+
+    def get_success_url(self, **kwargs):
+        servicio = self.get_servicio()
+        print(f"{servicio=}")
+        if servicio is not None:
+            return reverse_lazy('turnos:listarHorariosDeServicio', kwargs={"pk": servicio.pk})
+        else:
+            return reverse_lazy('listarHorarios')
+
+    def get_servicio(self):
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return Servicio.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_form(self, form_class=None):
+        """Return an instance of the form to be used in this view."""
+        form = super().get_form(form_class=form_class)
+        self.periodo_formset = PeriodoInline()(
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None
+        )
+        self.peridodo_formset_helper = PeriodoInlineFormSetHelper()
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        servicio = self.get_servicio()
+        context["periodo_formset"] = self.periodo_formset
+        context["periodo_formset_helper"] = self.peridodo_formset_helper
+        context["titulo"] = "Registrar Horario"
+        context["servicio"] = servicio
+        #context['tnav'] = "Gestion de turnos"
+        # context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
+        return context
+
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        #form = self.get_form(form_class=self.get_form_class())
+        self.object = form.save(commit=False)
+        self.object.servicio = self.get_servicio()
+        self.object.save()
+
+        if self.periodo_formset.is_valid():
+            self.periodo_formset.instance = self.object
+            self.periodo_formset.save()
+
+        messages.success(self.request, "El horario se ha creado exitosamente.")
         return super().form_valid(form)

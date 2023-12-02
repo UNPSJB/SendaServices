@@ -7,20 +7,22 @@ from django.urls import reverse_lazy
 from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
-
+from datetime import datetime
 
 
 class HorarioForm(ModelForm):
 
     class Meta:
         model = Horario
-        fields = '__all__'
+        fields = ("turno", "diaSemana",)
+
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
             'turno': 'Turno',
             'diaSemana': 'Dia de la semana',
-            'servicio': 'Servicio',
+            #'servicio': 'Servicio',
         }
+
         #Referencia a los estilos con los que se renderizan los campos
         widgets = {
             'turno': forms.Select(
@@ -36,13 +38,13 @@ class HorarioForm(ModelForm):
                     'placeholder':'Ingrese el dia de la semana del turno',
                 }
             ),
-            'servicio': forms.Select(
-                attrs = {
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el servicio del turno',
+            # 'servicio': forms.Select(
+            #     attrs = {
+            #         'class': 'form-control',
+            #         'placeholder':'Ingrese el servicio del turno',
 
-                }
-            ),
+            #     }
+            # ),
         
         }
 
@@ -51,8 +53,9 @@ class HorarioForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
+        self.helper.form_tag = False
 
-        self.helper.add_input(Submit('submit', 'Guardar'))
+        #self.helper.add_input(Submit('submit', 'Guardar'))
 
 
 class HorarioFiltrosForm(FiltrosForm):
@@ -91,51 +94,39 @@ class HorarioFiltrosForm(FiltrosForm):
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
 
+class HorarioCustomFiltrosForm(HorarioFiltrosForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "turno","diaSemana", #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+
+HorarioCustomFiltrosForm.base_fields.pop("servicio")
+
 
 class HorarioModForm(ModelForm):
 
     class Meta:
         model = Horario
-        fields = '__all__'
-
-        #Label se refiere la descripcion que esta al lado del formulario.
-        labels = { 
-            'turno': 'Turno',
-            'diaSemana': 'Dia de la semana',
-            #'servicio': 'Servicio',
-        }
-        #Referencia a los estilos con los que se renderizan los campos
-        widgets = {
-            'turno': forms.TextInput(
-                attrs = {
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el turno del horario',
-                }
-            ),
-            'diaServicio': forms.TextInput(
-                attrs = {
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el dia de la semana del turno',
-
-                }
-            ),
-            'servicio.pk': forms.Select(
-                attrs = {           
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el servicio del turno',
-                }
-            ),
-                 
-        }
+        #fields = "__all__"
+        exclude = ('turno', 'diaSemana', 'servicio',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
-        horario = kwargs["instance"] 
-        self.helper.form_action = reverse_lazy("turnos:modificarHorario", kwargs={"pk": horario.pk})
-        self.helper.add_input(Submit('submit', 'Guardar'))
+        self.helper.form_tag = False
+        #horario = kwargs["horario"] 
+        #self.helper.form_action = reverse_lazy("turnos:modificarHorario", kwargs={"pk": horario.pk})
+        #self.helper.add_input(Submit('submit', 'Guardar'))
 
 
 class PeriodoForm(forms.ModelForm):
@@ -143,19 +134,30 @@ class PeriodoForm(forms.ModelForm):
     class Meta:
         model = Periodo
         fields = '__all__'
- 
+
         widgets = {
-            'producto': forms.Select(attrs={'autocomplete': 'off'}),
-            'cantidad': forms.NumberInput(attrs={'min': 1})
+            "fechaDesde": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
+            "fechaHasta": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'})
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        fechaDesde = cleaned_data.get('fechaDesde')
+        fechaHasta = cleaned_data.get('fechaHasta')
+
+        if fechaDesde and fechaHasta and fechaHasta < fechaDesde:
+            raise ValidationError("La fecha 'Hasta' debe ser mayor o igual a la fecha 'Desde'.")
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.fields['fechaDesde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+        self.fields['fechaHasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
 
 
-
-class AsistenciForm(forms.ModelForm):
+class AsistenciaForm(forms.ModelForm):
     class Meta:
         model= Asistencia
         fields = '__all__'
@@ -165,45 +167,26 @@ class AsistenciForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
-"""
-    
-class TipoServicioFiltrosForm(FiltrosForm):
-    #Campos del modelo
-    ORDEN_CHOICES = [
-        ("codigo", "Codigo"),
-        ("descripcion", "Descripcion"),
-        ("costo", "Costo"),
-        ("unidadDeMedida", "Unidad de medida"),
-    ]
-    ATTR_CHOICES = [
-        ("codigo", "Codigo"),
-        ("descripcion", "Descripcion"),
-        ("costo", "Costo"),
-        ("unidadDeMedida", "Unidad de medida"),
 
-    ]
 
-    #Formulario de filtrado
-    codigo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': '12345'}), max_length=30)
-    descripcion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'limpieza'}), max_length=250)
-    costo = forms.DecimalField(required=False, widget=forms.TextInput(attrs={'placeholder': '10000'}), decimal_places=2,max_digits=14)
-    unidadDeMedida = forms.CharField(label="Unidad de Medida",required=False, widget=forms.TextInput(attrs={'placeholder': 'M2'}), max_length=30)
-        
-    
+# Tipo Servicio - Producto - Inlines
+def PeriodoInline(extra=1):
+    return forms.inlineformset_factory(
+        Horario,
+        Periodo,
+        form=PeriodoForm,
+        extra=extra,
+    )
 
+class PeriodoInlineFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'get'
-        self.helper.layout = Layout(
-            Fieldset(
-                "",
-                HTML(
-                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "codigo","descripcion", "costo", "unidadDeMedida", #Remplazar campos formulario
-            ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        self.form_method = 'post'
+        self.form_tag = False
+        self.template = 'bootstrap5/table_inline_formset.html'
+        self.layout = Layout(
+            'empleado',
+            'fechaDesde',
+            'fechaHasta'
         )
-
-
-"""
+        self.render_required_fields = True

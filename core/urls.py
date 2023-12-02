@@ -77,15 +77,16 @@ urlpatterns = [
     
     # Gestion Productos
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
-    path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
+    path('productos/modificar/<int:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
     path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
-    path('productos/eliminar/<str:pk>', ProductoDeleteView.as_view(), name='eliminarProducto'),
-    
+    path('productos/eliminar/<int:pk>', ProductoDeleteView.as_view(), name='eliminarProducto'),
+
+  
     #Gestion Empleados
     path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),
     path('empleadoList/', EmpleadoListView.as_view(), name="listarEmpleado"),
-    path('empleadoModificar/<str:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
-    path('empleado/eliminar/<str:pk>', EmpleadoDeleteView.as_view(), name='eliminarEmpleado'),
+    path('empleadoModificar/<int:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
+    path('empleado/eliminar/<int:pk>', EmpleadoDeleteView.as_view(), name='eliminarEmpleado'),
     
     #Gestion Categoria
     path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),

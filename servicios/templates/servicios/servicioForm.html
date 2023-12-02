@@ -16,8 +16,12 @@ Crear Servicio
 
 {% block cform %}
 
+<label for="chec" class="form-check-label mb-3">Servicio Eventual</label>
+<input name="chec" class="form-check-input" type="checkbox" id="chec" onchange="comprobar();"/>
+
 
 <form action="{% url 'servicios:crearServicio' %}" method="POST">
+
   {% csrf_token %}   
   {% crispy form form.helper %}
   <div data-formset="detalles_servicio" id="productos" >
@@ -35,6 +39,7 @@ Crear Servicio
 
 
 
+
 {% endblock %}
 
 
@@ -43,24 +48,3 @@ Crear Servicio
   Guardar
 {% endblock %}
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    // Obtén los elementos de los campos desde y hasta
-    var desde = document.getElementById("id_desde");
-    var hasta = document.getElementById("id_hasta");
-  
-    // Agrega un evento de cambio al campo desde
-    desde.addEventListener("change", function() {
-      // Obtén el valor seleccionado en el campo desde
-      var valorDesde = desde.value;
-  
-      // Establece la fecha mínima en el campo hasta
-      hasta.min = valorDesde;
-  
-      // Si el valor actual en hasta es menor que el nuevo mínimo, restablécelo
-      if (hasta.value < valorDesde) {
-        hasta.value = valorDesde;
-      }
-    });
-  });
-  </script>

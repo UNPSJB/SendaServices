@@ -1,19 +1,25 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
-<div class="modal-dialog"  role="document">
+<div class="modal-dialog modal-lg"  role="document">
     <div class="modal-content">
-        <div class="modal-header">
-            <h4 class="mx-3">{% block tmodal %} {% endblock %} {% block tobjectmodal %} {% endblock %}</h4>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+      <div class="modal-header">
+        <h4 class="mx-3">{% block tmodal %} {% endblock %} {% block tobjectmodal %} {% endblock %}</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% block url %}  {% endblock %}" method="POST">
+        <div class="modal-body " >
+            {% csrf_token %}
+            {%block cmodal%} 
         
-        <div class="modal-body">
-            {% block cform %}
-                {% crispy form form.helper %}
-            {% endblock %}
-            <!--button type="button" class="btn btn-secondary mx-auto" data-bs-dismiss="modal">Cancelar</button-->
-        </div>
+              {{ form | crispy }}
+              {% endblock %}
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">{% block btnmodal %} {% endblock %}</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
     </div>
 </div>
 

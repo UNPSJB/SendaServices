@@ -1,3 +1,4 @@
+from typing import Any
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, CreateView, UpdateView, ListView, DetailView
 from django.contrib import messages
@@ -8,9 +9,9 @@ from django.urls import reverse_lazy
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from .forms import (
-    ServicioForm, ServicioUpdateForm, DetalleServicioInline, ServiciosFiltrosForm, 
+    ServicioForm, ServicioUpdateForm, ServicioContratarForm, DetalleServicioInline, ServiciosFiltrosForm, 
     DetalleServicioFormSetHelper, TipoServicioForm, 
-    TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm)
+    TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm,TipoServicioUpdateForm)
 from .models import TipoServicio, Servicio
 from core.models import Cliente, Inmueble
 
@@ -23,6 +24,25 @@ from core.models import Cliente, Inmueble
 
 def dummy_view(request):
     return HttpResponse("Esta es una vista ficticia")
+
+def validar_contrato_form_en_modal(request, pk):
+    #instance = Servicio.objects.get(pk=pk)
+    form = ServicioContratarForm(request.POST or None)
+
+    if form.is_valid():
+        return JsonResponse({"success": True})
+    else:
+        print(f"form errors={form.errors}")
+        
+    ctx = {}
+    ctx.update(csrf(request))
+    form_html = render_crispy_form(form, form.helper, context=ctx)
+    return JsonResponse(
+        {
+            "success": False,
+            "form_html": form_html,
+        }
+    )
 
 def validar_servicio_form_en_modal(request, pk):
     instance = Servicio.objects.get(pk=pk)
@@ -63,7 +83,7 @@ def validar_servicio_form_en_modal(request, pk):
 
 def validar_tipo_servicio_form_en_modal(request, pk):
     instance = TipoServicio.objects.get(pk=pk)
-    form = TipoServicioForm(request.POST or None)
+    form = TipoServicioUpdateForm(request.POST or None)
     tipo_servicio_producto_formset = TipoServicioProductoInline()(
         instance=instance, data=request.POST or None
     )
@@ -109,10 +129,13 @@ class TipoServicioListView(ListFilterView):
     context_object_name = "tiposServicio"  # Nombre de la lista usar ''
     queryset = TipoServicio.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tnav'] = "Gestion de Tipo Servicios"
+        return context
 
 class TipoServicioDetailView(DetailView):
     model = TipoServicio
-
 
 class TipoServicioCreateView(CreateView):
     model = TipoServicio
@@ -138,6 +161,7 @@ class TipoServicioCreateView(CreateView):
         ] = self.tipoServicio_producto_formset_helper
 
         context["titulo"] = "Registrar Producto"
+        context['tnav'] = "Gestion de Tipos Servicios"
         # context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
 
         return context
@@ -161,7 +185,7 @@ class TipoServicioCreateView(CreateView):
 
 class TipoServicioUpdateView(UpdateView):
     model = TipoServicio
-    form_class = TipoServicioForm
+    form_class = TipoServicioUpdateForm
     success_url = reverse_lazy("servicios:listarTipoServicio")
     template_name = "tiposServicios/tipoServicio_modal.html"
 
@@ -203,7 +227,7 @@ class TipoServicioUpdateView(UpdateView):
 class ServicioCreateView(CreateView): 
     model = Servicio
     form_class = ServicioForm
-    template_name = "Servicios/ServicioForm.html"
+    template_name = "servicios/servicioForm.html"
     success_url = reverse_lazy('servicios:listarServicio')
 
     def get_form(self, form_class=None):
@@ -246,6 +270,7 @@ class ServicioCreateView(CreateView):
         context['detalleServicio_formset_helper'] = self.detalleServicio_formset_helper
         
         context['titulo'] = "Registrar Detalle Servicio"
+        context['tnav'] = "Gestion de Servicios"
         #context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
 
         return context
@@ -330,6 +355,48 @@ class ServicioUpdateView(UpdateView):
             self.request, "El servicio se ha modificado exitosamente."
         )
         return super().form_valid(form)
+
+
+
+def contratar_servicio(request, pk):
+    if request.method == "GET":
+        servicio = Servicio.objects.get(pk=pk)
+        if servicio:
+            servicio.contratar()
+        return redirect(reverse_lazy("servicios:listarServicio"))
+
+def facturar_servicio(request, pk):
+    pass
+
+def cancelar_servicio(request, pk):
+    pass
+
+class ServicioContratarView(UpdateView):
+    model = Servicio
+    form_class = ServicioContratarForm
+    success_url = reverse_lazy("servicios:listarServicio")
+    template_name = "servicios/contratar_modal.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["titulo"] = "Modificar Servicio"
+        context["boton"] = "Actualizar"
+        context["btnColor"] = "btn-primary"
+        return context
+
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        self.object = form.save()
+        messages.success(
+            self.request, "El servicio se ha modificado exitosamente."
+        )
+        return super().form_valid(form)
+
+
+#def contratar_servicio(request, pk):
+    #implementar
+
+
 
 class ServicioListView(ListFilterView):
     #Cantidad de elementos por lista

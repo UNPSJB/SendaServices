@@ -8,7 +8,6 @@
 Buscar Servicio
 {% endblock %}
 
-
     {% block tlista %} Listado de Servicios {% endblock %}
 
     {% block tExtras %} 
@@ -21,7 +20,6 @@ Buscar Servicio
     {% endblock %}
     {% block thextras %}
         <th colspan="">Opciones</th>
-        <th colspan="">Informacion</th>
     {% endblock%}
     
     {% block tcuerpo %}
@@ -32,15 +30,37 @@ Buscar Servicio
         <td>{{s.desde}}</td>
         <td>{{s.hasta}}</td>
         <td>{{s.cantidadEstimadaEmpleados}}</td>
-        <td>{{s.totalEstimado}}</td>
+        <td>{{s.total}}</td>
 
 
 
         <td>
-        {% if s.estado.tipo == s.estado.Tipo.PRESUPUESTADO %}
-            <button type="button" class="btn btn-primary">Contratar</button>
+        {% if s.estado_actual.tipo == "presupuestado" %}
+            <a 
+            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
+            class="bi bi-calendar-date text-info fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Añadir horarios">
+            </a>
+
+    
+        {% elif s.estado_actual.tipo == "contratado" %}
+            <a href="#" 
+            onclick="abrir_modal('{% url "servicios:facturarServicio" pk=s.pk %}')" 
+            class="bi bi-cash-stack text-success fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Facturar Servicio">
+            </a>
+            <a href="#" 
+            onclick="abrir_modal('{% url "servicios:cancelarServicio" pk=s.pk %}')" 
+            class="bi bi-x-octagon text-danger fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Cancelar Servicio">
+            </a>
         {% endif %}
-        </td>
 
         <td>
         {% if cliente %}
@@ -48,7 +68,16 @@ Buscar Servicio
         {% else %}
             <a href="#" onclick="abrir_modal('{% url "servicios:modificarServicio" pk=s.pk %}')" class="bi bi-pencil-square text-primary"> </a>
         {% endif %}
+            <!--a href="#" 
+               onclick="abrir_modal('{% url "servicios:modificarServicio" pk=s.pk %}')" 
+               class="bi bi-pencil-square text-primary fs-5 " 
+               data-bs-toggle="tooltip" 
+               data-bs-placement="top" 
+               title="Modificar Servicio">
+            </a-->
         </td>
+        
+
 
     </tr>
 
@@ -75,3 +104,5 @@ function abrir_modal(url){
 }
 </script>
 {% endblock %}
+
+

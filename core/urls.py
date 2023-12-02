@@ -46,6 +46,7 @@ from .views import (
     CategoriaUpdateView
 )
 
+print("llegue a las url de modificar inmueble")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -89,7 +90,7 @@ urlpatterns = [
     
     #Gestion Categoria
     path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),
-    path('categoria/modificar/<int:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
+    path('categoria/modificar/<str:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
     path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria'),  
 
     #Gestion Turnos

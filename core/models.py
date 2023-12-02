@@ -76,7 +76,7 @@ class Categoria(models.Model):
     MEDIA_JORNADA_SUELDO = 58000
     nombre = models.CharField(max_length=30, unique=True)
     sueldoBase= models.DecimalField(decimal_places=2,max_digits=10)
-    objects = CategoriaManager()
+    #objects = CategoriaManager()
     def __str__(self):
         return self.nombre
 
@@ -100,8 +100,3 @@ class Empleado(models.Model):
         self.baja = True
         self.save()
 
-
-
-
-
-    

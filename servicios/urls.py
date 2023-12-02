@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from .views import (
     ServicioCreateView, ServicioListView,ServicioUpdateView, ServicioContratarView, TipoServicioListView,
     TipoServicioCreateView,TipoServicioUpdateView, TipoServicioCreateView,
@@ -8,19 +9,22 @@ from .views import (
 app_name= "servicios"
 
 urlpatterns = [
-    path('servicio/crear/',ServicioCreateView.as_view(),name="crearServicio"),
-    path('servicio/listar/',ServicioListView.as_view(), name='listarServicio'),
-    path('servicio/modificar/<int:pk>/',ServicioUpdateView.as_view(), name='modificarServicio'),
-    path('servicio/validar_form/<int:pk>',validar_servicio_form_en_modal,name="validarServicioFormAjax"),   
-    path('servicio/validar_contrato_form/<int:pk>',validar_contrato_form_en_modal,name="validarContratoFormAjax"),
-    path('servicio/contratar/<int:pk>', contratar_servicio, name="contratarServicio"),
-    path('servicio/cancelar/<int:pk>', cancelar_servicio, name="cancelarServicio"),
-    path('servicio/facturar/<int:pk>', facturar_servicio, name="facturarServicio"),
+    path('servicio/crear/', login_required(ServicioCreateView.as_view()),name="crearServicio"),
+    path('servicios/cliente/<str:pk>/crear', login_required(ServicioCreateView.as_view()) , name='crearServicioParaCliente'), 
+    path('servicio/listar/',login_required(ServicioListView.as_view()) , name='listarServicio'),
+    path('servicios/cliente/<str:pk>/listar', login_required(ServicioListView.as_view()) , name='listarServiciosDeCliente'),
+    path('servicio/modificar/<int:pk>/',login_required(ServicioUpdateView.as_view()) , name='modificarServicio'),
+    path('servicios/cliente/<str:cliente_pk>/modificar/<int:pk>', login_required(ServicioUpdateView.as_view()) , name='modificarServicioParaCliente'),
+    path('servicio/validar_form/<int:pk>',login_required(validar_servicio_form_en_modal) ,name="validarServicioFormAjax"),   
+    path('servicio/validar_contrato_form/<int:pk>',login_required(validar_contrato_form_en_modal) ,name="validarContratoFormAjax"),
+    path('servicio/contratar/<int:pk>', login_required(contratar_servicio) , name="contratarServicio"),
+    path('servicio/cancelar/<int:pk>', login_required(cancelar_servicio) , name="cancelarServicio"),
+    path('servicio/facturar/<int:pk>', login_required(facturar_servicio) , name="facturarServicio"),
     
     #path('turnos/<int:pk>/crear', TurnoCreateView.as_view(), name="crearTurno"),
 
-    path('tipo-servicio/crear/',TipoServicioCreateView.as_view(),name="crearTipoServicio"),
-    path('tipo-servicio/listar/',TipoServicioListView.as_view(), name='listarTipoServicio'),
-    path('tipo-servicio/modificar/<int:pk>/',TipoServicioUpdateView.as_view(), name='modificarTipoServicio'),
-    path('tipo-servicio/validar_form/<int:pk>',validar_tipo_servicio_form_en_modal,name="validarTipoServicioFormAjax"),   
+    path('tipo-servicio/crear/',login_required(TipoServicioCreateView.as_view()),name="crearTipoServicio"),
+    path('tipo-servicio/listar/',login_required(TipoServicioListView.as_view()), name='listarTipoServicio'),
+    path('tipo-servicio/modificar/<int:pk>/',login_required(TipoServicioUpdateView.as_view()), name='modificarTipoServicio'),
+    path('tipo-servicio/validar_form/<int:pk>',login_required(validar_tipo_servicio_form_en_modal),name="validarTipoServicioFormAjax"),   
 ]

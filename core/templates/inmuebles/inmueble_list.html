@@ -2,8 +2,8 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
-{% block tmain %}
-<h4 class="mx-3">{{ titulo }}</h4>
+{% block title %}
+Buscar Inmuebles
 {% endblock %}
 
 {% block tlista %} Listado de Inmuebles {% endblock %}
@@ -39,23 +39,10 @@
             <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""></i></a>
             </td>
         </tr>
-        {% empty %}
+    {% empty %}
         <tr><td> No hay inmuebles registrados. </td></tr>
     {% endfor %}
 
-    {% comment %}<div class="modal" id="modificar" role="dialog">
-    </div>{% endcomment %}
+
     
 {% endblock %}
-
-{% comment %} {% block extrajs %}
-<!--Modal-->
-<script type="text/javascript">
-    var $ = jQuery.noConflict();
-    function abrir_modal_edicion(url){
-        $('#modificar').load(url, function(){
-            $(this).modal('show');
-        });
-    }
-</script> 
-{% endblock %}{% endcomment %}

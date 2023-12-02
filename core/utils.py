@@ -90,6 +90,7 @@ class ListFilterView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        #print(f"{qs=}")
         qs = self.apply_filters_to_qs(qs)
         return qs
 
@@ -97,9 +98,19 @@ class ListFilterView(ListView):
         return self.filtros(*args, **kwargs) if self.filtros is not None else None
 
     def apply_filters_to_qs(self, qs):
-        if self.filtros:
-            filtros = self.filtros(self.request.GET)
+
+        filtros = self.get_filtros(self.request.GET)
+        if filtros is not None:
+        # if self.filtros:
+        #     filtros = self.filtros(self.request.GET)
+        #     print(f"{filtros=}")
             return filtros.apply(qs)
+
+        """if self.filtros:
+            filtros = self.filtros(self.request.GET)
+            results = filtros.apply(qs)
+            return results"""
+
         return qs
     
 

@@ -33,9 +33,3 @@ class Periodo(models.Model):
 class Asistencia(models.Model):
     periodo= models.ForeignKey(Periodo,on_delete=models.CASCADE,related_name="periodo")
     fecha= models.DateTimeField()
-
-
-
-
-
-

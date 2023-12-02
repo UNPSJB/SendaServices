@@ -10,6 +10,14 @@ Buscar Servicio
 
     {% block tlista %} Listado de Servicios {% endblock %}
 
+    {% block tExtras %} 
+    
+        {% if cliente %}
+            <a href="{% url 'servicios:crearServicioParaCliente' cliente.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+        {% else %}
+            <a href="{% url 'servicios:crearServicio' %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+        {% endif %}
+    {% endblock %}
     {% block thextras %}
         <th colspan="">Opciones</th>
     {% endblock%}
@@ -61,6 +69,13 @@ Buscar Servicio
                data-bs-placement="top" 
                title="Modificar Servicio">
             </a-->
+            
+        <td>
+        {% if cliente %}
+            <a href="#" onclick="abrir_modal('{% url "servicios:modificarServicioParaCliente" cliente_pk=s.inmueble.cliente.pk pk=s.pk %}')" class="bi bi-pencil-square text-primary"> </a>
+        {% else %}
+            <a href="#" onclick="abrir_modal('{% url "servicios:modificarServicio" pk=s.pk %}')" class="bi bi-pencil-square text-primary"> </a>
+        {% endif %}
         </td>
         
 

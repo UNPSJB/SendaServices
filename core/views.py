@@ -86,7 +86,7 @@ class ClienteCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
+        # print(self.template_name)
         context['tnav'] = "Gestion de Clientes"
         return context
     
@@ -104,7 +104,7 @@ class ClienteUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.template_name)
+        # print(self.template_name)
         return context
     
     #Este form, es para cuando se envia se muestre el mensaje de cliente creado en list
@@ -139,7 +139,7 @@ class InmuebleListView(ListFilterView):
             kwargs['initial'] = { 
                 "cliente": cliente 
             }
-            kwargs['listadoInmueblesCliente'] = True   
+            #kwargs['listadoInmueblesCliente'] = True   
         return kwargs
 
     def get_queryset(self):
@@ -184,7 +184,7 @@ class InmuebleCreateView(CreateView):
 
     def get_success_url(self, **kwargs):
         cliente = self.get_cliente()
-        print(f"{cliente=}")
+        #print(f"{cliente=}")
         if cliente is not None:
             return reverse_lazy('listarInmueblesDeCliente', kwargs={"pk": cliente.pk})
         else:
@@ -273,12 +273,6 @@ class ProductoCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Producto"
         return context
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        print(self.template_name)
-        context['tnav'] = "Gestion de Productos"
-        return context
 
     #Este form, es para cuando se envia se muestre el mensaje de producto creado en list
     def form_valid(self, form):
@@ -303,6 +297,25 @@ class ProductoUpdateView(UpdateView):
         return super().form_valid(form)
     
     
+class ProductoDeleteView(SuccessMessageMixin, DeleteView):
+    model = Producto
+    context_object_name = "producto"
+    success_url = reverse_lazy('listarProductos')
+    success_message = "El producto ha sido eliminado!"
+    template_name = "core/producto_confirm_delete.html"
+    
+    def form_valid(self, form):
+        res = self.get_object().delete() # intento eliminar a mano
+        if res is None: # no pudo eliminar
+            messages.error(self.request, "El producto se encuentra asociado a un servicio activo.")
+            return redirect(self.success_url)
+        else:
+            return super().form_valid(form)
+
+    def post(self, *args, **kwargs):
+        producto = Producto.objects.get(pk=self.kwargs["pk"])
+        producto.dar_de_baja()
+        return redirect(self.success_url)
     
 #Gestion Empleado
 
@@ -421,22 +434,3 @@ class CategoriaUpdateView(UpdateView):
         messages.success(self.request, 'El producto se modifico exitosamente.')
         return super().form_valid(form)
     
-class ProductoDeleteView(SuccessMessageMixin, DeleteView):
-    model = Producto
-    context_object_name = "producto"
-    success_url = reverse_lazy('listarProductos')
-    success_message = "El producto ha sido eliminado!"
-    template_name = "core/producto_confirm_delete.html"
-    
-    def form_valid(self, form):
-        res = self.get_object().delete() # intento eliminar a mano
-        if res is None: # no pudo eliminar
-            messages.error(self.request, "El producto se encuentra asociado a un servicio activo.")
-            return redirect(self.success_url)
-        else:
-            return super().form_valid(form)
-
-    def post(self, *args, **kwargs):
-        producto = Producto.objects.get(pk=self.kwargs["pk"])
-        producto.dar_de_baja()
-        return redirect(self.success_url)

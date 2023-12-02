@@ -2,9 +2,11 @@
 from django import forms 
 from .models import Servicio, TipoServicio, TipoServicioProducto, Servicio, DetalleServicio, TipoEstado, Estado
 from core.utils import FiltrosForm
+from core.models import Inmueble
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
+from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, Subquery, OuterRef
@@ -111,6 +113,15 @@ class ServicioForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
         self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+
+        inmuebles = Inmueble.objects.all()
+
+        if "initial" in kwargs:
+            if "cliente" in kwargs["initial"]:
+                cliente = kwargs["initial"]["cliente"] # nos da el Cliente del Inmueble
+                inmuebles = Inmueble.objects.filter(cliente = cliente)
+      
+        self.fields['inmueble'].queryset = inmuebles
         self.helper = FormHelper()
         self.helper.form_tag = False
 
@@ -145,6 +156,32 @@ class ServicioUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+        #print(f"{kwargs=}")
+        servicio = kwargs["instance"] # nos da el modelo Inmueble
+        url_kwargs = {'pk': servicio.pk}
+        url = "servicios:modificarServicio"
+        #if "initial" in kwargs:
+            #if "cliente" in kwargs["initial"]:
+                #servicio = kwargs["initial"] # nos da el Servicio
+        inmueble = servicio.inmueble
+        #print(f"{inmueble=}")
+        url = "servicios:modificarServicioParaCliente"
+        url_kwargs.update({'cliente_pk': inmueble.cliente.pk})
+        #print(f"{url=}, {url_kwargs=}")
+        self.helper.form_action = reverse_lazy(url, kwargs=url_kwargs)
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     inmueble = kwargs["instance"] # nos da el modelo Inmueble
+    #     url_kwargs = {'pk': inmueble.pk}
+    #     url = "modificarInmueble"
+    #     if "initial" in kwargs:
+    #         if "cliente" in kwargs["initial"]:
+    #             cliente = kwargs["initial"]["cliente"] # nos da el Cliente del Inmueble
+    #             url = "modificarInmuebleParaCliente"
+    #             url_kwargs.update({'cliente_pk': cliente.pk})
+
+    #     self.helper.form_action = reverse_lazy(url, kwargs=url_kwargs)
 
 
 class ServicioContratarForm(forms.ModelForm):

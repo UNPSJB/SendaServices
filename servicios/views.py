@@ -12,6 +12,7 @@ from .forms import (
     DetalleServicioFormSetHelper, TipoServicioForm, 
     TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm)
 from .models import TipoServicio, Servicio
+from core.models import Cliente, Inmueble
 
 
 # Create your views here.
@@ -25,7 +26,7 @@ def dummy_view(request):
 
 def validar_servicio_form_en_modal(request, pk):
     instance = Servicio.objects.get(pk=pk)
-    form = ServicioUpdateForm(request.POST or None)
+    form = ServicioUpdateForm(request.POST or None, instance=instance)
     detalle_servicio_formset = DetalleServicioInline()(
         instance=instance, data=request.POST or None
     )
@@ -214,6 +215,30 @@ class ServicioCreateView(CreateView):
         self.detalleServicio_formset_helper = DetalleServicioFormSetHelper()
         return form
 
+    def get_cliente(self):
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return Cliente.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        cliente = self.get_cliente()
+        if cliente is not None:
+            kwargs['initial'] = { 
+                "cliente": cliente 
+            }   
+        return kwargs
+
+    def get_success_url(self, **kwargs):
+        cliente = self.get_cliente()
+        #print(f"{cliente=}")
+        if cliente is not None:
+            return reverse_lazy('servicios:listarServiciosDeCliente', kwargs={"pk": cliente.pk})
+        else:
+            return reverse_lazy('servicios:listarServicio')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -245,7 +270,7 @@ class ServicioCreateView(CreateView):
 class ServicioUpdateView(UpdateView):
     model = Servicio
     form_class = ServicioUpdateForm
-    success_url = reverse_lazy("servicios:listarServicio")
+    #success_url = reverse_lazy("servicios:listarServicio")
     template_name = "servicios/servicio_modal.html"
 
     def get_form(self, form_class=None):
@@ -259,6 +284,29 @@ class ServicioUpdateView(UpdateView):
         )
         self.detalle_servicio_formset_helper = DetalleServicioFormSetHelper()
         return form
+
+    def get_cliente(self):
+        pk = self.kwargs.get('cliente_pk')
+        if pk is not None:
+            return Cliente.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        cliente = self.get_cliente()
+        if cliente is not None:
+            kwargs['initial'] = { 
+                "cliente": cliente 
+            }   
+        return kwargs
+
+    def get_success_url(self, **kwargs):
+        cliente = self.get_cliente()
+        if cliente is not None:
+            return reverse_lazy('servicios:listarServiciosDeCliente', kwargs={"pk": cliente.pk})
+        else:
+            return reverse_lazy('servicios:listarServicio')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -292,3 +340,35 @@ class ServicioListView(ListFilterView):
     template_name = "servicios/servicio_list.html" #Ruta del template
     context_object_name = 'servicio' #Nombre de la lista usar ''
     queryset = Servicio.objects.all()
+
+    def get_cliente(self):
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return Cliente.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        cliente = self.get_cliente()
+        if cliente is not None:
+            kwargs['initial'] = { 
+                "cliente": cliente 
+            }
+            #kwargs['listadoServiciosCliente'] = True   
+        return kwargs
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        cliente = self.get_cliente()
+        if cliente:
+            return queryset.filter(inmueble__cliente=cliente)
+        return queryset
+
+    def get_filtros(self, *args, **kwargs):
+        return ServiciosFiltrosForm(*args, **kwargs) if not self.get_cliente() else ServiciosFiltrosForm(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["cliente"] = self.get_cliente()
+        return context    

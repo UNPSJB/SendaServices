@@ -139,7 +139,7 @@ class InmuebleListView(ListFilterView):
             kwargs['initial'] = { 
                 "cliente": cliente 
             }
-            kwargs['listadoInmueblesCliente'] = True   
+            #kwargs['listadoInmueblesCliente'] = True   
         return kwargs
 
     def get_queryset(self):
@@ -184,7 +184,7 @@ class InmuebleCreateView(CreateView):
 
     def get_success_url(self, **kwargs):
         cliente = self.get_cliente()
-        print(f"{cliente=}")
+        #print(f"{cliente=}")
         if cliente is not None:
             return reverse_lazy('listarInmueblesDeCliente', kwargs={"pk": cliente.pk})
         else:

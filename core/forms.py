@@ -154,7 +154,7 @@ class EmpleadoForm(ModelForm):
     class Meta:
         model = Empleado
         fields = '__all__'
-        exclude = ["baja"]
+        exclude = ["baja", "usuario"]
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 
             'legajo': 'Legajo',

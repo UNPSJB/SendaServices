@@ -1,5 +1,4 @@
 from django.db import models
-from servicios.models import Servicio
 from core.models import Empleado
 
 
@@ -22,7 +21,7 @@ class Horario(models.Model):
 
     turno= models.CharField(max_length=30,choices=Turno.choices)
     diaSemana= models.CharField(max_length=30,choices=DiaSemana.choices)
-    servicio= models.ForeignKey(Servicio, related_name="horarios", on_delete=models.CASCADE)
+    servicio= models.ForeignKey("servicios.Servicio", related_name="horarios", on_delete=models.CASCADE)
 
 class Periodo(models.Model): 
     horario=  models.ForeignKey(Horario,on_delete=models.CASCADE, related_name= "periodo") 

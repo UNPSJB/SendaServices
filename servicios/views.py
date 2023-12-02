@@ -1,3 +1,4 @@
+from typing import Any
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, CreateView, UpdateView, ListView, DetailView
 from django.contrib import messages
@@ -22,6 +23,25 @@ from .models import TipoServicio, Servicio
 
 def dummy_view(request):
     return HttpResponse("Esta es una vista ficticia")
+
+def validar_contrato_form_en_modal(request, pk):
+    #instance = Servicio.objects.get(pk=pk)
+    form = ServicioContratarForm(request.POST or None)
+
+    if form.is_valid():
+        return JsonResponse({"success": True})
+    else:
+        print(f"form errors={form.errors}")
+        
+    ctx = {}
+    ctx.update(csrf(request))
+    form_html = render_crispy_form(form, form.helper, context=ctx)
+    return JsonResponse(
+        {
+            "success": False,
+            "form_html": form_html,
+        }
+    )
 
 def validar_servicio_form_en_modal(request, pk):
     instance = Servicio.objects.get(pk=pk)
@@ -108,10 +128,13 @@ class TipoServicioListView(ListFilterView):
     context_object_name = "tiposServicio"  # Nombre de la lista usar ''
     queryset = TipoServicio.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tnav'] = "Gestion de Tipo Servicios"
+        return context
 
 class TipoServicioDetailView(DetailView):
     model = TipoServicio
-
 
 class TipoServicioCreateView(CreateView):
     model = TipoServicio
@@ -137,6 +160,7 @@ class TipoServicioCreateView(CreateView):
         ] = self.tipoServicio_producto_formset_helper
 
         context["titulo"] = "Registrar Producto"
+        context['tnav'] = "Gestion de Tipos Servicios"
         # context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
 
         return context
@@ -221,6 +245,7 @@ class ServicioCreateView(CreateView):
         context['detalleServicio_formset_helper'] = self.detalleServicio_formset_helper
         
         context['titulo'] = "Registrar Detalle Servicio"
+        context['tnav'] = "Gestion de Servicios"
         #context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
 
         return context
@@ -283,7 +308,21 @@ class ServicioUpdateView(UpdateView):
         )
         return super().form_valid(form)
 
-    
+
+
+def contratar_servicio(request, pk):
+    if request.method == "GET":
+        servicio = Servicio.objects.get(pk=pk)
+        if servicio:
+            servicio.contratar()
+        return redirect(reverse_lazy("servicios:listarServicio"))
+
+def facturar_servicio(request, pk):
+    pass
+
+def cancelar_servicio(request, pk):
+    pass
+
 class ServicioContratarView(UpdateView):
     model = Servicio
     form_class = ServicioContratarForm
@@ -320,3 +359,8 @@ class ServicioListView(ListFilterView):
     template_name = "servicios/servicio_list.html" #Ruta del template
     context_object_name = 'servicio' #Nombre de la lista usar ''
     queryset = Servicio.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tnav'] = "Gestion de Servicios"
+        return context

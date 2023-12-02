@@ -40,7 +40,7 @@
 {% block extrajs %}
 
 <script>
-  $(document).ready(function () {
+  /*$(document).ready(function () {
       $("#contratarBtn").click(function () {
           // Realizar una solicitud POST al endpoint de Django
           $.ajax({
@@ -57,6 +57,27 @@
               }
           });
       });
+  });*/
+  
+  // Capturamos el evento click del botón submit del modal
+  $("button[type=submit]").on("click", (e) => {
+    e.preventDefault();
+
+    // Seteamos la url a la view de validación del form que está dentro del modal
+    const url = "{% url 'servicios:validarContratoFormAjax' object.pk %}";
+
+    // Obtenemos los datos cargados en el form para enviarlos a validar
+    const form = document.querySelector(".modal form");
+    const form_data = new FormData(form);
+    
+    // Configuramos los selectores para reemplazar el contenido html sin/con los errores
+    // junto a sus respectivas "claves" dentro del objeto response que viene de la view de validación
+    const config = {
+      '#servicio-form-wrapper' : 'form_html',
+    }
+    
+    // Invocamos a la función que maneja la validación.
+    handle_modal_validation(url, form_data, config);
   });
 </script>
 

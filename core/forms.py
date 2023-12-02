@@ -546,7 +546,7 @@ class InmuebleUpdateForm(InmuebleForm()):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        print("llegue al form de inmuebleUpdate")
+        #print("llegue al form de inmuebleUpdate")
         inmueble = kwargs["instance"] # nos da el modelo Inmueble
         url_kwargs = {'pk': inmueble.pk}
         url = "modificarInmueble"

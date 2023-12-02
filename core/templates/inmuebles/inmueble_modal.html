@@ -1,6 +1,4 @@
 {% extends "basemodal.html" %}
-{% comment %} {% load crispy_forms_tags %}
-{% load static %} {% endcomment %}
 
 <!--Titulo del modal-->
 {% block tmodal %} Edicion del Inmueble de: {% endblock %}
@@ -10,6 +8,3 @@
 
 <!--Url del modal-->
 {% block url %} {% url 'modificarInmueble' object.pk %} {% endblock %}
-
-<!--Boton del modal-->
-{% comment %}{% block btnmodal %} Guardar {% endblock %} {% endcomment %}

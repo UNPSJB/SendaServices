@@ -134,13 +134,6 @@ class ServicioForm(forms.ModelForm):
             raise ValidationError("La fecha 'FIN' debe ser mayor o igual a la fecha 'INICIO'.")
 
         return cleaned_data
-    
-
-from django import forms
-from django.core.exceptions import ValidationError
-from .models import Servicio
-from datetime import datetime
-from crispy_forms.helper import FormHelper
 
 class ServicioUpdateForm(forms.ModelForm):
 
@@ -170,19 +163,6 @@ class ServicioUpdateForm(forms.ModelForm):
         url_kwargs.update({'cliente_pk': inmueble.cliente.pk})
         #print(f"{url=}, {url_kwargs=}")
         self.helper.form_action = reverse_lazy(url, kwargs=url_kwargs)
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     inmueble = kwargs["instance"] # nos da el modelo Inmueble
-    #     url_kwargs = {'pk': inmueble.pk}
-    #     url = "modificarInmueble"
-    #     if "initial" in kwargs:
-    #         if "cliente" in kwargs["initial"]:
-    #             cliente = kwargs["initial"]["cliente"] # nos da el Cliente del Inmueble
-    #             url = "modificarInmuebleParaCliente"
-    #             url_kwargs.update({'cliente_pk': cliente.pk})
-
-    #     self.helper.form_action = reverse_lazy(url, kwargs=url_kwargs)
 
     def clean(self):
         cleaned_data = super().clean()

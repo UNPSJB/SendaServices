@@ -1,5 +1,10 @@
 {% extends "../baselist.html" %}
 
+{% block title %}
+Buscar Producto
+{% endblock %}
+
+
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
@@ -14,13 +19,12 @@
     {% for p in productos %}
     <tr>
         <td>{{forloop.counter}}</td>
-        <td>{{p.codigo}}</td>
         <td>{{p.descripcion}}</td>
         <td>{{p.stock}}</td>
         <td>{{p.precioUnitario}}</td>
         <td class="list-options">
             <a href="#"><i class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarProducto" p.pk %}')"></i></a>
-            <a href="#"><i class="bi bi-trash3 icon-danger" onclick="abrir_modal('{% url "eliminarProducto" p.pk %}')"></i></a>
+            <a href="#"><i class="bi bi-trash3 icon-danger" onclick="abrir_modal('{% url "eliminarProducto" p.pk %}')" ></i></a>
             <!--button onclick="abrir_modal('{% url "modificarProducto" p.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button-->
         </td>
     </tr>

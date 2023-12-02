@@ -19,7 +19,9 @@
 {% endblock %}
 
 {% block cmodal %}
-  {% crispy form form.helper %}
+  <div id="tipo-servicio-form-wrapper">
+    {% crispy form form.helper %}
+  </div>
   <div data-formset="productos_cantidad" id="productos">
     {% crispy tipoServicio_producto_formset tipoServicio_producto_formset_helper %}
   </div>
@@ -28,4 +30,37 @@
 <!-- Boton del modal -->
 {% block btnmodal %}
   Guardar
+{% endblock %}
+
+
+
+{% block extrajs %}
+<script type="text/javascript">
+
+  
+  // Capturamos el evento click del botón submit del modal
+  $("button[type=submit]").on("click", (e) => {
+    e.preventDefault();
+
+    // Seteamos la url a la view de validación del form que está dentro del modal
+    const url = "{% url 'servicios:validarTipoServicioFormAjax' object.pk %}";
+
+    // Obtenemos los datos cargados en el form para enviarlos a validar
+    const form = document.querySelector(".modal form");
+    const form_data = new FormData(form);
+    
+    // Configuramos los selectores para reemplazar el contenido html sin/con los errores
+    // junto a sus respectivas "claves" dentro del objeto response que viene de la view de validación
+    const config = {
+      '#tipo-servicio-form-wrapper' : 'form_html',
+      '#productos': 'productos_html'
+    }
+    
+    // Invocamos a la función que maneja la validación.
+    handle_modal_validation(url, form_data, config);
+  });
+    
+    
+  </script>
+  
 {% endblock %}

@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
     {% block title %}
-
+      
     {% endblock %}
   </title>
 
@@ -51,6 +51,57 @@
               Home
             </a>
           </li>
+
+          <!-- Menu empleados -->
+          <li class="sidebar-item">
+
+            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionempleado" data-bs-toggle="collapse"
+              aria-expanded="false">
+              <i class="bi bi-person-bounding-box"></i> Gestion Empleados
+            </a>
+
+            <!--Empleados-->
+            <ul id="gestionempleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#empleado" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-person-square"></i>
+                Empleados
+              </a>
+
+              <ul id="empleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'crearEmpleado' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+                <li class="sidebar-item">
+                  <a href="{% url 'listarEmpleado' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
+            </ul>
+
+            <!--Categorias-->
+            <ul id="gestionempleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#categoria" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-clipboard2-fill"></i>
+                Categorias
+              </a>
+
+              <ul id="categoria" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'crearCategoria' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+                <li class="sidebar-item">
+                  <a href="{% url 'listarCategoria' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+                </li>
+              </ul>
+            </ul>            
+
+          </li>   
+
           <!-- Menu clientes -->
           <li class="sidebar-item">
 
@@ -84,7 +135,7 @@
 
               <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#inmueble" data-bs-toggle="collapse"
                 aria-expanded="false">
-                <i class="bi bi-person-fill"></i>
+                <i class="bi bi-building-fill"></i>
                 Inmueble
               </a>
 
@@ -100,6 +151,7 @@
             </ul>
           </li> 
 
+         
           <!-- Menu productos -->
           <li class="sidebar-item">
 
@@ -119,21 +171,62 @@
               </li>
             </ul>
           </li>
-      
-          <!-- Menu clientes -->
+
+      <!-- Menu turnos -->
+      <li class="sidebar-item">
+
+        <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionHorarios" data-bs-toggle="collapse"
+          aria-expanded="false">
+          <i class="bi bi-alarm"></i> Gestion Turnos
+        </a>
+
+        <!--Turnos-->
+        <ul id="gestionHorarios" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+          <li class="sidebar-item">
+            <a href="{% url 'turnos:crearHorario' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+          </li>
+          
+          <li class="sidebar-item">
+            <a href="{% url 'turnos:listarHorarios' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+          </li>
+        </ul>
+      </li>
+            
+          <!-- Menu servicios -->
           <li class="sidebar-item">
 
             <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionservicios" data-bs-toggle="collapse"
               aria-expanded="false">
-              <i class="bi bi-file-earmark-text-fill"></i>Gestion de Servicios
+              <i class="bi bi-file-medical-fill"></i> Gestion de Servicios
             </a>
 
-            <!--Clientes-->
+            <!--Servicios-->
             <ul id="gestionservicios" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+
+
+              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#Servicio" data-bs-toggle="collapse"
+                aria-expanded="false">
+                <i class="bi bi-file-text-fill"></i>
+                Servicio
+              </a>
+
+              <ul id="Servicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'servicios:crearServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
+                </li>
+                
+              </ul>
+
+              <ul id="Servicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+                <li class="sidebar-item">
+                  <a href="{% url 'servicios:listarServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Listar</a>
+                </li>
+                
+              </ul>
 
               <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#tipoServicio" data-bs-toggle="collapse"
                 aria-expanded="false">
-                <i class="bi bi-file-medical-fill"></i>
+                <i class="bi bi-file-earmark-text-fill"></i>
                 Tipo Servicio
               </a>
 
@@ -149,57 +242,7 @@
             </ul>
           </li>
 
-
-
-          <li class="sidebar-item">
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#post" data-bs-toggle="collapse"
-              aria-expanded="false">
-              <i class="bi bi-file-earmark"></i>Post</a>
-            <ul id="post" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Post 1</a>
-              </li>
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Post 2</a>
-              </li>
-              <li class="sidebar-item">
-                <a href="#" class="sidebar-link">Post 3</a>
-              </li>
-            </ul>
-          </li>
-
-          <!---->
-          <li class="sidebar-header">
-            Multi nivel
-          </li>
-          <li class="sidebar-item">
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#menu" data-bs-toggle="collapse"
-              aria-expanded="false">
-              <i class="bi bi-person-fill-gear"></i>Multi Dropdown
-            </a>
-            <ul id="menu" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-
-              <a href="#" class="sidebar-link collapsed" data-bs-target="#nivel-1" data-bs-toggle="collapse"
-                aria-expanded="false">
-                Nivel 1
-              </a>
-
-              <ul id="nivel-1" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="#" class="sidebar-link">Nivel 1.1</a>
-                </li>
-                <li class="sidebar-item">
-                  <a href="#" class="sidebar-link">Nivel 1.2</a>
-                </li>
-                <li class="sidebar-item">
-                  <a href="#" class="sidebar-link">Nivel 1.3</a>
-                </li>
-
-              </ul>
-            </ul>
-
-          </li>
-
+        
         </ul>
       </div>
     </aside>
@@ -240,10 +283,6 @@
       <main class="content px-3 py-2">
         <div class="container-fluid">
           <div class="d-flex pt-2 pb-2">
-            
-            {% block volver %}
-            <a class="" href="../"><i class="bi bi-arrow-left"></i></a>
-            {% endblock %}
 
             {% block tmain %}
             {% endblock %}
@@ -276,6 +315,8 @@
   <script src="{% static 'js/tablas.js' %}"></script>
 
   <script src="{% static 'js/aside.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/modal_form_validation.js' %}"></script>
+
 
   {% block extrajs %}
   {% endblock %}

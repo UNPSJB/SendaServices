@@ -17,6 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required
+
+#from turnos import urls
+
 from .views import (
     salir, 
     index, 
@@ -33,8 +36,16 @@ from .views import (
     ProductoCreateView,
     ProductoListView,
     ProductoUpdateView,
-    ProductoDeleteView
+    ProductoDeleteView,
+    EmpleadoCreateView,
+    EmpleadoListView,
+    EmpleadoUpdateView,
+    EmpleadoDeleteView,
+    CategoriaCreateView,
+    CategoriaListView,
+    CategoriaUpdateView
 )
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -51,18 +62,37 @@ urlpatterns = [
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
     
     # Gestion Inmuebles
+    
+    # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
     path('inmuebles/cliente/<str:pk>/crear', InmuebleCreateView.as_view(), name='crearInmuebleParaCliente'),
+    path('inmuebles/cliente/<str:cliente_pk>/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmuebleParaCliente'),    
     path('inmuebles/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmueble'),
     path('inmuebles/listar/', InmuebleListView.as_view(), name='listarInmuebles'),
     path('inmuebles/cliente/<str:pk>/listar', InmuebleListView.as_view(), name='listarInmueblesDeCliente'),
-
+    
     # Gestion Tipo Servicio
     path('servicios/', include('servicios.urls',namespace='servicios')),
     
-        # Gestion Productos
+    # Gestion Productos
     path('productos/', ProductoCreateView.as_view(), name='crearProducto'),
-    path('productos/modificar/<str:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
+    path('productos/modificar/<int:pk>', ProductoUpdateView.as_view(), name='modificarProducto'),
     path('productos/listar', ProductoListView.as_view(), name='listarProductos'),
-    path('productos/eliminar/<str:pk>', ProductoDeleteView.as_view(), name='eliminarProducto')
+    path('productos/eliminar/<int:pk>', ProductoDeleteView.as_view(), name='eliminarProducto'),
+
+  
+    #Gestion Empleados
+    path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),
+    path('empleadoList/', EmpleadoListView.as_view(), name="listarEmpleado"),
+    path('empleadoModificar/<int:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
+    path('empleado/eliminar/<int:pk>', EmpleadoDeleteView.as_view(), name='eliminarEmpleado'),
+    
+    #Gestion Categoria
+    path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),
+    path('categoria/modificar/<int:pk>', CategoriaUpdateView.as_view(), name='modificarCategoria'),
+    path('categoria/listar', CategoriaListView.as_view(), name='listarCategoria'),  
+
+    #Gestion Turnos
+    path('turnos/', include('turnos.urls',namespace='turnos')),
+    
 ]

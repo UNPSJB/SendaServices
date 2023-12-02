@@ -1,0 +1,86 @@
+{% extends 'basemodal.html' %}
+
+
+{% load crispy_forms_tags %}
+
+<!-- Titulo del modal -->
+{% block tmodal %}
+  Contratar servicio:
+{% endblock %}
+
+<!-- Objeto del titulo del modal -->
+{% block tobjectmodal %}
+  {{ object }}
+{% endblock %}
+
+<label for="chec" class="form-check-label mb-3">Servicio Eventual</label>
+<input name="chec" class="form-check-input" type="checkbox" id="chec" onchange="comprobar();"/>
+
+{% block cform %}
+<form action="{% url 'servicios:contratarServicio' object.pk %}" method="POST">
+  {% csrf_token %}
+  <div id="servicio-form-wrapper">
+    {% crispy form form.helper %}
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary" onclick="">Contratar</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+  </div>
+</form>
+{% endblock %}
+
+<!-- Boton del modal -->
+{% block btnmodal %}
+  Guardar
+{% endblock %}
+
+
+
+{% block extrajs %}
+
+<script>
+  /*$(document).ready(function () {
+      $("#contratarBtn").click(function () {
+          // Realizar una solicitud POST al endpoint de Django
+          $.ajax({
+              url: '/ruta/a/contratar/',  // Reemplaza con tu URL real
+              method: 'POST',
+              data: {csrfmiddlewaretoken: '{{ csrf_token }}'},  // Asegúrate de incluir el token CSRF
+              success: function (data) {
+                  // Manejar la respuesta del servidor si es necesario
+                  console.log('Contratación exitosa');
+              },
+              error: function (error) {
+                  // Manejar errores
+                  console.error('Error al intentar contratar:', error);
+              }
+          });
+      });
+  });*/
+  
+  // Capturamos el evento click del botón submit del modal
+  $("button[type=submit]").on("click", (e) => {
+    e.preventDefault();
+
+    // Seteamos la url a la view de validación del form que está dentro del modal
+    const url = "{% url 'servicios:validarContratoFormAjax' object.pk %}";
+
+    // Obtenemos los datos cargados en el form para enviarlos a validar
+    const form = document.querySelector(".modal form");
+    const form_data = new FormData(form);
+    
+    // Configuramos los selectores para reemplazar el contenido html sin/con los errores
+    // junto a sus respectivas "claves" dentro del objeto response que viene de la view de validación
+    const config = {
+      '#servicio-form-wrapper' : 'form_html',
+    }
+    
+    // Invocamos a la función que maneja la validación.
+    handle_modal_validation(url, form_data, config);
+  });
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "basemodal.html" %}
+
+<!--Titulo del modal-->
+{% block tmodal %} Edicion Empleado: {% endblock %}
+
+<!--Objeto del titulo del modal-->
+{% block tobjectmodal %} {{object}} {% endblock %}
+
+<!--Url del modal-->
+{% block url %} {% url 'modificarEmpleado' object.pk%} {% endblock %}
+
+<!--Boton del modal-->
+{% comment %}{% block btnmodal %} Guardar {% endblock %}{% endcomment %} 

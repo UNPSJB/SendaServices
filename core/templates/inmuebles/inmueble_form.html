@@ -3,8 +3,33 @@
 <!--Titulo del formulario-->
 {% block tform %} Crear Inmueble {% endblock %}
 
+<!--Objeto del titulo del form-->
+{% block tobjectform %} {% endblock %}
+
 <!--Url del formulario-->
 {% block url %} {% url 'crearInmueble' %} {% endblock %}
 
 <!--Boton del formulario-->
-{% block btnform %} Guardar {% endblock %}
+{% comment %}{% block btnform %} Guardar {% endblock %}{% endcomment %}
+{% block extrajs %}
+
+<script type="text/javascript">
+$(function() {
+  	
+    $("#save-inmueble").on("click", (e) => { 
+	    const select = $("#id_cliente[disabled]");
+	    if (select.length > 0){
+	        //e.preventDefault();
+	        select.prop("disabled", false);
+	        //console.log($("#id-inmuebleForm"));
+	        //$("#id-inmuebleForm").trigger("submit");
+	        $("#id-inmuebleForm").trigger("submit");
+	    }
+
+    })
+
+})
+
+</script>
+
+{% endblock %}

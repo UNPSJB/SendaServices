@@ -1,0 +1,50 @@
+{% extends '../baseform.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+Crear Servicio
+{% endblock %}
+
+
+<!-- Titulo del formulario -->
+{% block tform %}
+  Registrar Servicio
+{% endblock %}
+
+<!-- Url del formulario -->
+
+{% block cform %}
+
+<label for="chec" class="form-check-label mb-3">Servicio Eventual</label>
+<input name="chec" class="form-check-input" type="checkbox" id="chec" onchange="comprobar();"/>
+
+
+<form action="{% url 'servicios:crearServicio' %}" method="POST">
+
+  {% csrf_token %}   
+  {% crispy form form.helper %}
+  <div data-formset="detalles_servicio" id="productos" >
+    {% crispy detalleServicio_formset detalleServicio_formset_helper %}
+  </div>
+
+  <div class="d-grid gap-2">
+    <button type="submit" class="btn btn-primary btn-block text-white">
+      Guardar
+    </button>
+  </div>
+</form>
+
+
+
+
+
+
+{% endblock %}
+
+
+<!-- Boton del formulario -->
+{% block btnform %}
+  Guardar
+{% endblock %}
+

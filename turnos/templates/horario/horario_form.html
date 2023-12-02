@@ -1,0 +1,34 @@
+{% extends "baseform.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+Crear Turno
+{% endblock %}
+
+<!--Titulo del formulario-->
+{% block tform %} Crear Turno {% endblock %}
+
+{% block cform %}
+
+  <form action="{% url 'turnos:crearHorarioParaServicio' servicio.pk %}" method="POST">
+    {% csrf_token %}
+    {% crispy form form.helper %}
+    <div data-formset="periodo_formset" id="periodos" >
+      {% crispy periodo_formset periodo_formset_helper %}
+    </div>
+
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-primary btn-block text-white">
+        Guardar
+      </button>
+    </div>
+  </form>
+  
+{% endblock %}
+
+<!--Url del formulario-->
+{% block url %} {% url 'turnos:crearHorario' %} {% endblock %}
+
+<!--Boton del formulario-->
+{% block btnform %} Guardar {% endblock %}

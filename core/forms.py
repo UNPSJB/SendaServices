@@ -215,7 +215,6 @@ class EmpleadoForm(ModelForm):
 class EmpleadoFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
-        ("legajo", "Legajo"),
         ("apellido", "Apellido"),
         ("nombre", "Nombre"),
         ("correo", "Correo"),
@@ -224,7 +223,6 @@ class EmpleadoFiltrosForm(FiltrosForm):
     ]
     ATTR_CHOICES = [
 
-        ("legajo", "Legajo"),
         ("apellido", "Apellido"),
         ("nombre", "Nombre"),
         ("correo", "Correo"),
@@ -234,7 +232,6 @@ class EmpleadoFiltrosForm(FiltrosForm):
     ]
 
     #Formulario de filtrado
-    legajo = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Legajo'}), max_length=45)
     apellido = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Apellido'}), max_length=45)
     nombre = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Nombre'}), max_length=45)
     correo = forms.EmailField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Correo'}))
@@ -312,9 +309,11 @@ class EmpleadoModForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = 'legajo-empleadoForm'
         self.helper.form_method = 'post'
+        self.helper.form_tag = False
         empleado = kwargs["instance"] 
         self.helper.form_action = reverse_lazy("modificarEmpleado", kwargs={"pk": empleado.pk})
         self.helper.add_input(Submit('submit', 'Guardar'))
+
 
             
 
@@ -658,6 +657,7 @@ class ProductoUpdateForm(ProductoForm):
         self.helper = FormHelper()
         self.helper.form_id = 'pk-productoForm'
         self.helper.form_method = 'post'
+        self.helper.form_tag = False
         producto = kwargs["instance"] 
         self.helper.form_action = reverse_lazy("modificarProducto", kwargs={"pk": producto.pk})
         self.helper.add_input(Submit('submit', 'Guardar'))

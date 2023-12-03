@@ -51,7 +51,6 @@
               Home
             </a>
           </li>
-
           {% if perms.core %}
           <!-- Menu empleados -->
           <li class="sidebar-item">
@@ -102,7 +101,7 @@
             </ul>            
 
           </li>   
-          {% endif %}
+          
 
           <!-- Menu clientes -->
           <li class="sidebar-item">
@@ -173,6 +172,7 @@
               </li>
             </ul>
           </li>
+          {% endif %}
 
       <!-- Menu turnos -->
       <li class="sidebar-item">
@@ -193,7 +193,7 @@
           </li>
         </ul>
       </li>
-            
+        {% if perms.core %}
           <!-- Menu servicios -->
           <li class="sidebar-item">
 
@@ -243,7 +243,7 @@
               </ul>
             </ul>
           </li>
-
+        {% endif %}
 
           <li class="sidebar-item">
             <a href="#" class="sidebar-link collapsed" data-bs-target="#post" data-bs-toggle="collapse"

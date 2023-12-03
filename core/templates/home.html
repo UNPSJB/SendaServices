@@ -17,8 +17,12 @@ Senda
         <div class="row g-0 w-100">
           <div class="col-6">
             <div class="p-3 m-1">
-              <h4>Bienvenido de nuevo, Admin</h4>
-              <p class="mb-0">Panel admin, senda</p>
+              {% if perms.core%}
+                <h4>Bienvenido de nuevo, Admin</h4>
+                <p class="mb-0">Panel admin, senda</p>
+              {% else %}
+                <h4>Bienvenido de nuevo, Empleado</h4>
+              {% endif %}
             </div>
             <div class="col-6 align-self-end text-end">
             </div>
@@ -28,6 +32,7 @@ Senda
     </div>
   </div>
 
+  {% if perms.core%}
   <div class="col-12 col-md-6 d-flex">
     <div class="card flex-fill border-0">
       <div class="card-body py-4">
@@ -44,6 +49,7 @@ Senda
         </div>
       </div>
     </div>
+    {% endif %}
   </div>
 
 

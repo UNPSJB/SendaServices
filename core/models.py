@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Permission
 from servicios.models import (
     DetalleServicio, 
     Servicio, 
@@ -94,6 +94,12 @@ class Empleado(models.Model):
     baja= models.BooleanField(default=False)
     usuario = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
 
+    class Meta:
+        default_permissions = ()
+        permissions = [
+            ("es_empleado","puede ver sus horarios y marcar sus asistencias"),
+            ]
+        
     def crear_usuario(self):
         # base_username = (self.nombre[0] + self.apellido).lower()
         # cantidad = User.objects.filter(username__startswith=base_username).count()

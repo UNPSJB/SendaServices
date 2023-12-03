@@ -26,6 +26,15 @@ class FacturaListView(ListFilterView):
             return Servicio.objects.get(pk=pk)
         else:
             return None
+        
+    def get_queryset(self):
+        servicio = self.get_servicio()
+        if servicio:
+            # Filtrar las facturas por el servicio
+            return Factura.objects.filter(servicio=servicio)
+        else:
+            # Si no hay servicio, mostrar todas las facturas
+            return Factura.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

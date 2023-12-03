@@ -13,15 +13,20 @@ Facturas
     {% block tcuerpo %}
     {% for f in facturas %}
     <tr>
-        <td>{{f.pago}}</td>
+        <td>{{f.emision}}</td>
+        <td>{{f.pagado}}</td>
 
-        <td>
-            <!--Pagar factura-->
-        </td>
     </tr>
     {% empty %}
         <tr> <td> No hay turnos registrados </td> </tr>
     {% endfor %}
+{% endblock %}
+
+
+{% block custom_actions %}
+    <div class="d-flex justify-content-end">
+        <a href="{% url 'servicios:pagarServicio' facturas.0.servicio.pk %}" class="btn btn-success">Pagar</a>
+    </div>
 {% endblock %}
 
 {% block extrajs %}

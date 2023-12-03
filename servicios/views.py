@@ -358,6 +358,12 @@ class ServicioUpdateView(UpdateView):
         return super().form_valid(form)
 
 
+def pagar_servicio(request, pk):
+    if request.method == "GET":
+        servicio = Servicio.objects.get(pk=pk)
+        if servicio:
+            servicio.pagar()
+        return redirect(reverse_lazy("servicios:listarServicio"))
 
 def contratar_servicio(request, pk):
     if request.method == "GET":

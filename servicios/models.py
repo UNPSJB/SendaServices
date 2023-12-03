@@ -178,7 +178,8 @@ class EstadoPresupuestado(EstadoStrategy):
     TIPO = TipoEstado.PRESUPUESTADO
 
     def facturar(self, servicio, monto):
-        factura = Factura(servicio=servicio, total=monto, pago=datetime.now())        
+        factura = Factura(servicio=servicio, total=monto, emision=datetime.now())        
+        factura.save()
         return factura
 
     def contratar(self, servicio, monto = None):
@@ -187,6 +188,8 @@ class EstadoPresupuestado(EstadoStrategy):
         if monto :
             seña = self.facturar(servicio, monto)
         
+        precio = 10 #Calcular precio factura
+        self.facturar(servicio, precio)
         if servicio.esEventual:
             servicio.set_estado(TipoEstado.CONTRATADO)
         else:
@@ -202,6 +205,12 @@ class EstadoContratado(EstadoStrategy):
         
         print("Facturando desde contratado")      
         #controlar servicio.saldo() implementar
+
+    def pagar(self, servicio, *args, **kwargs):
+        factura = servicio.facturas.last()
+        factura.pago = datetime.now()
+        factura.save()
+        servicio.set_estado(TipoEstado.PAGADO)
 
     def cancelar(self, servicio, monto = None):
         servicio.set_estado(TipoEstado.CANCELADO)

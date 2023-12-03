@@ -62,7 +62,20 @@ Buscar Servicio
             data-bs-placement="top" 
             title="Cancelar Servicio">
             </a>
+
+            {% elif s.estado_actual.tipo == "pagado" %}
+
+            <a 
+            href="{% url 'facturas:listarFacturasDeServicio' pk=s.pk %}" 
+            class="bi bi-cash-stack  text-info fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Facturas">
+            </a>
+
         {% endif %}
+
+
 
             <!--a href="#" 
                onclick="abrir_modal('{% url "servicios:modificarServicio" pk=s.pk %}')" 

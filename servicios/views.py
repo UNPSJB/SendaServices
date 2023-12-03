@@ -301,7 +301,7 @@ class ServicioUpdateView(UpdateView):
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super().get_form(form_class=form_class)
-        print(form)
+        #print(form)
         
         self.detalle_servicio_formset = DetalleServicioInline()(
             instance=self.get_object(),

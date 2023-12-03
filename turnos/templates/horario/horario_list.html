@@ -37,10 +37,13 @@ Buscar Turno
     {% endfor %}
 {% endblock %}
 
+
 {% block custom_actions %}
-    <div class="d-flex justify-content-end">
-        <a href="{% url 'servicios:contratarServicio' servicio.pk %}" class="btn btn-success">Confirmar</a>
-    </div>
+    {% if servicio %}
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
+        </div>  
+    {% endif %}
 {% endblock %}
 
 

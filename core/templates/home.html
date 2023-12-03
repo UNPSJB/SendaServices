@@ -21,7 +21,7 @@ Senda
                 <h4>Bienvenido de nuevo, Admin</h4>
                 <p class="mb-0">Panel admin, senda</p>
               {% else %}
-                <h4>Bienvenido de nuevo, Empleado</h4>
+                <h4>Bienvenido de nuevo, {{ user.first_name }} {{ user.last_name }}</h4>
               {% endif %}
             </div>
             <div class="col-6 align-self-end text-end">

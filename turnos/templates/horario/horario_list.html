@@ -28,8 +28,7 @@ Buscar Turno
         <td>{{h.servicio}}</td>
         <td>
             <!--Si queremos abrir un moda, se utiliza abrir-->
-            <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "turnos:modificarHorario" pk=h.pk %}')"></a>
-                <!--a href='{% url "turnos:listarHorarios" %}' class="bi bi-building-fill text-success"></a-->
+            <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "turnos:modificarHorarioParaServicio" pk=h.pk %}')"></a>
         </td>
     </tr>
     {% empty %}
@@ -39,11 +38,9 @@ Buscar Turno
 
 
 {% block custom_actions %}
-    {% if servicio %}
-        <div class="d-flex justify-content-end">
-            <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
-        </div>  
-    {% endif %}
+    <div class="d-flex justify-content-end">
+        <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
+    </div>  
 {% endblock %}
 
 

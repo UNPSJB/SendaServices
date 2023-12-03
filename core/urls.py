@@ -95,5 +95,8 @@ urlpatterns = [
 
     #Gestion Turnos
     path('turnos/', include('turnos.urls',namespace='turnos')),
+
+    #Gestion Facturas
+    path('facturas/', include('facturas.urls',namespace='facturas')),
     
 ]

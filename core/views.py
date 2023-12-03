@@ -296,7 +296,7 @@ class ProductoUpdateView(UpdateView):
         messages.success(self.request, 'El producto se modificó exitosamente.')
         return super().form_valid(form)
     
-    
+
 class ProductoDeleteView(SuccessMessageMixin, DeleteView):
     model = Producto
     context_object_name = "producto"

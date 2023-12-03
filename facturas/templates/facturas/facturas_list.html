@@ -1,0 +1,38 @@
+{% extends '../baselist.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+Facturas
+{% endblock %}
+
+    {% block thextras %}
+        <th colspan="">Pagar</th>
+    {% endblock%}
+    
+    {% block tcuerpo %}
+    {% for f in facturas %}
+    <tr>
+        <td>{{f.pago}}</td>
+
+        <td>
+            <!--Pagar factura-->
+        </td>
+    </tr>
+    {% empty %}
+        <tr> <td> No hay turnos registrados </td> </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block extrajs %}
+<!--Modal-->
+<script type="text/javascript">
+var $ = jQuery.noConflict();
+function abrir_modal(url){
+    $('#modal').load(url, function(){
+        $(this).modal('show');
+        bindFormSet($('#modal'));
+    });
+}
+</script>
+{% endblock %}

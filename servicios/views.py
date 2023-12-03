@@ -1,10 +1,11 @@
 from typing import Any
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, CreateView, UpdateView, ListView, DetailView
+from django.views.generic import View, CreateView, UpdateView, DeleteView, ListView, DetailView
 from django.contrib import messages
 from core.utils import ListFilterView
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
 
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
@@ -369,7 +370,13 @@ def facturar_servicio(request, pk):
     pass
 
 def cancelar_servicio(request, pk):
-    pass
+    if request.method == "GET":
+        servicio = Servicio.objects.get(pk=pk)
+        if servicio:
+            servicio.cancelar()
+        return redirect(reverse_lazy("servicios:listarServicio"))
+
+
 
 class ServicioContratarView(UpdateView):
     model = Servicio
@@ -393,10 +400,18 @@ class ServicioContratarView(UpdateView):
         return super().form_valid(form)
 
 
-#def contratar_servicio(request, pk):
-    #implementar
+class ServicioCancelarView(SuccessMessageMixin, DeleteView):
+    model = Servicio
+    context_object_name = "servicio"
+    success_url = reverse_lazy('servicios:listarServicio')
+    success_message = "El servicio ha sido cancelado!"
+    template_name = "servicios/servicio_confirm_delete.html"
 
-
+    def post(self, *args, **kwargs):
+        servicio = Servicio.objects.get(pk=self.kwargs["pk"])
+        servicio.cancelar()
+        return redirect(self.success_url)
+    
 
 class ServicioListView(ListFilterView):
     #Cantidad de elementos por lista

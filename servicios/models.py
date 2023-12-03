@@ -128,6 +128,9 @@ class Servicio(models.Model):
     def contratar(self, *args, **kwargs):
         self.strategy().contratar(self, *args, **kwargs)
 
+    def cancelar(self, *args, **kwargs):
+        self.strategy().cancelar(self, *args, **kwargs)
+
 class DetalleServicio(models.Model):
     cantidad= models.IntegerField("Cantidad de m²", validators=[MinValueValidator(1)])
     tipoServicio = models.ForeignKey(TipoServicio, on_delete=models.CASCADE, related_name="detalles_servicio", verbose_name="Tipo Servicio")
@@ -164,6 +167,9 @@ class EstadoStrategy():
 
     def contratar(self, servicio, *args, **kwargs):
         raise ValidationError(_("El servicio no se puede contratar en este estado"))
+    
+    def cancelar(self, servicio, *args, **kwargs):
+        raise ValidationError(_("El servicio no se puede contratar en este estado"))
 
 class EstadoVencido(EstadoStrategy):
     TIPO = TipoEstado.VENCIDO
@@ -187,13 +193,19 @@ class EstadoPresupuestado(EstadoStrategy):
             servicio.set_estado(TipoEstado.INICIADO)
 
 
+
 Servicio.STRATEGIES.append(EstadoPresupuestado())
 
 class EstadoContratado(EstadoStrategy):
     TIPO = TipoEstado.CONTRATADO
     def facturar(self, servicio, monto = None, *args, **kwargs):
+        
         print("Facturando desde contratado")      
         #controlar servicio.saldo() implementar
+
+    def cancelar(self, servicio, monto = None):
+        servicio.set_estado(TipoEstado.CANCELADO)
+
          
 Servicio.STRATEGIES.append(EstadoContratado())
 

@@ -1,0 +1,21 @@
+{% extends "../base_confirm_delete.html" %}
+
+{% block title %}
+ Cancelar Contrato
+ {% endblock %}
+
+{% block action %}
+ {% url "servicios:cancelarServicio" object.pk %}
+{% endblock %}
+
+{% block p %}
+    ¿Está seguro/a de querer cancelar el contrato 
+{% endblock %}
+
+{% block object %}
+    {{object}}
+{% endblock %}
+
+{% block btn %}
+    Cancelar
+{% endblock %}

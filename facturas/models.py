@@ -6,6 +6,7 @@ from django.db import models
 class Factura(models.Model):
     servicio = models.ForeignKey("servicios.Servicio",on_delete=models.CASCADE, related_name="facturas")
     total = models.DecimalField(decimal_places=2,max_digits=10)
+    emision = models.DateField(auto_now_add=True)
     pago = models.DateField(null=True, blank=True) 
     FORMAS= [('efectivo','efectivo'),('credito','credito'),('cheque','cheque'),('transferencia','transferencia')]
     formaPago= models.CharField(max_length=15,choices=FORMAS,default='efectivo')

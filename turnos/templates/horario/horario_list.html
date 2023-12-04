@@ -15,9 +15,7 @@ Buscar Turno
     {% endblock %}
 
 
-    {% block thextras %}
-        <th colspan="">Opciones</th>
-    {% endblock%}
+
     
     {% block tcuerpo %}
     {% for h in horario %}
@@ -26,10 +24,7 @@ Buscar Turno
         <td>{{h.turno}}</td>
         <td>{{h.diaSemana}}</td>
         <td>{{h.servicio}}</td>
-        <td>
-            <!--Si queremos abrir un moda, se utiliza abrir-->
-            <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "turnos:modificarHorarioParaServicio" pk=h.pk %}')"></a>
-        </td>
+        
     </tr>
     {% empty %}
         <tr> <td> No hay turnos registrados </td> </tr>

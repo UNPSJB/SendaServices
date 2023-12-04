@@ -15,7 +15,6 @@ Buscar Turno
     {% endblock %}
 
 
-
     
     {% block tcuerpo %}
     {% for h in horario %}
@@ -32,11 +31,21 @@ Buscar Turno
 {% endblock %}
 
 
-{% block custom_actions %}
-    <div class="d-flex justify-content-end">
-        <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
-    </div>  
-{% endblock %}
+    {% block custom_actions %}
+        <div class="d-flex justify-content-end">
+            {% if servicio.estado_actual.tipo == "presupuestado" %}
+                {% if servicio.requiereSeña %}
+                    <a href="#" 
+                    
+                    onclick="abrir_modal('{% url 'servicios:señarServicio' pk=servicio.pk %}')"  class="btn btn-success">Señar</a>
+
+                {% else %}
+                    <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
+                {% endif %}
+            {% endif %}
+        </div>  
+    {% endblock %}
+
 
 
 {% block extrajs %}
@@ -49,5 +58,11 @@ function abrir_modal(url){
         bindFormSet($('#modal'));
     });
 }
+
+function cerrar_modal() {
+    $('#modal').modal('hide');
+}
 </script>
+
+
 {% endblock %}

@@ -24,9 +24,13 @@
           {% endblock %}?
         </p>
       </div>
+
       <div class="modal-footer">
+        {% block footer %}
         <button type="submit" class="btn btn-danger">{% block btn %}Eliminar{% endblock %}</button>
+        {% endblock %}
       </div>
+
     </form>
   </div>
 </div>

@@ -419,6 +419,19 @@ class ServicioCancelarView(SuccessMessageMixin, DeleteView):
         return redirect(self.success_url)
     
 
+class ServicioSeñarView(SuccessMessageMixin, DeleteView):
+    model = Servicio
+    context_object_name = "servicio"
+    success_url = reverse_lazy('servicios:listarServicio')
+    success_message = "El servicio fue contratado correctamente!"
+    template_name = "servicios/servicio_confirm_seña.html"
+
+    def post(self, *args, **kwargs):
+        servicio = Servicio.objects.get(pk=self.kwargs["pk"])
+        servicio.contratar()
+        return redirect(self.success_url)
+    
+
 class ServicioListView(ListFilterView):
     #Cantidad de elementos por lista
     paginate_by = 5

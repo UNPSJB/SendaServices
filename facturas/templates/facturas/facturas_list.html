@@ -31,9 +31,11 @@ Facturas
 
 
 {% block custom_actions %}
+    {% if servicio.estado_actual.tipo != "pagado" %}
     <div class="d-flex justify-content-end">
         <a href="{% url 'servicios:pagarServicio' servicio.pk %}" class="btn btn-success">Pagar</a>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block extrajs %}

@@ -12,10 +12,12 @@ from datetime import datetime
 class FacturasFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
+        ("emision", "Fecha Emision"),
         ("pago", "Pago"),
         
     ]
     ATTR_CHOICES = [
+        ("emision", "Fecha Emision"),
         ("pago", "Pago"),
     ]
 

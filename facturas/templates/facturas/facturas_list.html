@@ -7,14 +7,21 @@ Facturas
 {% endblock %}
 
     {% block thextras %}
-        <th colspan="">Pagar</th>
+        <th colspan="">Estado</th>
     {% endblock%}
     
     {% block tcuerpo %}
     {% for f in facturas %}
     <tr>
+        <td>{{forloop.counter}}</td>
         <td>{{f.emision}}</td>
-        <td>{{f.pagado}}</td>
+        <td>{{f.total}}</td>
+
+        {% if f.pagado %}
+            <td>Pagada</td>
+        {% else %}
+            <td>Impaga</td>
+        {% endif %}
 
     </tr>
     {% empty %}
@@ -25,7 +32,7 @@ Facturas
 
 {% block custom_actions %}
     <div class="d-flex justify-content-end">
-        <a href="{% url 'servicios:pagarServicio' facturas.0.servicio.pk %}" class="btn btn-success">Pagar</a>
+        <a href="{% url 'servicios:pagarServicio' servicio.pk %}" class="btn btn-success">Pagar</a>
     </div>
 {% endblock %}
 

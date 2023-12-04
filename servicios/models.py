@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator,MaxValueValidator
 from decimal import Decimal
 from facturas.models import Factura
+from dateutil.relativedelta import relativedelta
 
 
 # Create your models here.
@@ -56,8 +57,9 @@ class Servicio(models.Model):
 
     inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
 
-    total = models.DecimalField(decimal_places=2,max_digits=10, default=0.)
+    total = models.DecimalField(decimal_places=2,max_digits=10, default=0)
 
+   
     @property
     def requiereSeña(self):
         return not self.inmueble.cliente.habitual
@@ -69,9 +71,14 @@ class Servicio(models.Model):
         else:
             semanas = Decimal(((self.hasta - self.desde).days) / 7)
         
-        empleados =   Decimal((self.cantidadEstimadaEmpleados * 58000) * 1.5)
+        meses = Decimal(relativedelta(self.hasta, self.desde).months)
 
-        diasTotales =  Decimal((semanas * self.diasSemana)) # Obtener las semanas
+        if meses == 0:
+            meses = 1
+
+        empleados =   Decimal((self.cantidadEstimadaEmpleados * 58000) * 1.5) * meses
+
+        diasTotales =  Decimal((semanas * self.diasSemana)) # Obtener los dias totales de trabajo
         detalles_servicio = self.detalles_servicio.all()
         tdetalles = sum([float(d.importe()) for d in detalles_servicio])
 
@@ -178,7 +185,11 @@ class EstadoPresupuestado(EstadoStrategy):
     TIPO = TipoEstado.PRESUPUESTADO
 
     def facturar(self, servicio, monto):
-        factura = Factura(servicio=servicio, total=monto, emision=datetime.now())        
+        if servicio.esEventual :
+            factura = Factura(servicio=servicio, total=monto, emision=datetime.now())     
+        else :
+            nueva_fecha = datetime.now() + relativedelta(months=1)
+            factura = Factura(servicio=servicio, total=monto, emision=nueva_fecha)     
         factura.save()
         return factura
 
@@ -188,7 +199,16 @@ class EstadoPresupuestado(EstadoStrategy):
         if monto :
             seña = self.facturar(servicio, monto)
         
-        precio = 10 #Calcular precio factura
+        # Calcula la diferencia en meses
+        meses = Decimal(relativedelta(servicio.hasta, servicio.desde).months)
+        if meses == 0 :
+            meses = 1
+        
+        totalEstimado = Decimal(servicio.totalEstimado())
+
+        # Calcula el precio dividiendo el totalEstimado por el número de meses
+        precio = totalEstimado / meses
+
         self.facturar(servicio, precio)
         if servicio.esEventual:
             servicio.set_estado(TipoEstado.CONTRATADO)
@@ -220,8 +240,40 @@ Servicio.STRATEGIES.append(EstadoContratado())
 
 class EstadoIniciado(EstadoStrategy):
     TIPO = TipoEstado.INICIADO
-    def facturar(self, servicio, *args, **kwargs):
-        print("Facturando desde iniciado")
+    def facturar(self, servicio, monto, *args, **kwargs):
+        ultima = servicio.facturas.last()
+        nueva_fecha = ultima.emision + relativedelta(months=1)
+        print(nueva_fecha)
+        factura = Factura(servicio=servicio, total=monto, emision=nueva_fecha)        
+        factura.save()
+        return factura
+
+    def pagar(self, servicio, *args, **kwargs):
+        factura = servicio.facturas.last()
+        factura.pago = datetime.now()
+        factura.save()
+
+        fecha_factura = (factura.emision).month
+        fecha_servicio = (servicio.hasta).month
+
+        if fecha_factura == fecha_servicio :
+            servicio.set_estado(TipoEstado.PAGADO)
+        else:
+            # Calcula la diferencia en meses
+            meses = Decimal(relativedelta(servicio.hasta, servicio.desde).months)
+            if meses == 0 :
+                meses = 1
+            
+            totalEstimado = Decimal(servicio.totalEstimado())
+
+            # Calcula el precio dividiendo el totalEstimado por el número de meses
+            precio = totalEstimado / meses
+
+            self.facturar(servicio, precio)
+
+
+            
+
 Servicio.STRATEGIES.append(EstadoIniciado())
 
         #return self.costoServicio

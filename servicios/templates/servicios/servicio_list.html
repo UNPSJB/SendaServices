@@ -63,6 +63,24 @@ Buscar Servicio
             title="Cancelar Servicio">
             </a>
 
+            {% elif s.estado_actual.tipo == "iniciado" %}
+
+            <a 
+            href="{% url 'facturas:listarFacturasDeServicio' pk=s.pk %}" 
+            class="bi bi-cash-stack  text-info fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Facturas">
+            </a>
+
+            <a href="#" 
+            onclick="abrir_modal('{% url "servicios:cancelarServicio" pk=s.pk %}')" 
+            class="bi bi-x-octagon text-danger fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Cancelar Servicio">
+            </a>
+
             {% elif s.estado_actual.tipo == "pagado" %}
 
             <a 

@@ -23,8 +23,17 @@ Buscar Producto
         <td>{{p.stock}}</td>
         <td>{{p.precioUnitario}}</td>
         <td class="list-options">
-            <a href="#"><i class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarProducto" p.pk %}')"></i></a>
-            <a href="#"><i class="bi bi-trash3 icon-danger" onclick="abrir_modal('{% url "eliminarProducto" p.pk %}')" ></i></a>
+            <a href="#"><i class="bi bi-pencil-square" 
+            onclick="abrir_modal('{% url "modificarProducto" p.pk %}')"
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Modificar"></i></a>
+
+            <a href="#"><i class="bi bi-trash3 icon-danger" 
+            onclick="abrir_modal('{% url "eliminarProducto" p.pk %}')" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Eliminar"></i></a>
             <!--button onclick="abrir_modal('{% url "modificarProducto" p.pk %}')" class="btn mx-2 mb-2 btn-sm btn-primary">Modificar</button-->
         </td>
     </tr>

@@ -11,7 +11,11 @@ Buscar Inmuebles
 {% block tExtras %} 
     
     {% if cliente %}
-        <a href="{% url 'crearInmuebleParaCliente' cliente.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+        <a href="{% url 'crearInmuebleParaCliente' cliente.pk %}" 
+        class="bi bi-plus-circle-fill text-success fs-5"
+        data-bs-toggle="tooltip" 
+        data-bs-placement="top" 
+        title="Agregar Inmueble"></a>
     {% else %}
         <a href="{% url 'crearInmueble' %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
     {% endif %}
@@ -32,11 +36,19 @@ Buscar Inmuebles
             <td>{{i.cliente}}</td>
             <td>
             {% if cliente %}
-                <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarInmuebleParaCliente" cliente_pk=i.cliente.pk pk=i.pk %}')"></a>
+                <a href="#" class="bi bi-pencil-square" 
+                onclick="abrir_modal('{% url "modificarInmuebleParaCliente" cliente_pk=i.cliente.pk pk=i.pk %}')"
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Modificar"></a>
             {% else %}
-                <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarInmueble" i.pk %}')"></a>
+                <a href="#" class="bi bi-pencil-square" 
+                onclick="abrir_modal('{% url "modificarInmueble" i.pk %}')"></a>
             {% endif %}
-            <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""></i></a>
+                <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Eliminar"></i></a>
             </td>
         </tr>
     {% empty %}

@@ -23,7 +23,11 @@
                 <td>
                     <!--Si queremos abrir un moda, se utiliza abrir-->
 
-                    <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarCategoria" c.pk %}')"></a>
+                    <a href="#" class="bi bi-pencil-square" 
+                    onclick="abrir_modal('{% url "modificarCategoria" c.pk %}')"
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="top" 
+                    title="Modificar"></a>
                     
                 </td>
 

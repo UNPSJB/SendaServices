@@ -1,0 +1,45 @@
+{% extends '../baselist.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+Buscar Periodo
+{% endblock %}
+
+    {% block tlista %} Listado de {% if empleado %} Periodos del Empleado {% else %} Periodos {% endif %} {% endblock %}
+
+    {% block tExtras %}     
+    {% endblock %}
+
+    {% block thextras %}
+        <th colspan="">Servicios</th>
+    {% endblock%}
+    
+    {% block tcuerpo %}
+    {% for p in periodo %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{p.empleado}}</td>
+        <td>{{p.fechaDesde}}</td>
+        <td>{{p.fechaHasta}}</td>
+        <td>{{p.horario.servicio}}</td>
+
+    </tr>
+    {% empty %}
+        <tr> <td> No hay turnos registrados </td> </tr>
+    {% endfor %}
+{% endblock %}
+
+
+{% block extrajs %}
+<!--Modal-->
+<script type="text/javascript">
+var $ = jQuery.noConflict();
+function abrir_modal(url){
+    $('#modal').load(url, function(){
+        $(this).modal('show');
+        bindFormSet($('#modal'));
+    });
+}
+</script>
+{% endblock %}

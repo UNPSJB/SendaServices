@@ -1,6 +1,7 @@
 
 from django import forms 
 from servicios.models import Servicio
+from core.models import Empleado
 from .models import Horario, Periodo,Asistencia
 from django.forms import ModelForm, ValidationError, Select
 from django.urls import reverse_lazy
@@ -155,6 +156,55 @@ class PeriodoForm(forms.ModelForm):
         self.helper.form_tag = False
         self.fields['fechaDesde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
         self.fields['fechaHasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+
+
+class PeriodoFiltrosForm(FiltrosForm):
+    #Campos del modelo
+    ORDEN_CHOICES = [
+        ("empleado", "Empleado"),
+        ("fechaDesde", "Fecha Desde"),
+        ("fechaHasta", "Fecha Hasta"),
+    ]
+    ATTR_CHOICES = [
+        ("empleado", "Empleado"),
+        ("fechaDesde", "Fecha Desde"),
+        ("fechaHasta", "Fecha Hasta"),
+        ("servicio", "Servicio"),
+    ]
+
+    #Formulario de filtrado
+    fechaHasta = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Inicio"))
+    fechaDesde = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Fin"))
+    empleado = forms.ModelChoiceField(queryset=Empleado.objects.all(), required=False, label='Empleado')
+    servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Servicio')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        #self.initial['turno'] = '' 
+        self.helper = FormHelper()
+        self.helper.form_method = 'get'
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "empleado","fechaDesde","fechaHasta","servicio",  #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
+
+class PeriodoCustomFiltrosForm(PeriodoFiltrosForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Fieldset(
+                "",
+                HTML(
+                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "fechaDesde","fechaHasta","servicio", #Remplazar campos formulario
+            ),
+            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+        )
 
 
 class AsistenciaForm(forms.ModelForm):

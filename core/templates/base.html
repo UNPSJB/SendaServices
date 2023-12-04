@@ -51,7 +51,7 @@
               Home
             </a>
           </li>
-
+          {% if perms.core %}
           <!-- Menu empleados -->
           <li class="sidebar-item">
 
@@ -101,6 +101,7 @@
             </ul>            
 
           </li>   
+          
 
           <!-- Menu clientes -->
           <li class="sidebar-item">
@@ -171,24 +172,33 @@
               </li>
             </ul>
           </li>
+          {% endif %}
 
-      <!-- Menu turnos -->
-      <li class="sidebar-item">
-
-        <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionHorarios" data-bs-toggle="collapse"
-          aria-expanded="false">
-          <i class="bi bi-alarm"></i> Gestion Turnos
-        </a>
-
-        <!--Turnos-->
-        <ul id="gestionHorarios" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-          
+          <!-- Menu turnos -->
           <li class="sidebar-item">
-            <a href="{% url 'turnos:listarHorarios' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+
+            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionPeriodos" data-bs-toggle="collapse"
+              aria-expanded="false">
+              <i class="bi bi-alarm"></i> Gestion Turnos
+            </a>
+
+            <!--Turnos-->
+            <ul id="gestionPeriodos" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
+              
+              
+              {% if perms.core %}
+              <li class="sidebar-item">
+                <a href="{% url 'turnos:listarPeriodos' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+              </li>
+              {% else %}
+              <li class="sidebar-item">
+                <a href="{% url 'turnos:listarPeriodosDeEmpleado' user.empleado.pk %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
+              </li>
+              {% endif %}
+            </ul>
           </li>
-        </ul>
-      </li>
-            
+
+        {% if perms.core %}
           <!-- Menu servicios -->
           <li class="sidebar-item">
 
@@ -237,7 +247,7 @@
               </ul>
             </ul>
           </li>
-
+        {% endif %}
 
         </ul>
       </div>

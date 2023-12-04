@@ -13,11 +13,15 @@ from django.urls import reverse_lazy
 from django.urls import reverse_lazy, reverse
 from .models import Horario
 from servicios.models import Servicio
+from core.models import Empleado
+from .models import Periodo, Horario
 from .forms import (
     HorarioForm, 
     HorarioModForm,
     HorarioFiltrosForm,
     HorarioCustomFiltrosForm,
+    PeriodoFiltrosForm,
+    PeriodoCustomFiltrosForm,
     PeriodoInline,
     PeriodoInlineFormSetHelper
   )
@@ -32,6 +36,20 @@ class HorarioListView(ListFilterView):
     template_name = "horario/horario_list.html" #Ruta del template
     context_object_name = 'horario' #Nombre de la lista usar ''
   
+    """def get_empleado(self):
+        pk = self.kwargs.get('empleado_pk')
+        if pk is not None:
+            return Empleado.objects.get(pk=pk)
+        else:
+            return None
+        
+    def get_periodos(self):
+        empleado = self.get_empleado()
+        if empleado is not None:
+            return Periodo.objects.get(empleado=empleado)
+        else: 
+            return None"""
+
     def get_servicio(self):
         pk = self.kwargs.get('pk')
         if pk is not None:
@@ -54,6 +72,14 @@ class HorarioListView(ListFilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         servicio = self.get_servicio()
+        # periodos = self.get_periodos()
+        # print("{=}")
+        # horarios = Horario.objects.all()
+        # if periodos is not None:
+        #     for p in [periodos]:
+        #         horarios.append(p.horario)
+        #     context["horario"] = horarios
+
         context['tnav'] = "Gestion de Horarios" if not servicio else f"Gestion de horarios: {servicio}"
         context["servicio"] = servicio
         return context
@@ -143,7 +169,7 @@ class HorarioCreateView(CreateView):
 
     def get_success_url(self, **kwargs):
         servicio = self.get_servicio()
-        print(f"{servicio=}")
+        #print(f"{servicio=}")
         if servicio is not None:
             return reverse_lazy('turnos:listarHorariosDeServicio', kwargs={"pk": servicio.pk})
         else:
@@ -189,3 +215,36 @@ class HorarioCreateView(CreateView):
 
         messages.success(self.request, "El horario se ha creado exitosamente.")
         return super().form_valid(form)
+
+  
+class PeriodoListView(ListFilterView):
+    #Cantidad de elementos por lista
+    paginate_by = 2
+    #Filtros de la lista
+    filtros = PeriodoFiltrosForm
+    model = Periodo #Nombre del modelo
+    template_name = "periodo/periodo_list.html" #Ruta del template
+    context_object_name = 'periodo' #Nombre de la lista usar ''
+  
+    def get_empleado(self):
+        pk = self.kwargs.get('empleado_pk')
+        if pk is not None:
+            return Empleado.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_filtros(self, *args, **kwargs):
+        return PeriodoFiltrosForm(*args, **kwargs) if not self.get_empleado() else PeriodoCustomFiltrosForm(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        empleado = self.get_empleado()
+        periodos = Periodo.objects.all()
+
+        if empleado is not None:
+            periodos = Periodo.objects.filter(empleado=empleado)
+
+        context['tnav'] = "Gestion de Periodo" if not empleado else f"Gestion de periodos de empleado: {empleado}"
+        context["empleado"] = empleado
+        context["periodo"] = periodos
+        return context

@@ -56,6 +56,15 @@ class HorarioListView(ListFilterView):
             return Servicio.objects.get(pk=pk)
         else:
             return None
+        
+    def get_queryset(self):
+        servicio = self.get_servicio()
+        if servicio:
+            # Filtrar las facturas por el servicio
+            return Horario.objects.filter(servicio=servicio)
+        else:
+            # Si no hay servicio, mostrar todas las facturas
+            return Horario.objects.all()
 
     def get_filtros(self, *args, **kwargs):
         return HorarioFiltrosForm(*args, **kwargs) if not self.get_servicio() else HorarioCustomFiltrosForm(*args, **kwargs)

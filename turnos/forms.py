@@ -164,12 +164,12 @@ class PeriodoFiltrosForm(FiltrosForm):
         ("empleado", "Empleado"),
         ("fechaDesde", "Fecha Desde"),
         ("fechaHasta", "Fecha Hasta"),
+
     ]
     ATTR_CHOICES = [
         ("empleado", "Empleado"),
         ("fechaDesde", "Fecha Desde"),
         ("fechaHasta", "Fecha Hasta"),
-        ("servicio", "Servicio"),
     ]
 
     #Formulario de filtrado

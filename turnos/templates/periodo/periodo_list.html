@@ -13,6 +13,7 @@ Buscar Periodo
 
     {% block thextras %}
         <th colspan="">Servicios</th>
+        <th colspan="">Dia de la Semana</th>
     {% endblock%}
     
     {% block tcuerpo %}
@@ -23,6 +24,7 @@ Buscar Periodo
         <td>{{p.fechaDesde}}</td>
         <td>{{p.fechaHasta}}</td>
         <td>{{p.horario.servicio}}</td>
+        <td>{{p.horario.diaSemana}}</td>
 
     </tr>
     {% empty %}
@@ -31,15 +33,3 @@ Buscar Periodo
 {% endblock %}
 
 
-{% block extrajs %}
-<!--Modal-->
-<script type="text/javascript">
-var $ = jQuery.noConflict();
-function abrir_modal(url){
-    $('#modal').load(url, function(){
-        $(this).modal('show');
-        bindFormSet($('#modal'));
-    });
-}
-</script>
-{% endblock %}

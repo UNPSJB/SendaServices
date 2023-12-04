@@ -16,14 +16,16 @@
       {% csrf_token %}
       <div class="modal-body">
         <p>
+          {% block p %}
           ¿Está seguro/a de querer eliminar 
+          {% endblock %}
           {% block object %} 
             objeto
           {% endblock %}?
         </p>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <button type="submit" class="btn btn-danger">{% block btn %}Eliminar{% endblock %}</button>
       </div>
     </form>
   </div>

@@ -359,6 +359,11 @@ class ProductoUpdateView(UpdateView):
         print(self.template_name)
         return context
 
+    def form_valid(self, form):
+        messages.success(self.request, 'El producto se modificó exitosamente.')
+        return super().form_valid(form)
+    
+
 class ProductoDeleteView(SuccessMessageMixin, DeleteView):
     model = Producto
     context_object_name = "producto"
@@ -378,9 +383,9 @@ class ProductoDeleteView(SuccessMessageMixin, DeleteView):
         producto = Producto.objects.get(pk=self.kwargs["pk"])
         producto.dar_de_baja()
         return redirect(self.success_url)
-
-
+    
 #Gestion Empleado
+
 
 class EmpleadoListView(ListFilterView):
     #Cantidad de elementos por lista
@@ -409,14 +414,10 @@ class EmpleadoCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Empleado"
         context['boton1'] = "Crear Empleado"
-        #print(self.template_name)
-        #print(context["form"].errors)
+        print(self.template_name)
+        print(context["form"].errors)
+        context['tnav'] = "Gestion de Empleado"
         return context
-
-    #Este form, es para cuando se envia se muestre el mensaje de empleado creado en list
-    def form_valid(self, form):
-        messages.success(self.request, 'El empleado se ha creado exitosamente.')
-        return super().form_valid(form)
     
 class EmpleadoUpdateView(UpdateView):
     model = Empleado
@@ -427,13 +428,14 @@ class EmpleadoUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Modificar Empleado"
-        #print(self.template_name)
+        print(self.template_name)
         return context
-    
-    #Este form, es para cuando se envia se muestre el mensaje de empleado modificado en list
+
     def form_valid(self, form):
-        messages.success(self.request, 'El empleado se ha modificado exitosamente.')
+        messages.success(self.request, 'El empleado se modificó exitosamente.')
         return super().form_valid(form)
+    
+    
 
 class EmpleadoDeleteView(DeleteView):
     model = Empleado
@@ -460,10 +462,9 @@ class CategoriaListView(ListFilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #print(self.template_name)
+        print(self.template_name)
         context['tnav'] = "Gestion de Categoria"
         return context
-
 
 class CategoriaCreateView(CreateView):
     model = Categoria
@@ -475,8 +476,9 @@ class CategoriaCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['titulo'] = "Registrar Categoria"
         context['boton1'] = "Crear Categoria"
-        #print(self.template_name)
-        #print(context["form"].errors)
+        print(self.template_name)
+        print(context["form"].errors)
+        context['tnav'] = "Gestion de Categoria"
         return context
 
     

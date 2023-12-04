@@ -3,28 +3,26 @@
 {% load static %}
 
 {% block title %}
-Buscar Turno
+Facturas
 {% endblock %}
 
-    {% block tlista %} Listado de {% if servicio %} Turnos para servicio {% else %} Turnos {% endif %} {% endblock %}
-
-    {% block tExtras %}     
-        {% if servicio %}
-            <a href="{% url 'turnos:crearHorarioParaServicio' servicio.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
-        {% endif %}
-    {% endblock %}
-
-
-
+    {% block thextras %}
+        <th colspan="">Estado</th>
+    {% endblock%}
     
     {% block tcuerpo %}
-    {% for h in horario %}
+    {% for f in facturas %}
     <tr>
         <td>{{forloop.counter}}</td>
-        <td>{{h.turno}}</td>
-        <td>{{h.diaSemana}}</td>
-        <td>{{h.servicio}}</td>
-        
+        <td>{{f.emision}}</td>
+        <td>{{f.total}}</td>
+
+        {% if f.pagado %}
+            <td>Pagada</td>
+        {% else %}
+            <td>Impaga</td>
+        {% endif %}
+
     </tr>
     {% empty %}
         <tr> <td> No hay turnos registrados </td> </tr>
@@ -34,10 +32,9 @@ Buscar Turno
 
 {% block custom_actions %}
     <div class="d-flex justify-content-end">
-        <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
-    </div>  
+        <a href="{% url 'servicios:pagarServicio' servicio.pk %}" class="btn btn-success">Pagar</a>
+    </div>
 {% endblock %}
-
 
 {% block extrajs %}
 <!--Modal-->

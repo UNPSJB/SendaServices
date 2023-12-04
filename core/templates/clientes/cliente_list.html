@@ -35,10 +35,29 @@ Buscar Cliente
                 <td>
                     <!--Si queremos abrir un moda, se utiliza abrir-->
 
-                    <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "modificarCliente" c.pk %}')"></a>
-                    <a href="#"><i class="bi bi-trash3 icon-danger" onclick=""></i></a>
-                    <a href='{% url "listarInmueblesDeCliente" c.pk %}' class="bi bi-building-fill text-success"></a>
-                    <a href='{% url "servicios:listarServiciosDeCliente" c.pk %}' class="bi bi-file-medical-fill"></a>
+                    <a href="#" class="bi bi-pencil-square" 
+                    onclick="abrir_modal('{% url "modificarCliente" c.pk %}')"
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="top" 
+                    title="Modificar"></a>
+
+                    <a href="#"><i class="bi bi-trash3 icon-danger" 
+                    onclick=""
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="top" 
+                    title="Eliminar"></i></a>
+
+                    <a href='{% url "listarInmueblesDeCliente" c.pk %}' 
+                    class="bi bi-building-fill text-success"
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="top" 
+                    title="Agregar Inmueble"></a>
+
+                    <a href='{% url "servicios:listarServiciosDeCliente" c.pk %}' 
+                    class="bi bi-file-medical-fill"
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="top" 
+                    title="Contratar Servicio"></a>
                 </td>
 
             </tr>

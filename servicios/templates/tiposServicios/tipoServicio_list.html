@@ -29,8 +29,11 @@ Buscar Tipo de Servicio
 
 
         <td>
-            <a href="#" onclick="abrir_modal('{% url "servicios:modificarTipoServicio" pk=t.pk %}')" class="bi bi-pencil-square text-primary"> </a>
-
+            <a href="#" onclick="abrir_modal('{% url "servicios:modificarTipoServicio" pk=t.pk %}')" 
+            class="bi bi-pencil-square text-primary"
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="modificar"> </a>
         </td>
 
     </tr>

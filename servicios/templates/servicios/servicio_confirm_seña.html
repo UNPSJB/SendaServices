@@ -1,0 +1,24 @@
+{% extends "../base_confirm_delete.html" %}
+
+{% block title %}
+ Señar Contrato
+ {% endblock %}
+
+{% block action %}
+ {% url "servicios:señarServicio" object.pk %}
+{% endblock %}
+
+{% block p %}
+    La seña del servicio requerida es de: {{seña}}
+
+    ¿El cliente realizo la seña de 
+{% endblock %}
+
+{% block object %}
+    {{object}}
+{% endblock %}
+
+{% block footer %}
+    <button type="submit" class="btn btn-success">Señar</button>
+    <button type="button" class="btn btn-danger" onclick="cerrar_modal()">Cancelar</button>
+{% endblock %}

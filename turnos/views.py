@@ -157,7 +157,7 @@ class HorarioUpdateView(UpdateView):
             self.periodo_formset.instance = self.object
             self.periodo_formset.save()
 
-        messages.success(self.request, "El turno se ha modificado exitosamente.")
+        messages.success(self.request, "✨ ¡Éxito! El turno se ha modificado exitosamente. 🔄")
         return super().form_valid(form)
 
 
@@ -213,7 +213,7 @@ class HorarioCreateView(CreateView):
             self.periodo_formset.instance = self.object
             self.periodo_formset.save()
 
-        messages.success(self.request, "El horario se ha creado exitosamente.")
+        messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
         return super().form_valid(form)
 
   

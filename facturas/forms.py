@@ -7,22 +7,28 @@ from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
+from django.utils.translation import gettext_lazy as _
 
 
 class FacturasFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
         ("emision", "Fecha Emision"),
-        ("pago", "Pago"),
+        ("total", "Total"),
         
     ]
     ATTR_CHOICES = [
         ("emision", "Fecha Emision"),
-        ("pago", "Pago"),
+        ("total", "Total"),
     ]
 
     #Formulario de filtrado
-    servicio = forms.TextInput()
+    emision = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False,
+        label=_("Fecha Emision"))
+    total = forms.DecimalField(label=_("Total de la factura"),
+        required=False,)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,7 +40,7 @@ class FacturasFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "turno","diaSemana","servicio",  #Remplazar campos formulario
+                "emision","total", #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

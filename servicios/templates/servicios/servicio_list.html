@@ -55,6 +55,14 @@ Buscar Servicio
             title="Facturas">
             </a>
 
+            <a 
+            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
+            class="bi bi-calendar-date text-info fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Añadir horarios">
+            </a>
+
             <a href="#" 
             onclick="abrir_modal('{% url "servicios:cancelarServicio" pk=s.pk %}')" 
             class="bi bi-x-octagon text-danger fs-5" 
@@ -71,6 +79,14 @@ Buscar Servicio
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             title="Facturas">
+            </a>
+
+            <a 
+            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
+            class="bi bi-calendar-date text-info fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Añadir horarios">
             </a>
 
             <a href="#" 
@@ -91,6 +107,33 @@ Buscar Servicio
             title="Facturas">
             </a>
 
+            <a 
+            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
+            class="bi bi-calendar-date text-info fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Añadir horarios">
+            </a>
+
+            {% elif s.estado_actual.tipo == "cancelado" %}
+
+            <a 
+            href="{% url 'facturas:listarFacturasDeServicio' pk=s.pk %}" 
+            class="bi bi-cash-stack  text-info fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Facturas">
+            </a>
+
+            <a 
+            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
+            class="bi bi-calendar-date text-info fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Añadir horarios">
+            </a>
+
+
         {% endif %}
 
     
@@ -98,8 +141,6 @@ Buscar Servicio
 
 
     </tr>
-
-    
 
     {% empty %}
     <tr> <td> No hay servicios registrados </td> </tr>
@@ -118,6 +159,10 @@ function abrir_modal(url){
         $(this).modal('show');
         bindFormSet($('#modal'));
     });
+}
+
+function cerrar_modal() {
+    $('#modal').modal('hide');
 }
 </script>
 {% endblock %}

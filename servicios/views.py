@@ -15,6 +15,7 @@ from .forms import (
     TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm,TipoServicioUpdateForm)
 from .models import TipoServicio, Servicio
 from core.models import Cliente, Inmueble
+from turnos.models import Horario
 
 
 # Create your views here.
@@ -180,7 +181,7 @@ class TipoServicioCreateView(CreateView):
             self.tipoServicio_producto_formset.instance = self.object
             self.tipoServicio_producto_formset.save()
 
-        messages.success(self.request, "El tipo de servicio se ha creado exitosamente.")
+        messages.success(self.request, "✨ ¡Éxito! El tipo de servicio se ha creado exitosamente. 🚀")
         return super().form_valid(form)
 
 
@@ -290,7 +291,7 @@ class ServicioCreateView(CreateView):
             self.detalleServicio_formset.save()
 
 
-        messages.success(self.request, 'El servicio se ha creado exitosamente.')
+        messages.success(self.request, "✨ ¡Éxito! El servicio se ha creado exitosamente. 🚀")
         return super().form_valid(form)
     
 class ServicioUpdateView(UpdateView):
@@ -363,14 +364,26 @@ def pagar_servicio(request, pk):
         servicio = Servicio.objects.get(pk=pk)
         if servicio:
             servicio.pagar()
+            if servicio.estado_actual.tipo == "pagado":
+                messages.success(request, '✅ ¡El servicio se PAGÓ con éxito! 🎉')
+            else:
+                messages.success(request, '📜 ¡La factura se PAGÓ con éxito! 🎉')
+
+            
+
         return redirect(reverse_lazy("servicios:listarServicio"))
 
 def contratar_servicio(request, pk):
     if request.method == "GET":
         servicio = Servicio.objects.get(pk=pk)
-        if servicio:
+        horarios = servicio.horarios.count()
+        if horarios == 0:
+            messages.error(request, '⚠️ ¡Error! El servicio requiere horarios para ser CONTRATADO. Por favor, añade horarios antes de continuar. ⏰')
+            return redirect(reverse_lazy('turnos:listarHorariosDeServicio', kwargs={'pk': servicio.pk}))
+        else:
             servicio.contratar()
-        return redirect(reverse_lazy("servicios:listarServicio"))
+            messages.success(request, '🤝 ¡El servicio se CONTRATÓ con éxito! 🎊')
+            return redirect(reverse_lazy("servicios:listarServicio"))
 
 def facturar_servicio(request, pk):
     pass
@@ -379,6 +392,7 @@ def cancelar_servicio(request, pk):
     if request.method == "GET":
         servicio = Servicio.objects.get(pk=pk)
         if servicio:
+            messages.success(request, '❌ ¡El servicio se CANCELÓ con éxito! 😔')
             servicio.cancelar()
         return redirect(reverse_lazy("servicios:listarServicio"))
 
@@ -413,10 +427,36 @@ class ServicioCancelarView(SuccessMessageMixin, DeleteView):
     success_message = "El servicio ha sido cancelado!"
     template_name = "servicios/servicio_confirm_delete.html"
 
+    def post(self, request, *args, **kwargs):
+        servicio = self.get_object()  # Utiliza el método get_object para obtener el objeto Servicio
+        if servicio:
+            messages.success(request, '❌ ¡El servicio se CANCELÓ con éxito! 😔')
+            servicio.cancelar()
+        return redirect(self.success_url)
+    
+    
+    
+
+class ServicioSeñarView(SuccessMessageMixin, DeleteView):
+    model = Servicio
+    context_object_name = "servicio"
+    success_message = "El servicio fue contratado correctamente!"
+    template_name = "servicios/servicio_confirm_seña.html"
+
     def post(self, *args, **kwargs):
         servicio = Servicio.objects.get(pk=self.kwargs["pk"])
-        servicio.cancelar()
-        return redirect(self.success_url)
+        success_url = reverse_lazy('servicios:contratarServicio', kwargs={'pk': servicio.pk})
+        return redirect(success_url)
+    
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Suponiendo que totalEstimado es un método, llámalo antes de realizar la división
+        total_estimado = self.object.totalEstimado()
+        # Realiza la operación de división
+        context["seña"] = total_estimado / 2
+
+        return context    
     
 
 class ServicioListView(ListFilterView):

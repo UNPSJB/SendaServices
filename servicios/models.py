@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -106,7 +107,7 @@ class Servicio(models.Model):
 
     @property
     def estado_actual(self):
-        hoy = datetime.now()
+        hoy = timezone.now()
         if self.estados.exists():
             return self.estados.filter(timestamp__lte=hoy).latest()
         
@@ -185,26 +186,31 @@ class EstadoPresupuestado(EstadoStrategy):
     TIPO = TipoEstado.PRESUPUESTADO
 
     def facturar(self, servicio, monto):
-        if servicio.esEventual :
-            factura = Factura(servicio=servicio, total=monto, emision=datetime.now())     
+        if servicio.esEventual or (servicio.requiereSeña and servicio.facturas.count() == 0) :
+            factura = Factura(servicio=servicio, total=monto, emision=timezone.now())     
         else :
-            nueva_fecha = datetime.now() + relativedelta(months=1)
+            nueva_fecha = timezone.now() + relativedelta(months=1)
             factura = Factura(servicio=servicio, total=monto, emision=nueva_fecha)     
         factura.save()
         return factura
 
     def contratar(self, servicio, monto = None):
-        if servicio.requiereSeña and not monto:
-            raise ValidationError(_("El servicio requiere seña"))
-        if monto :
-            seña = self.facturar(servicio, monto)
-        
+        if servicio.requiereSeña:  
+            totalEstimado = Decimal(servicio.totalEstimado())
+            seña = self.facturar(servicio, totalEstimado/2)
+            seña.pago = timezone.now()
+            seña.save()
+
         # Calcula la diferencia en meses
         meses = Decimal(relativedelta(servicio.hasta, servicio.desde).months)
         if meses == 0 :
             meses = 1
         
-        totalEstimado = Decimal(servicio.totalEstimado())
+        if servicio.requiereSeña:
+            totalEstimado = Decimal(servicio.totalEstimado()/2)
+        else:
+            totalEstimado = Decimal(servicio.totalEstimado())
+        
 
         # Calcula el precio dividiendo el totalEstimado por el número de meses
         precio = totalEstimado / meses
@@ -228,7 +234,7 @@ class EstadoContratado(EstadoStrategy):
 
     def pagar(self, servicio, *args, **kwargs):
         factura = servicio.facturas.last()
-        factura.pago = datetime.now()
+        factura.pago = timezone.now()
         factura.save()
         servicio.set_estado(TipoEstado.PAGADO)
 
@@ -250,7 +256,7 @@ class EstadoIniciado(EstadoStrategy):
 
     def pagar(self, servicio, *args, **kwargs):
         factura = servicio.facturas.last()
-        factura.pago = datetime.now()
+        factura.pago = timezone.now()
         factura.save()
 
         fecha_factura = (factura.emision).month
@@ -264,8 +270,10 @@ class EstadoIniciado(EstadoStrategy):
             if meses == 0 :
                 meses = 1
             
-            totalEstimado = Decimal(servicio.totalEstimado())
-
+            if servicio.requiereSeña:
+                totalEstimado = Decimal(servicio.totalEstimado()) / 2
+            else:
+                totalEstimado = Decimal(servicio.totalEstimado()) 
             # Calcula el precio dividiendo el totalEstimado por el número de meses
             precio = totalEstimado / meses
 

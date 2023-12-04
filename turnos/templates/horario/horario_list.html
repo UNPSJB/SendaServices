@@ -16,7 +16,9 @@ Buscar Turno
 
 
     {% block thextras %}
-        <th colspan="">Opciones</th>
+        {% if servicio.estado_actual.tipo == "presupuestado" %}
+            <th colspan="">Opciones</th>
+        {% endif %}
     {% endblock%}
     
     {% block tcuerpo %}
@@ -26,10 +28,12 @@ Buscar Turno
         <td>{{h.turno}}</td>
         <td>{{h.diaSemana}}</td>
         <td>{{h.servicio}}</td>
+        {% if servicio.estado_actual.tipo == "presupuestado" %}
         <td>
             <!--Si queremos abrir un moda, se utiliza abrir-->
             <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "turnos:modificarHorarioParaServicio" pk=h.pk %}')"></a>
         </td>
+        {% endif %}
     </tr>
     {% empty %}
         <tr> <td> No hay turnos registrados </td> </tr>
@@ -37,19 +41,21 @@ Buscar Turno
 {% endblock %}
 
 
-{% block custom_actions %}
-    <div class="d-flex justify-content-end">
-        {% if servicio.requiereSeña %}
-            <a href="#" 
-            
-            onclick="abrir_modal('{% url 'servicios:señarServicio' pk=servicio.pk %}')"  class="btn btn-success">Señar</a>
+    {% block custom_actions %}
+        <div class="d-flex justify-content-end">
+            {% if servicio.estado_actual.tipo == "presupuestado" %}
+                {% if servicio.requiereSeña %}
+                    <a href="#" 
+                    
+                    onclick="abrir_modal('{% url 'servicios:señarServicio' pk=servicio.pk %}')"  class="btn btn-success">Señar</a>
 
+                {% else %}
+                    <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
+                {% endif %}
+            {% endif %}
+        </div>  
+    {% endblock %}
 
-        {% else %}
-            <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
-        {% endif %}
-    </div>  
-{% endblock %}
 
 
 {% block extrajs %}

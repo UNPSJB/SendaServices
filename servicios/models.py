@@ -279,7 +279,8 @@ class EstadoIniciado(EstadoStrategy):
 
             self.facturar(servicio, precio)
 
-
+    def cancelar(self, servicio, monto = None):
+        servicio.set_estado(TipoEstado.CANCELADO)
             
 
 Servicio.STRATEGIES.append(EstadoIniciado())

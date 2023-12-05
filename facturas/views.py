@@ -1,14 +1,13 @@
-from django.shortcuts import render
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import render, get_object_or_404
 from .models import Factura
 from core.utils import ListFilterView
 from servicios.models import Servicio
 from .forms import (
     FacturasFiltrosForm,)
 
+def detalle_factura(request, factura_id):
+    factura = get_object_or_404(Factura, pk=factura_id)
+    return render(request, 'facturas/factura.html', {'factura': factura})
 
 # Create your views here.s
 class FacturaListView(ListFilterView):

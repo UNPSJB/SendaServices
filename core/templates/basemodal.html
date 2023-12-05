@@ -4,11 +4,13 @@
 <div class="modal-dialog modal-lg"  role="document">
     <div class="modal-content">
       <div class="modal-header">
+        {% block hmodal %}
         <h4 class="mx-3">{% block tmodal %} {% endblock %} {% block tobjectmodal %} {% endblock %}</h4>
+        {% endblock %}
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form action="{% block url %}  {% endblock %}" method="POST">
-        <div class="modal-body " >
+        <div class="modal-body" id="contenido_modal" >
             {% csrf_token %}
             {%block cmodal%} 
         
@@ -16,8 +18,10 @@
               {% endblock %}
           </div>
           <div class="modal-footer">
+            {% block fmodal %}
             <button type="submit" class="btn btn-primary">{% block btnmodal %} {% endblock %}</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            {% endblock %}
           </div>
         </form>
     </div>

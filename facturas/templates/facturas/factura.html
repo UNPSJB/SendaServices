@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+{% endblock %}
+
+{% block volver %}
+{% endblock volver %}
+
+{% block body %}
+
+
+<div class="col-12 col-md-6 w-100" id="factura">
+    <div class="card flex-fill border-0">
+        <div class="card-body py-4">
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Factura</h2>
+                <img src="{% static 'img/senda.png' %}" class="img-fluid" alt="Senda Image">
+            </div>
+            <hr class="my-4 bg-primary">
+            <div class="d-flex justify-content-between align-items-center">
+                <p>
+                    <b>Cliente:</b> {{factura.servicio.inmueble.cliente}}
+                </p>
+                <p>
+                    <b>Fecha:</b> {{factura.emision}}
+                </p>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <p>
+                    <b>Inmueble:</b> {{factura.servicio.inmueble}}
+                </p>
+                <p>
+                    {% if factura.pagado %}
+                    <b>Estado:</b> Pagada
+                    {% else %}
+                    <b>Estado:</b> Impaga
+                    {% endif %}
+                </p>
+            </div>
+            <hr class="my-4 bg-primary">
+            <div>
+                <p><b>Detalles del Servicio</b></p>
+                <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Cantidad Metros Cuadrados</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        {% for d in factura.servicio.detalles_servicio.all %}
+                            <tr>
+                                <td>{{d}}</td>
+                                <td>{{d.cantidad}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+            </div>
+            <hr class="my-4 bg-primary">
+            <div class="d-flex justify-content-between align-items-center">
+                <p><b>Forma de pago: </b> {{factura.formaPago }} </p>
+                <p><b>Total:</b> {{factura.total}} </p>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <p><b>Nota:</b> </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

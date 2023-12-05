@@ -8,6 +8,7 @@ Facturas
 
     {% block thextras %}
         <th colspan="">Estado</th>
+        <th>Opciones</th>
     {% endblock%}
     
     {% block tcuerpo %}
@@ -22,6 +23,13 @@ Facturas
         {% else %}
             <td>Impaga</td>
         {% endif %}
+        <td>
+            <a onclick="descargarPDF('{% url 'facturas:detalle_factura' f.pk %}')" class="bi bi-filetype-pdf fs-6"
+            data-bs-toggle="tooltip" data-bs-placement="top" title="Descargar Factura">
+         </a>
+         
+        </td>
+        
 
     </tr>
     {% empty %}
@@ -48,5 +56,35 @@ function abrir_modal(url){
         bindFormSet($('#modal'));
     });
 }
+
 </script>
+
+ <!-- Modal Script -->
+ <script>
+    async function descargarPDF(url) {
+        try {
+            const response = await fetch(url);
+            const htmlContent = await response.text();
+
+            // Crea un elemento div para contener el contenido HTML
+            const container = document.createElement('div');
+            container.innerHTML = htmlContent;
+
+            // Configura las opciones para la conversión
+            const opciones = {
+                margin: 10,
+                filename: 'factura.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Convierte el contenido a PDF y descárgalo
+            html2pdf(container, opciones);
+        } catch (error) {
+            console.error('Error al descargar el PDF:', error);
+        }
+    }
+</script>
+
 {% endblock %}

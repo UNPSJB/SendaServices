@@ -225,6 +225,7 @@ class PeriodoListView(ListFilterView):
     model = Periodo #Nombre del modelo
     template_name = "periodo/periodo_list.html" #Ruta del template
     context_object_name = 'periodo' #Nombre de la lista usar ''
+    queryset = Periodo.objects.all()
   
     def get_empleado(self):
         pk = self.kwargs.get('empleado_pk')
@@ -236,6 +237,28 @@ class PeriodoListView(ListFilterView):
     def get_filtros(self, *args, **kwargs):
         return PeriodoFiltrosForm(*args, **kwargs) if not self.get_empleado() else PeriodoCustomFiltrosForm(*args, **kwargs)
 
+    # def get_queryset(self):
+    #     qs = super().get_queryset()
+    #     queryset = super().apply_filters_to_qs(qs)
+    #     #if self.filtros:
+    #     #    filtros = self.filtros(self.request.GET)
+    #     #    return filtros.apply(qs)
+    #     return qs
+
+    #     if servicio:
+    #         # Filtrar las facturas por el servicio
+    #         return Horario.objects.filter(servicio=servicio)
+    #     else:
+    #         # Si no hay servicio, mostrar todas las facturas
+    #         return Horario.objects.all()
+
+    #     queryset = super().get_queryset()
+    #     cliente = self.get_cliente()
+    #     if cliente:
+    #         return queryset.filter(cliente=cliente)
+    #     return queryset
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         empleado = self.get_empleado()
@@ -245,6 +268,10 @@ class PeriodoListView(ListFilterView):
             periodos = Periodo.objects.filter(empleado=empleado)
 
         context['tnav'] = "Gestion de Periodo" if not empleado else f"Gestion de periodos de empleado: {empleado}"
+        # filtros = self.get_filtros(self.request.GET)
+        # if filtros is not None:
+        #     context['filtros'] = filtros
+        #     context['serialized_query_params'] = filtros.serialize_query_params()
         context["empleado"] = empleado
         context["periodo"] = periodos
         return context

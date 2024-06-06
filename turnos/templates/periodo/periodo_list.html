@@ -14,6 +14,7 @@ Buscar Periodo
     {% block thextras %}
         <th colspan="">Servicios</th>
         <th colspan="">Dia de la Semana</th>
+        <th colspan="">Turno</th>
     {% endblock%}
     
     {% block tcuerpo %}
@@ -25,6 +26,7 @@ Buscar Periodo
         <td>{{p.fechaHasta}}</td>
         <td>{{p.horario.servicio}}</td>
         <td>{{p.horario.diaSemana}}</td>
+        <td>{{p.horario.turno}}</td>
 
     </tr>
     {% empty %}

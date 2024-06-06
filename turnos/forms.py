@@ -173,10 +173,10 @@ class PeriodoFiltrosForm(FiltrosForm):
     ]
 
     #Formulario de filtrado
-    fechaHasta = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Inicio"))
-    fechaDesde = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Fin"))
+    fechaDesde = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Inicio"))
+    fechaHasta = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Fin"))
     empleado = forms.ModelChoiceField(queryset=Empleado.objects.all(), required=False, label='Empleado')
-    servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Servicio')
+    #servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Servicio')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -188,7 +188,7 @@ class PeriodoFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "empleado","fechaDesde","fechaHasta","servicio",  #Remplazar campos formulario
+                "empleado","fechaDesde","fechaHasta",  #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
@@ -201,7 +201,7 @@ class PeriodoCustomFiltrosForm(PeriodoFiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "fechaDesde","fechaHasta","servicio", #Remplazar campos formulario
+                "fechaDesde","fechaHasta", #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

@@ -46,7 +46,7 @@ from .views import (
     CategoriaUpdateView
 )
 
-print("llegue a las url de modificar inmueble")
+#print("llegue a las url de modificar inmueble")
 
 urlpatterns = [
     path('admin/', admin.site.urls),

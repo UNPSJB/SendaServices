@@ -6,32 +6,51 @@
 Buscar Periodo
 {% endblock %}
 
-    {% block tlista %} Listado de {% if empleado %} Periodos del Empleado {% else %} Periodos {% endif %} {% endblock %}
-
-    {% block tExtras %}     
-    {% endblock %}
-
-    {% block thextras %}
-        <th colspan="">Servicios</th>
-        <th colspan="">Dia de la Semana</th>
-        <th colspan="">Turno</th>
-    {% endblock%}
-    
-    {% block tcuerpo %}
-    {% for p in periodo %}
-    <tr>
-        <td>{{forloop.counter}}</td>
-        <td>{{p.empleado}}</td>
-        <td>{{p.fechaDesde}}</td>
-        <td>{{p.fechaHasta}}</td>
-        <td>{{p.horario.servicio}}</td>
-        <td>{{p.horario.diaSemana}}</td>
-        <td>{{p.horario.turno}}</td>
-
-    </tr>
-    {% empty %}
-        <tr> <td> No hay turnos registrados </td> </tr>
-    {% endfor %}
+{% block tlista %}
+Listado de {% if empleado %} Periodos del Empleado {% else %} Periodos {% endif %}
 {% endblock %}
 
+{% block tExtras %}
+{% endblock %}
 
+{% block thextras %}
+    <th colspan="">Servicios</th>
+    <th colspan="">Dia de la Semana</th>
+    <th colspan="">Turno</th>
+{% endblock %}
+
+{% block tcuerpo %}
+{% for p in page_obj %}
+<tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ p.empleado }}</td>
+    <td>{{ p.fechaDesde }}</td>
+    <td>{{ p.fechaHasta }}</td>
+    <td>{{ p.horario.servicio }}</td>
+    <td>{{ p.horario.diaSemana }}</td>
+    <td>{{ p.horario.turno }}</td>
+</tr>
+{% empty %}
+<tr> <td> No hay turnos registrados </td> </tr>
+{% endfor %}
+{% endblock %}
+
+{% block pagination %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+        {% endif %}
+        
+        <span class="current">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+        </span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

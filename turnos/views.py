@@ -236,13 +236,13 @@ class HorarioCreateView(CreateView):
 
   
 class PeriodoListView(ListFilterView):
-    #Cantidad de elementos por lista
-    paginate_by = 2
     #Filtros de la lista
     filtros = PeriodoFiltrosForm
     model = Periodo #Nombre del modelo
     template_name = "periodo/periodo_list.html" #Ruta del template
     context_object_name = 'periodo' #Nombre de la lista usar ''
+     #Cantidad de elementos por lista
+    paginate_by = 2
     queryset = Periodo.objects.all()
   
     def get_empleado(self):

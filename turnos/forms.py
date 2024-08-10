@@ -9,6 +9,8 @@ from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
+from servicios.forms import Servicio
+
 
 
 class HorarioForm(ModelForm):
@@ -140,7 +142,7 @@ class PeriodoForm(forms.ModelForm):
             "fechaDesde": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
             "fechaHasta": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'})
         }
-
+    
     def clean(self):
         cleaned_data = super().clean()
         fechaDesde = cleaned_data.get('fechaDesde')

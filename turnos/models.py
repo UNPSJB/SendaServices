@@ -23,13 +23,20 @@ class Horario(models.Model):
     diaSemana= models.CharField(max_length=30,choices=DiaSemana.choices)
     servicio= models.ForeignKey("servicios.Servicio", related_name="horarios", on_delete=models.CASCADE)
 
+  
+
 class Periodo(models.Model): 
     horario=  models.ForeignKey(Horario,on_delete=models.CASCADE, related_name= "periodo") 
     empleado= models.ForeignKey(Empleado,on_delete=models.CASCADE,related_name= "periodo")
     fechaDesde= models.DateField()
     fechaHasta= models.DateField()
-
+    def get_horario(self):
+        """Retorna el objeto Horario asociado a este Periodo."""
+        return self.horario
+    
+        
 
 class Asistencia(models.Model):
     periodo= models.ForeignKey(Periodo,on_delete=models.CASCADE,related_name="periodo")
     fecha= models.DateTimeField()
+

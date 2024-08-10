@@ -3,6 +3,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.forms import ValidationError
 from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
@@ -210,9 +211,26 @@ class HorarioCreateView(CreateView):
         self.object.save()
 
         if self.periodo_formset.is_valid():
+            for periodo_form in self.periodo_formset:
+                desde = periodo_form.cleaned_data.get('fechaDesde')
+                hasta = periodo_form.cleaned_data.get('fechaHasta')
+                print(f"{desde=}")
+                print(f"{hasta=}")
+
+            if desde < self.object.servicio.desde:
+                messages.error(self.request,"La fecha 'Desde' debe ser mayor o igual a la fecha de inicio del servicio.")
+                return self.form_invalid(form)
+            if desde > self.object.servicio.hasta:
+                messages.error(self.request,"La fecha 'Desde' debe ser menor o igual a la fecha de finalizacion del servicio.")
+                return self.form_invalid(form)
+            if hasta > self.object.servicio.hasta:
+                messages.error(self.request,"La fecha 'Hasta' debe ser menor o igual a la fecha de finalizacion del servicio.")
+                return self.form_invalid(form)
+            if hasta < self.object.servicio.desde:
+                messages.error(self.request,"La fecha 'Hasta' debe ser mayor o igual a la fecha de inicio del servicio.")
+                return self.form_invalid(form)
             self.periodo_formset.instance = self.object
             self.periodo_formset.save()
-
         messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
         return super().form_valid(form)
 

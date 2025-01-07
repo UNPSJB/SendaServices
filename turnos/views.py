@@ -86,28 +86,6 @@ class HorarioListView(ListFilterView):
         return context
 
 
-
-# class HorarioCreateView(CreateView):
-#     model = Horario
-#     form_class = HorarioForm
-#     success_url = reverse_lazy('turnos:listarHorarios')
-#     template_name = "horario/horario_form.html"
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['titulo'] = "Registrar Horario"
-#         context['boton1'] = "Crear Horario"
-#         context['tnav'] = "Gestion de Horarios"
-#         #print(self.template_name)
-#         #print(context["form"].errors)
-#         return context
-    
-
-#     #Este form, es para cuando se envia se muestre el mensaje de empleado creado en list
-#     def form_valid(self, form):
-#         messages.success(self.request, 'El turno se ha creado exitosamente.')
-#         return super().form_valid(form)
-    
 class HorarioUpdateView(UpdateView):
     model = Horario
     form_class = HorarioModForm
@@ -120,11 +98,6 @@ class HorarioUpdateView(UpdateView):
             return Horario.objects.get(pk=pk)
         else:
             return 
-        
-    # def get_form_kwargs(self):
-    #     kwargs = super().get_form_kwargs()
-    #     kwargs["horario"] = self.get_horario()
-    #     return kwargs
 
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
@@ -133,7 +106,6 @@ class HorarioUpdateView(UpdateView):
             data=self.request.POST if self.request.method in ["POST", "PUT"] else None
         )
         self.peridodo_formset_helper = PeriodoInlineFormSetHelper()
-        #print(f"periodo.formset={self.periodo_formset}")
         return form
 
     def get_context_data(self, **kwargs):
@@ -143,8 +115,6 @@ class HorarioUpdateView(UpdateView):
         context["periodo_formset_helper"] = self.peridodo_formset_helper
         context["titulo"] = "Registrar Horario"
         context["horario"] = horario
-        #context['tnav'] = "Gestion de turnos"
-        # context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
         return context
 
     def form_valid(self, form):
@@ -189,18 +159,16 @@ class HorarioCreateView(CreateView):
         self.periodo_formset = PeriodoInline()(
             data=self.request.POST if self.request.method in ["POST", "PUT"] else None
         )
-        self.peridodo_formset_helper = PeriodoInlineFormSetHelper()
+        self.periodo_formset_helper = PeriodoInlineFormSetHelper()
         return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         servicio = self.get_servicio()
         context["periodo_formset"] = self.periodo_formset
-        context["periodo_formset_helper"] = self.peridodo_formset_helper
+        context["periodo_formset_helper"] = self.periodo_formset_helper
         context["titulo"] = "Registrar Horario"
         context["servicio"] = servicio
-        #context['tnav'] = "Gestion de turnos"
-        # context['ayuda'] = 'presupuestos.html#creacion-de-un-presupuesto'
         return context
 
     def form_valid(self, form):
@@ -255,37 +223,14 @@ class PeriodoListView(ListFilterView):
     def get_periodos(self):
         empleado = self.get_empleado()
         periodos = Periodo.objects.all()
-        #print(f"{empleado=}") 
 
         if empleado is not None:
             periodos = Periodo.objects.filter(empleado=empleado)
-        #print(f"{periodos=}") 
 
         return periodos
 
     def get_filtros(self, *args, **kwargs):
         return PeriodoFiltrosForm(*args, **kwargs) if not self.get_empleado() else PeriodoCustomFiltrosForm(*args, **kwargs)
-
-    # def get_queryset(self):
-    #     qs = super().get_queryset()
-    #     queryset = super().apply_filters_to_qs(qs)
-    #     #if self.filtros:
-    #     #    filtros = self.filtros(self.request.GET)
-    #     #    return filtros.apply(qs)
-    #     return qs
-
-    #     if servicio:
-    #         # Filtrar las facturas por el servicio
-    #         return Horario.objects.filter(servicio=servicio)
-    #     else:
-    #         # Si no hay servicio, mostrar todas las facturas
-    #         return Horario.objects.all()
-
-    #     queryset = super().get_queryset()
-    #     cliente = self.get_cliente()
-    #     if cliente:
-    #         return queryset.filter(cliente=cliente)
-    #     return queryset
 
     def get_queryset(self):
         qs = self.get_periodos()
@@ -318,9 +263,6 @@ class PeriodoListView(ListFilterView):
 
         filtros = self.get_filtros(self.request.GET)
 
-        #print(f"{filtros=}")
-        # if filtros is not None:
-        #     context['filtros'] = filtros
         context['serialized_query_params'] = filtros.serialize_query_params()
         context['query'] = self.get_queryset()
         #periodos = self.get_queryset()    #ACA ESTA EL PROBLEMA Y LA SOLUCION     

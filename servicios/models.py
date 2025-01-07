@@ -58,7 +58,7 @@ class Servicio(models.Model):
 
     inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
 
-    total = models.DecimalField(decimal_places=2,max_digits=10, default=0)
+    total = models.DecimalField(decimal_places=2,max_digits=100, default=0)
 
     def get_fecha_inicio(self):
         """Retorna la fecha de inicio del servicio."""

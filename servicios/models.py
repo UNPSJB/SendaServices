@@ -58,9 +58,16 @@ class Servicio(models.Model):
 
     inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
 
-    total = models.DecimalField(decimal_places=2,max_digits=10, default=0)
+    total = models.DecimalField(decimal_places=2,max_digits=100, default=0)
 
-   
+    def get_fecha_inicio(self):
+        """Retorna la fecha de inicio del servicio."""
+        return self.desde
+
+    def get_fecha_fin(self):
+        """Retorna la fecha de fin del servicio."""
+        return self.hasta
+
     @property
     def requiereSeña(self):
         return not self.inmueble.cliente.habitual

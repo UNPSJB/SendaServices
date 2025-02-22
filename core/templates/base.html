@@ -309,9 +309,6 @@
   </div>
   {% endblock %}
 
-
-
-
   <script src="{% static 'third-party/js/jquery.min.js' %}"></script>
 
   <script src="{% static 'third-party/js/bootstrap.bundle.min.js' %}"></script>
@@ -323,9 +320,8 @@
   <script src="{% static 'js/aside.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/modal_form_validation.js' %}"></script>
 
+  {% block extra_js %}{% endblock %}
 
-  {% block extrajs %}
-  {% endblock %}
 </body>
 
 </html>

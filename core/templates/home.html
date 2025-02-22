@@ -52,18 +52,62 @@ Senda
     {% endif %}
   </div>
 
-
   <div class="col-12 col-md-6 w-100">
     <div class="card flex-fill border-0">
       <div class="card-body py-4">
+        <h2>Estadísticas de Ventas</h2>
+        <p>Total vendido este mes: ${{ total_mes }}</p>
+        <p>Total vendido este año: ${{ total_año }}</p>
+        <p>Facturas emitidas este mes: {{ facturas_mes }}</p>
+        <p>Facturas emitidas este año: {{ facturas_año }}</p>
         <div class="d-flex align-items-start">
           <div class="flex-grow-1">
-                <img src="{% static 'img/cleanweb.gif' %}"  class="img-fluid" alt="Responsive image">
-            </div>
+            <canvas id="myChart"></canvas>
+            <!--img src="{% static 'img/cleanweb.gif' %}"  class="img-fluid" alt="Responsive image"-->
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  {% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctx = document.getElementById("myChart").getContext("2d");
+    
+        var labels = JSON.parse('{{ labels|escapejs }}'); 
+        var data = JSON.parse('{{ data|escapejs }}');
+
+        var myChart = new Chart(ctx, {
+            type: "bar",  // Puedes cambiarlo a "line", "pie", etc.
+            data: {
+                //labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"],
+                labels: labels,
+                datasets: [{
+                    label: "Ventas",
+                    //data: [50, 75, 40, 90, 120], // Datos de ejemplo
+                    data: data,
+                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+    </script>    
+
+  {% endblock %}
 {% endblock %}

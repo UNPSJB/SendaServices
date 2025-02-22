@@ -9,6 +9,10 @@ from django.views.generic import View, ListView
 from .utils import ListFilterView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect
+from django.db.models import Sum, Count
+from datetime import datetime
+from facturas.models import Factura
+import json
 
 
 from django.urls import reverse_lazy
@@ -38,7 +42,47 @@ from .forms import (
 
 @login_required
 def index(request):
-    return render(request, 'home.html')
+
+    hoy = datetime.today()
+    año_actual = hoy.year
+    mes_actual = hoy.month
+
+    # Total vendido en el mes actual
+    total_mes = Factura.objects.filter(emision__year=año_actual, emision__month=mes_actual).aggregate(Sum("total"))["total__sum"] or 0
+
+    # Total vendido en el año actual
+    total_año = Factura.objects.filter(emision__year=año_actual).aggregate(Sum("total"))["total__sum"] or 0
+
+    # Cantidad de facturas emitidas en el mes actual
+    facturas_mes = Factura.objects.filter(emision__year=año_actual, emision__month=mes_actual).count()
+
+    # Cantidad de facturas emitidas en el año actual
+    facturas_año = Factura.objects.filter(emision__year=año_actual).count()
+
+    # Ventas por mes en el año actual (para gráficos)
+    ventas_por_mes = Factura.objects.filter(emision__year=año_actual).values("emision__month").annotate(total=Sum("total")).order_by("emision__month")
+
+    # Formatear datos para pasarlos al template
+    labels = [f"Mes {item['emision__month']}" for item in ventas_por_mes]
+    data = [float(item["total"]) for item in ventas_por_mes]
+
+    context = {
+        "total_mes": total_mes,
+        "total_año": total_año,
+        "facturas_mes": facturas_mes,
+        "facturas_año": facturas_año,
+        "labels": json.dumps(labels),
+        "data": json.dumps(data)
+    }
+
+    #labels = ["Enero", "Febrero", "Marzo", "Abril", "Mayo"]
+    #data = [10, 20, 15, 25, 30]  # Datos de ejemplo
+
+    #context = {
+    #    "labels": json.dumps(labels),
+    #    "data": json.dumps(data)
+    #}
+    return render(request, "home.html", context)
 
 def salir(request):
     logout(request)

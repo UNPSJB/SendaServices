@@ -13,5 +13,8 @@ Aplicación Django para gestión de servicios de Limpieza
 - Gonzalez Alejo 
 - Skarkloff Lautaro 
 
+**CARGA DE DATOS**
+
+python core/scripts/load_tests_data.py
 
 

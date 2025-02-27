@@ -9,6 +9,12 @@ Senda
 {% block volver %}
 {% endblock volver %}
 
+{% block navbtn %}
+<a href="{% url 'servicios:crearServicio' %}" class="btn btn-primary me-3"> 
+  <i class="bi bi-plus"></i> Crear Servicio
+</a>
+{% endblock %}
+
 {% block cmain %}
 
 <div class="col-12 col-md-6 d-flex">
@@ -62,7 +68,9 @@ Senda
         <p>Facturas emitidas este año: {{ facturas_año }}</p>
         <div class="d-flex align-items-start">
           <div class="flex-grow-1">
-            <canvas id="myChart"></canvas>
+            <canvas id="ctx_ventas_mes"></canvas>
+            <canvas id="ctx_ventas_tipo_servicio"></canvas>
+            <canvas id="ctx_cant_servicios_estados"></canvas>
             <!--img src="{% static 'img/cleanweb.gif' %}"  class="img-fluid" alt="Responsive image"-->
           </div>
         </div>
@@ -75,20 +83,76 @@ Senda
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var ctx = document.getElementById("myChart").getContext("2d");
-    
-        var labels = JSON.parse('{{ labels|escapejs }}'); 
-        var data = JSON.parse('{{ data|escapejs }}');
+        var ctx_ventas_mes = document.getElementById("ctx_ventas_mes").getContext("2d");
+        var ctx_ventas_tipo_servicio = document.getElementById("ctx_ventas_tipo_servicio").getContext("2d");
+        var ctx_cant_servicios_estados = document.getElementById("ctx_cant_servicios_estados").getContext("2d");
 
-        var myChart = new Chart(ctx, {
-            type: "pie",  // Puedes cambiarlo a "line", "pie", etc.
+        var labels_ventas_mes = JSON.parse('{{ labels_ventas_mes|escapejs }}'); 
+        var data_ventas_mes = JSON.parse('{{ data_ventas_mes|escapejs }}');
+
+        var labels_ventas_tipo_servicio = JSON.parse('{{ labels_ventas_tipo_servicio|escapejs }}'); 
+        var data_ventas_tipo_servicio = JSON.parse('{{ data_ventas_tipo_servicio|escapejs }}');
+
+        var labels_cant_servicios_estados = JSON.parse('{{ labels_cant_servicios_estados|escapejs }}'); 
+        var data_cant_servicios_estados = JSON.parse('{{ data_cant_servicios_estados|escapejs }}');
+
+        var Ventas_Mes_Chart = new Chart(ctx_ventas_mes, {
+            type: "bar",
             data: {
-                //labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"],
-                labels: labels,
+                labels: labels_ventas_mes,
                 datasets: [{
                     label: "Ventas",
-                    //data: [50, 75, 40, 90, 120], // Datos de ejemplo
-                    data: data,
+                    data: data_ventas_mes,
+                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var Ventas_Tipo_Servicio_Chart = new Chart(ctx_ventas_tipo_servicio, {
+            type: "pie",
+            data: {
+                labels: labels_ventas_tipo_servicio,
+                datasets: [{
+                    label: "Ventas",
+                    data: data_ventas_tipo_servicio,
+                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var Cant_Servicios_Estados_Chart = new Chart(ctx_cant_servicios_estados, {
+            type: "line", 
+            data: {
+                labels: labels_cant_servicios_estados,
+                datasets: [{
+                    label: "Cantidad",
+                    data: data_cant_servicios_estados,
                     backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2

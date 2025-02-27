@@ -12,6 +12,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Sum, Count
 from datetime import datetime
 from facturas.models import Factura
+from servicios.models import TipoServicio, Servicio
 import json
 
 
@@ -60,28 +61,43 @@ def index(request):
     facturas_año = Factura.objects.filter(emision__year=año_actual).count()
 
     # Ventas por mes en el año actual (para gráficos)
-    ventas_por_mes = Factura.objects.filter(emision__year=año_actual).values("emision__month").annotate(total=Sum("total")).order_by("emision__month")
+    ventas_por_mes = Factura.objects.filter(emision__year=año_actual).values("emision__month").annotate(
+        total=Sum("total")
+    ).order_by("emision__month")
+
+    # Ventas por Tipo de Servicio (para gráficos)
+    ventas_por_tipo_servicio = Factura.objects.values("servicio__detalles_servicio__tipoServicio__descripcion").annotate(
+        total=Sum("total")
+    )
+
+    # Cantidad de Servicios en cada Estado (para gráficos)
+    cant_servicios_estados = Servicio.objects.values("estado").annotate(
+        cantidad=Count("id")
+    )
 
     # Formatear datos para pasarlos al template
-    labels = [f"Mes {item['emision__month']}" for item in ventas_por_mes]
-    data = [float(item["total"]) for item in ventas_por_mes]
+    labels_ventas_mes = [f"Mes {item['emision__month']}" for item in ventas_por_mes]
+    data_ventas_mes = [float(item["total"]) for item in ventas_por_mes]
+
+    labels_ventas_tipo_servicio = [item['servicio__detalles_servicio__tipoServicio__descripcion'] for item in ventas_por_tipo_servicio]
+    data_ventas_tipo_servicio = [float(item["total"]) for item in ventas_por_tipo_servicio]
+
+    labels_cant_servicios_estados = [item['estado'] for item in cant_servicios_estados]
+    data_cant_servicios_estados = [float(item["cantidad"]) for item in cant_servicios_estados]
 
     context = {
         "total_mes": total_mes,
         "total_año": total_año,
         "facturas_mes": facturas_mes,
         "facturas_año": facturas_año,
-        "labels": json.dumps(labels),
-        "data": json.dumps(data)
+        "labels_ventas_mes": json.dumps(labels_ventas_mes),
+        "data_ventas_mes": json.dumps(data_ventas_mes),
+        "labels_ventas_tipo_servicio": json.dumps(labels_ventas_tipo_servicio),
+        "data_ventas_tipo_servicio": json.dumps(data_ventas_tipo_servicio),
+        "labels_cant_servicios_estados": json.dumps(labels_cant_servicios_estados),
+        "data_cant_servicios_estados": json.dumps(data_cant_servicios_estados)
     }
 
-    #labels = ["Enero", "Febrero", "Marzo", "Abril", "Mayo"]
-    #data = [10, 20, 15, 25, 30]  # Datos de ejemplo
-
-    #context = {
-    #    "labels": json.dumps(labels),
-    #    "data": json.dumps(data)
-    #}
     return render(request, "home.html", context)
 
 def salir(request):
@@ -363,7 +379,7 @@ class ProductoListView(ListFilterView):
     #Filtros de la lista
     filtros = ProductoFiltrosForm
     model = Producto #Nombre del modelo
-    template_name = "core/producto_list.html" #Ruta del template
+    template_name = "productos/producto_list.html" #Ruta del template
     context_object_name = 'productos' #Nombre de la lista usar ''
     queryset = Producto.objects.filter(baja=False)
 
@@ -378,7 +394,7 @@ class ProductoCreateView(CreateView):
     model = Producto
     form_class = ProductoForm
     success_url = reverse_lazy('listarProductos')
-    template_name = "core/producto_form.html"
+    template_name = "productos/producto_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -395,7 +411,7 @@ class ProductoUpdateView(UpdateView):
     model = Producto
     form_class = ProductoUpdateForm
     success_url = reverse_lazy('listarProductos')
-    template_name = "core/producto_modal.html"
+    template_name = "productos/producto_modal.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -413,7 +429,7 @@ class ProductoDeleteView(SuccessMessageMixin, DeleteView):
     context_object_name = "producto"
     success_url = reverse_lazy('listarProductos')
     success_message = "El producto ha sido eliminado!"
-    template_name = "core/producto_confirm_delete.html"
+    template_name = "productos/producto_confirm_delete.html"
     
     def form_valid(self, form):
         res = self.get_object().delete() # intento eliminar a mano

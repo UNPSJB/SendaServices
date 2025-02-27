@@ -33,221 +33,89 @@
       <div class="h-100">
         <div class="sidebar-logo p-0 m-0">
           <a href="#">
-
             <div class="d-flex justify-content-center align-items-center" style="width: 264px; height: 64.4px;">
               <img src="{% static 'img/senda.png' %}" class="p-0">
-
-
           </a>
         </div>
         <!--Menu sidebar-->
         <ul class="sidebar-nav">
+
           <li class="sidebar-item">
             <li class="sidebar-header">
               Opciones Generales
             </li>
             <a href="{% url 'home' %}" class="sidebar-link">
-              <i class="bi bi-house-fill"></i>
-              Home
+              <i class="bi bi-house-fill"></i> Home
             </a>
           </li>
+
           {% if perms.core %}
-          <!-- Menu empleados -->
+          <!-- Empleados -->
           <li class="sidebar-item">
-
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionempleado" data-bs-toggle="collapse"
-              aria-expanded="false">
-              <i class="bi bi-person-bounding-box"></i> Gestion Empleados
+            <a href="{% url 'listarEmpleado' %}" class="sidebar-link"> 
+              <i class="bi bi-person-square"></i> Empelados
             </a>
+          </li>
 
-            <!--Empleados-->
-            <ul id="gestionempleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-
-              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#empleado" data-bs-toggle="collapse"
-                aria-expanded="false">
-                <i class="bi bi-person-square"></i>
-                Empleados
-              </a>
-
-              <ul id="empleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="{% url 'crearEmpleado' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
-                </li>
-                
-                <li class="sidebar-item">
-                  <a href="{% url 'listarEmpleado' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-                </li>
-              </ul>
-            </ul>
-
-            <!--Categorias-->
-            <ul id="gestionempleado" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-
-              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#categoria" data-bs-toggle="collapse"
-                aria-expanded="false">
-                <i class="bi bi-clipboard2-fill"></i>
-                Categorias
-              </a>
-
-              <ul id="categoria" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="{% url 'crearCategoria' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
-                </li>
-                
-                <li class="sidebar-item">
-                  <a href="{% url 'listarCategoria' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-                </li>
-              </ul>
-            </ul>            
-
-          </li>   
+          <!-- Categorias -->
+          <li class="sidebar-item">
+            <a href="{% url 'listarCategoria' %}" class="sidebar-link"> 
+              <i class="bi bi-clipboard2-fill"></i> Categorias
+            </a>
+          </li>             
           
-
-          <!-- Menu clientes -->
+          <!-- Clientes -->
           <li class="sidebar-item">
-
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestioncliente" data-bs-toggle="collapse"
-              aria-expanded="false">
-              <i class="bi bi-person-lines-fill"></i> Gestion Clientes
+            <a href="{% url 'listarCliente' %}" class="sidebar-link"> 
+              <i class="bi bi-person-fill"></i> Clientes
             </a>
-
-            <!--Clientes-->
-            <ul id="gestioncliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-
-              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#cliente" data-bs-toggle="collapse"
-                aria-expanded="false">
-                <i class="bi bi-person-fill"></i>
-                Cliente
-              </a>
-
-              <ul id="cliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="{% url 'crearCliente' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
-                </li>
-                
-                <li class="sidebar-item">
-                  <a href="{% url 'listarCliente' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-                </li>
-              </ul>
-            </ul>
-
-            <!--Inmuebles-->
-            <ul id="gestioncliente" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-
-              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#inmueble" data-bs-toggle="collapse"
-                aria-expanded="false">
-                <i class="bi bi-building-fill"></i>
-                Inmueble
-              </a>
-
-              <ul id="inmueble" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="{% url 'crearInmueble' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
-                </li>
-                
-                <li class="sidebar-item">
-                  <a href="{% url 'listarInmuebles' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-                </li>
-              </ul>
-            </ul>
+          </li>
+        
+          <!-- Inmuebles -->
+          <li class="sidebar-item">
+            <a href="{% url 'listarInmuebles' %}" class="sidebar-link"> 
+              <i class="bi bi-building-fill"></i> Inmuebles
+            </a>
+          </li>
+         
+          <!-- Productos -->    
+          <li class="sidebar-item">
+            <a href="{% url 'listarProductos' %}" class="sidebar-link"> 
+              <i class="bi bi-box-seam"></i> Productos
+            </a>
           </li> 
 
-         
-          <!-- Menu productos -->
+          <!-- Tipo Servicios -->   
           <li class="sidebar-item">
-
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionProductos" data-bs-toggle="collapse"
-              aria-expanded="false">
-              <i class="bi bi-box-seam"></i> Gestion Productos
+            <a href="{% url 'servicios:listarTipoServicio' %}" class="sidebar-link"> 
+              <i class="bi bi-file-earmark-text-fill"></i> Tipos de Servicios
             </a>
-
-            <!--Productos-->
-            <ul id="gestionProductos" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-              <li class="sidebar-item">
-                <a href="{% url 'crearProducto' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
-              </li>
-              
-              <li class="sidebar-item">
-                <a href="{% url 'listarProductos' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-              </li>
-            </ul>
           </li>
           {% endif %}
 
-          <!-- Menu turnos -->
+          <!-- Turnos -->
+          {% if perms.core %}
           <li class="sidebar-item">
-
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionPeriodos" data-bs-toggle="collapse"
-              aria-expanded="false">
-              <i class="bi bi-alarm"></i> Gestion Turnos
+            <a href="{% url 'turnos:listarPeriodos' %}" class="sidebar-link"> 
+              <i class="bi bi-alarm"></i> Turnos
             </a>
-
-            <!--Turnos-->
-            <ul id="gestionPeriodos" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-              
-              
-              {% if perms.core %}
-              <li class="sidebar-item">
-                <a href="{% url 'turnos:listarPeriodos' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-              </li>
-              {% else %}
-              <li class="sidebar-item">
-                <a href="{% url 'turnos:listarPeriodosDeEmpleado' user.empleado.pk %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-              </li>
-              {% endif %}
-            </ul>
           </li>
+          {% else %}
+          <li class="sidebar-item">
+            <a href="{% url 'turnos:listarPeriodosDeEmpleado' user.empleado.pk %}" class="sidebar-link"> 
+              <i class="bi bi-alarm"></i> Turnos
+            </a>
+          </li>
+          {% endif %}
 
-        {% if perms.core %}
+          {% if perms.core %}
           <!-- Menu servicios -->
           <li class="sidebar-item">
-
-            <a href="#" class="sidebar-link collapsed" data-bs-target="#gestionservicios" data-bs-toggle="collapse"
-              aria-expanded="false">
-              <i class="bi bi-file-medical-fill"></i> Gestion de Servicios
+            <a href="{% url 'servicios:listarServicio' %}" class="sidebar-link"> 
+              <i class="bi bi-file-medical-fill"></i> Servicios
             </a>
-
-            <!--Servicios-->
-            <ul id="gestionservicios" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-
-
-              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#Servicio" data-bs-toggle="collapse"
-                aria-expanded="false">
-                <i class="bi bi-file-text-fill"></i>
-                Servicio
-              </a>
-
-              <ul id="Servicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="{% url 'servicios:crearServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
-                </li>
-                
-              </ul>
-
-              <ul id="Servicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="{% url 'servicios:listarServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Listar</a>
-                </li>
-                
-              </ul>
-              <a href="#" class="sidebar-link collapsed mx-2" data-bs-target="#tipoServicio" data-bs-toggle="collapse"
-                aria-expanded="false">
-                <i class="bi bi-file-earmark-text-fill"></i>
-                Tipo Servicio
-              </a>
-
-              <ul id="tipoServicio" class="sidebar-dropdown list-unstyled collapse" data-bs-parents="#sidebar">
-                <li class="sidebar-item">
-                  <a href="{% url 'servicios:crearTipoServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-plus"></i> Crear</a>
-                </li>
-                
-                <li class="sidebar-item">
-                  <a href="{% url 'servicios:listarTipoServicio' %}" class="sidebar-link mx-4"> <i class="bi bi-list-ul"></i> Buscar</a>
-                </li>
-              </ul>
-            </ul>
-          </li>
-        {% endif %}
+          </li>  
+          {% endif %}
 
         </ul>
       </div>
@@ -265,6 +133,8 @@
         {% block tnav %}
           <div class="container-fluid"><h4 class="mt-2">{{ tnav }}</h4></div> 
         {% endblock %}
+
+        {% block navbtn %}{% endblock %}
 
         <div class="navbar-collapse navbar">
           <ul class="navbar-nav">

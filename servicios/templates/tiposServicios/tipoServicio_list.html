@@ -1,5 +1,3 @@
-
-
 {% extends "../baselist.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
@@ -8,16 +6,18 @@
 Buscar Tipo de Servicio
 {% endblock %}
 
+{% block tlista %} Listado de Tipos de servicio {% endblock %}
 
+{% block tExtras %} 
+    <a href="{% url 'servicios:crearTipoServicio' %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+{% endblock %}
 
-    {% block tlista %} Listado de Tipos de servicio {% endblock %}
+{% block thextras %}
+    <th colspan="">Importe</th>
+    <th colspan="">Opciones</th>
+{% endblock%}
 
-    {% block thextras %}
-        <th colspan="">Importe</th>
-        <th colspan="">Opciones</th>
-    {% endblock%}
-    
-    {% block tcuerpo %}
+{% block tcuerpo %}
     {% for t in tiposServicio %}
     <tr>
         <td>{{forloop.counter}}</td>

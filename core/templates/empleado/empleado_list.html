@@ -10,41 +10,45 @@ Buscar Empleados
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
 
-    {% block tlista %} Listado de Empleados {% endblock %}
+{% block tlista %} Listado de Empleados {% endblock %}
 
-    {% block thextras %}
-        <th colspan="">Opciones</th>
-    {% endblock%}
-    
-    {% block tcuerpo %}
-        {% for e in empleado %}
-            <tr>
-                <td>{{forloop.counter}}</td>
-                <td>{{e.apellido}}</td>
-                <td>{{e.nombre}}</td>
-                <td>{{e.correo}}</td>
-                <td>{{e.cuil}}</td>
-                <td>{{e.categoria}}</td>
-            
-                <td>
-                    <!--Si queremos abrir un moda, se utiliza abrir-->
+{% block tExtras %} 
+    <a href="{% url 'crearEmpleado' %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+{% endblock %}
 
-                    <a href="#" class="bi bi-pencil-square" 
-                    onclick="abrir_modal('{% url "modificarEmpleado" e.pk %}')"
-                    data-bs-toggle="tooltip" 
-                    data-bs-placement="top" 
-                    title="Modificar"></a>
+{% block thextras %}
+    <th colspan="">Opciones</th>
+{% endblock%}
 
-                    <a href="#"><i class="bi bi-trash3 icon-danger" 
-                    onclick="abrir_modal('{% url "eliminarEmpleado" e.pk %}')"
-                    data-bs-toggle="tooltip" 
-                    data-bs-placement="top" 
-                    title="Eliminar"></i></a>
-                    
-                </td>
+{% block tcuerpo %}
+    {% for e in empleado %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{e.apellido}}</td>
+            <td>{{e.nombre}}</td>
+            <td>{{e.correo}}</td>
+            <td>{{e.cuil}}</td>
+            <td>{{e.categoria}}</td>
+        
+            <td>
+                <!--Si queremos abrir un moda, se utiliza abrir-->
 
-            </tr>
-            {% empty %}
-                <tr> <td> No hay empleados registrados </td> </tr>
+                <a href="#" class="bi bi-pencil-square" 
+                onclick="abrir_modal('{% url "modificarEmpleado" e.pk %}')"
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Modificar"></a>
+
+                <a href="#"><i class="bi bi-trash3 icon-danger" 
+                onclick="abrir_modal('{% url "eliminarEmpleado" e.pk %}')"
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Eliminar"></i></a>
+                
+            </td>
+
+        </tr>
+    {% empty %}
+        <tr> <td> No hay empleados registrados </td> </tr>
     {% endfor %}
 {% endblock %}

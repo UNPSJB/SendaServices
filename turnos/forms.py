@@ -10,6 +10,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
 from servicios.forms import Servicio
+from servicios.models import Servicio
 
 
 
@@ -156,8 +157,31 @@ class PeriodoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.fields['fechaDesde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
-        self.fields['fechaHasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+        # self.fields['fechaDesde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+        # self.fields['fechaHasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+
+        servicios = Servicio.objects.all()
+
+        print("Estoy a punto de entrar al primer if")
+        # if "initial" in kwargs:
+        # print("Ya entre al primer if")
+        if "servicio" in kwargs:
+            servicio = kwargs["servicio"] # nos da el Servicio del Periodo
+                # servicios = Servicio.objects.filter( = cliente)
+
+        # if self.instance and self.instance.horario:
+            # servicio = self.instance.horario.servicio
+            # if servicio:
+            fechaDesde = servicio.desde.strftime('%Y-%m-%d')
+            fechaHasta = servicio.hasta.strftime('%Y-%m-%d')
+
+            print(f"{fechaDesde=}")
+            print(f"{fechaHasta=}")
+
+            self.fields['fechaDesde'].widget.attrs['min'] = fechaDesde
+            self.fields['fechaDesde'].widget.attrs['max'] = fechaHasta
+            self.fields['fechaHasta'].widget.attrs['min'] = fechaDesde
+            self.fields['fechaHasta'].widget.attrs['max'] = fechaHasta
 
 
 class PeriodoFiltrosForm(FiltrosForm):

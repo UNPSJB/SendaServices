@@ -153,35 +153,31 @@ class PeriodoForm(forms.ModelForm):
             raise ValidationError("La fecha 'Hasta' debe ser mayor o igual a la fecha 'Desde'.")
         return cleaned_data
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, servicio=None, **kwargs):
+        # servicio = kwargs.pop('servicio', None)  # Extrae 'servicio' correctamente
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        # self.fields['fechaDesde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
-        # self.fields['fechaHasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
 
-        servicios = Servicio.objects.all()
-
-        print("Estoy a punto de entrar al primer if")
+        # print("Estoy a punto de entrar al primer if")
         # if "initial" in kwargs:
-        # print("Ya entre al primer if")
-        if "servicio" in kwargs:
-            servicio = kwargs["servicio"] # nos da el Servicio del Periodo
-                # servicios = Servicio.objects.filter( = cliente)
-
-        # if self.instance and self.instance.horario:
-            # servicio = self.instance.horario.servicio
-            # if servicio:
+        #     print("Ya entre al primer if")
+        # servicio = kwargs["initial"]['servicio']
+        self.servicio = servicio 
+        # print(servicio)
+        if servicio:
+            # servicio = kwargs["initial"]["servicio"] # nos da el Servicio del Periodo
+            # servicio = kwargs["servicio"] # nos da el Servicio del Periodo
             fechaDesde = servicio.desde.strftime('%Y-%m-%d')
             fechaHasta = servicio.hasta.strftime('%Y-%m-%d')
 
             print(f"{fechaDesde=}")
             print(f"{fechaHasta=}")
 
-            self.fields['fechaDesde'].widget.attrs['min'] = fechaDesde
-            self.fields['fechaDesde'].widget.attrs['max'] = fechaHasta
-            self.fields['fechaHasta'].widget.attrs['min'] = fechaDesde
-            self.fields['fechaHasta'].widget.attrs['max'] = fechaHasta
+            self.fields['fechaDesde'].widget.attrs['min'] = fechaDesde # '2025-03-16'
+            self.fields['fechaDesde'].widget.attrs['max'] = fechaHasta # '2025-03-23' 
+            self.fields['fechaHasta'].widget.attrs['min'] = fechaDesde # '2025-03-16' 
+            self.fields['fechaHasta'].widget.attrs['max'] = fechaHasta # '2025-03-23'
 
 
 class PeriodoFiltrosForm(FiltrosForm):

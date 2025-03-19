@@ -138,14 +138,6 @@ class HorarioCreateView(CreateView):
     #success_url = reverse_lazy("servicios:listarHorarios") # TODO: definir a donde ir
     template_name = "horario/horario_form.html"
 
-    def get_success_url(self, **kwargs):
-        servicio = self.get_servicio()
-        #print(f"{servicio=}")
-        if servicio is not None:
-            return reverse_lazy('turnos:listarHorariosDeServicio', kwargs={"pk": servicio.pk})
-        else:
-            return reverse_lazy('listarHorarios')
-
     def get_servicio(self):
         pk = self.kwargs.get('pk')
         if pk is not None:
@@ -153,30 +145,38 @@ class HorarioCreateView(CreateView):
         else:
             return None
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     servicio = self.get_servicio()
+    #     if servicio is not None:
+    #         # kwargs['initial'] = { 
+    #         #    "servicio": servicio 
+    #         # }
+    #         # servicioAPuntoDeMandarse = kwargs["initial"]["servicio"]
+    #         # print(servicioAPuntoDeMandarse)
+    #         # kwargs["initial"]['servicio'] = servicio  # En vez de 'initial', pásalo directamente   
+    #     return kwargs
+
+    def get_success_url(self, **kwargs):
         servicio = self.get_servicio()
-        print(f"{servicio}")
         if servicio is not None:
-            # if "initial" not in kwargs:  
-            #     kwargs["initial"] = {}  # 🟢 Asegurar que `initial` existe
-            # kwargs["initial"]["servicio"] = servicio  # Añadir servicio correctamente
-            kwargs['initial'] = { 
-                "servicio": servicio 
-            }   
-        return kwargs
+            return reverse_lazy('turnos:listarHorariosDeServicio', kwargs={"pk": servicio.pk})
+        else:
+            return reverse_lazy('listarHorarios')
 
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super().get_form(form_class=form_class)
+        servicio = self.get_servicio()
 
         # Asegurar que el servicio se pase correctamente
-        servicio = self.get_servicio()
-        if servicio:
-            form.initial["servicio"] = servicio
+        # servicio = self.get_servicio()
+        # if servicio:
+        #     form.initial["servicio"] = servicio # Hasta aca llega bien
 
         self.periodo_formset = PeriodoInline()(
-            data=self.request.POST if self.request.method in ["POST", "PUT"] else None
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None,
+            form_kwargs={'servicio': servicio}  # Pasamos el servicio al formset
         )
         self.periodo_formset_helper = PeriodoInlineFormSetHelper()
         return form

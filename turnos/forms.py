@@ -153,26 +153,16 @@ class PeriodoForm(forms.ModelForm):
             raise ValidationError("La fecha 'Hasta' debe ser mayor o igual a la fecha 'Desde'.")
         return cleaned_data
 
-    def __init__(self, *args, servicio=None, **kwargs):
-        # servicio = kwargs.pop('servicio', None)  # Extrae 'servicio' correctamente
+    def __init__(self, *args, **kwargs):
+        servicio = kwargs.pop('servicio', None)  # Extrae 'servicio' correctamente
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-
-        # print("Estoy a punto de entrar al primer if")
-        # if "initial" in kwargs:
-        #     print("Ya entre al primer if")
-        # servicio = kwargs["initial"]['servicio']
+        
         self.servicio = servicio 
-        # print(servicio)
         if servicio:
-            # servicio = kwargs["initial"]["servicio"] # nos da el Servicio del Periodo
-            # servicio = kwargs["servicio"] # nos da el Servicio del Periodo
             fechaDesde = servicio.desde.strftime('%Y-%m-%d')
             fechaHasta = servicio.hasta.strftime('%Y-%m-%d')
-
-            print(f"{fechaDesde=}")
-            print(f"{fechaHasta=}")
 
             self.fields['fechaDesde'].widget.attrs['min'] = fechaDesde # '2025-03-16'
             self.fields['fechaDesde'].widget.attrs['max'] = fechaHasta # '2025-03-23' 

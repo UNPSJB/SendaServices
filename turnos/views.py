@@ -145,17 +145,14 @@ class HorarioCreateView(CreateView):
         else:
             return None
 
-    # def get_form_kwargs(self):
-    #     kwargs = super().get_form_kwargs()
-    #     servicio = self.get_servicio()
-    #     if servicio is not None:
-    #         # kwargs['initial'] = { 
-    #         #    "servicio": servicio 
-    #         # }
-    #         # servicioAPuntoDeMandarse = kwargs["initial"]["servicio"]
-    #         # print(servicioAPuntoDeMandarse)
-    #         # kwargs["initial"]['servicio'] = servicio  # En vez de 'initial', pásalo directamente   
-    #     return kwargs
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        servicio = self.get_servicio()
+        if servicio is not None:
+            kwargs['initial'] = { 
+               "servicio": servicio 
+            }
+        return kwargs
 
     def get_success_url(self, **kwargs):
         servicio = self.get_servicio()
@@ -168,11 +165,6 @@ class HorarioCreateView(CreateView):
         """Return an instance of the form to be used in this view."""
         form = super().get_form(form_class=form_class)
         servicio = self.get_servicio()
-
-        # Asegurar que el servicio se pase correctamente
-        # servicio = self.get_servicio()
-        # if servicio:
-        #     form.initial["servicio"] = servicio # Hasta aca llega bien
 
         self.periodo_formset = PeriodoInline()(
             data=self.request.POST if self.request.method in ["POST", "PUT"] else None,

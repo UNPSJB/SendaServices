@@ -149,9 +149,7 @@ class HorarioCreateView(CreateView):
         kwargs = super().get_form_kwargs()
         servicio = self.get_servicio()
         if servicio is not None:
-            kwargs['initial'] = { 
-               "servicio": servicio 
-            }
+            kwargs["servicio"] = servicio
         return kwargs
 
     def get_success_url(self, **kwargs):

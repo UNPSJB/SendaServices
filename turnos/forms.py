@@ -42,8 +42,8 @@ class HorarioForm(ModelForm):
             ),
         }
 
-    def __init__(self, *args, servicio=None, **kwargs):
-        # servicio = kwargs.pop("servicio", None)  # Extraemos el servicio de los kwargs
+    def __init__(self, *args, **kwargs):
+        servicio = kwargs.pop("servicio", None)  # Extraemos el servicio de los kwargs
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-horarioForm'
@@ -67,8 +67,10 @@ class HorarioForm(ModelForm):
 
             # Si el día obtenido está en las opciones, lo establecemos
             if dia_defecto in dict(Horario.DiaSemana.choices):
+                self.fields["diaSemana"].widget = forms.HiddenInput()
                 self.fields["diaSemana"].initial = dia_defecto
-                self.fields["diaSemana"].widget.attrs["readonly"] = True
+                # self.fields["diaSemana"].initial = dia_defecto
+                # self.fields["diaSemana"].widget.attrs["readonly"] = True
 
 class HorarioFiltrosForm(FiltrosForm):
     #Campos del modelo

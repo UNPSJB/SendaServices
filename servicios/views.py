@@ -127,6 +127,7 @@ class TipoServicioListView(ListFilterView):
     # Filtros de la lista
     filtros = TipoServicioFiltrosForm
     model = TipoServicio  # Nombre del modelo
+    # ordering = ["id"]  # Ordena por el campo "id"
     template_name = "tiposServicios/tipoServicio_list.html"  # Ruta del template
     context_object_name = "tiposServicio"  # Nombre de la lista usar ''
     queryset = TipoServicio.objects.all()

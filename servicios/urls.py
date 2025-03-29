@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth.decorators import login_required
 from .views import (
     ServicioCreateView, ServicioListView,ServicioUpdateView, ServicioCancelarView, ServicioSeñarView, TipoServicioListView,
-    TipoServicioCreateView,TipoServicioUpdateView, TipoServicioCreateView,
+    TipoServicioCreateView,TipoServicioUpdateView,
     validar_tipo_servicio_form_en_modal,validar_servicio_form_en_modal, validar_contrato_form_en_modal,
     contratar_servicio, pagar_servicio, facturar_servicio, cancelar_servicio)
 

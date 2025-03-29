@@ -1,7 +1,7 @@
 from django import forms 
 from servicios.models import Servicio
 from core.models import Empleado
-from .models import Horario, Periodo,Asistencia
+from .models import Horario
 from django.forms import ModelForm, ValidationError, Select
 from django.urls import reverse_lazy
 from core.utils import FiltrosForm
@@ -9,7 +9,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
 from servicios.forms import Servicio
-from servicios.models import Servicio
 
 
 class HorarioForm(ModelForm):
@@ -231,15 +230,6 @@ class PeriodoCustomFiltrosForm(PeriodoFiltrosForm):
         )
 
 
-class AsistenciaForm(forms.ModelForm):
-    class Meta:
-        model= Asistencia
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
 
 
 # Tipo Servicio - Producto - Inlines

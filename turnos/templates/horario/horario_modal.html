@@ -8,13 +8,13 @@
 {% block tobjectmodal %}  {% endblock %}
 
 <!--Url del modal-->
-{% block url %} {% url 'turnos:modificarHorarioParaServicio' object.pk %} {% endblock %}
+{% block url %} {% url 'turnos:modificarHorarioParaEmpleado' object.pk %} {% endblock %}
 
 {% block cmodal %}
     {% crispy form form.helper %}
-    <div data-formset="periodo" id="periodos" class="table-responsive">
+    {% comment %} <div data-formset="periodo" id="periodos" class="table-responsive">
       {% crispy periodo_formset periodo_formset_helper %}
-    </div>
+    </div> {% endcomment %}
 {% endblock %}
 
 <!--Boton del modal-->

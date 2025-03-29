@@ -278,7 +278,7 @@ class EmpleadoModForm(ModelForm):
 
     class Meta:
         model = Empleado
-        exclude= ("legajo", "baja","cuil",)
+        exclude= ("legajo", "baja","cuil", "usuario")
 
         #Label se refiere la descripcion que esta al lado del formulario.
         labels = { 

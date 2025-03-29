@@ -3,6 +3,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.forms import ValidationError
 from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View, ListView
@@ -60,10 +61,10 @@ class HorarioListView(ListFilterView):
     def get_queryset(self):
         servicio = self.get_servicio()
         if servicio:
-            # Filtrar las facturas por el servicio
+            # Filtrar los horarios por el servicio
             return Horario.objects.filter(servicio=servicio)
         else:
-            # Si no hay servicio, mostrar todas las facturas
+            # Si no hay servicio, mostrar todos lo horarios
             return Horario.objects.all()
 
     def get_filtros(self, *args, **kwargs):
@@ -210,21 +211,39 @@ class HorarioCreateView(CreateView):
         self.object.save()
 
         if self.periodo_formset.is_valid():
+            for periodo_form in self.periodo_formset:
+                desde = periodo_form.cleaned_data.get('fechaDesde')
+                hasta = periodo_form.cleaned_data.get('fechaHasta')
+                print(f"{desde=}")
+                print(f"{hasta=}")
+
+            if desde < self.object.servicio.desde:
+                messages.error(self.request,"La fecha 'Desde' debe ser mayor o igual a la fecha de inicio del servicio.")
+                return self.form_invalid(form)
+            if desde > self.object.servicio.hasta:
+                messages.error(self.request,"La fecha 'Desde' debe ser menor o igual a la fecha de finalizacion del servicio.")
+                return self.form_invalid(form)
+            if hasta > self.object.servicio.hasta:
+                messages.error(self.request,"La fecha 'Hasta' debe ser menor o igual a la fecha de finalizacion del servicio.")
+                return self.form_invalid(form)
+            if hasta < self.object.servicio.desde:
+                messages.error(self.request,"La fecha 'Hasta' debe ser mayor o igual a la fecha de inicio del servicio.")
+                return self.form_invalid(form)
             self.periodo_formset.instance = self.object
             self.periodo_formset.save()
-
         messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
         return super().form_valid(form)
 
   
 class PeriodoListView(ListFilterView):
-    #Cantidad de elementos por lista
-    paginate_by = 2
     #Filtros de la lista
     filtros = PeriodoFiltrosForm
     model = Periodo #Nombre del modelo
     template_name = "periodo/periodo_list.html" #Ruta del template
     context_object_name = 'periodo' #Nombre de la lista usar ''
+     #Cantidad de elementos por lista
+    paginate_by = 2
+    queryset = Periodo.objects.all()
   
     def get_empleado(self):
         pk = self.kwargs.get('empleado_pk')
@@ -233,18 +252,80 @@ class PeriodoListView(ListFilterView):
         else:
             return None
 
-    def get_filtros(self, *args, **kwargs):
-        return PeriodoFiltrosForm(*args, **kwargs) if not self.get_empleado() else PeriodoCustomFiltrosForm(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_periodos(self):
         empleado = self.get_empleado()
         periodos = Periodo.objects.all()
+        #print(f"{empleado=}") 
 
         if empleado is not None:
             periodos = Periodo.objects.filter(empleado=empleado)
+        #print(f"{periodos=}") 
 
+        return periodos
+
+    def get_filtros(self, *args, **kwargs):
+        return PeriodoFiltrosForm(*args, **kwargs) if not self.get_empleado() else PeriodoCustomFiltrosForm(*args, **kwargs)
+
+    # def get_queryset(self):
+    #     qs = super().get_queryset()
+    #     queryset = super().apply_filters_to_qs(qs)
+    #     #if self.filtros:
+    #     #    filtros = self.filtros(self.request.GET)
+    #     #    return filtros.apply(qs)
+    #     return qs
+
+    #     if servicio:
+    #         # Filtrar las facturas por el servicio
+    #         return Horario.objects.filter(servicio=servicio)
+    #     else:
+    #         # Si no hay servicio, mostrar todas las facturas
+    #         return Horario.objects.all()
+
+    #     queryset = super().get_queryset()
+    #     cliente = self.get_cliente()
+    #     if cliente:
+    #         return queryset.filter(cliente=cliente)
+    #     return queryset
+
+    def get_queryset(self):
+        qs = self.get_periodos()
+        filtros = self.get_filtros(self.request.GET)
+
+         # Obtener el parámetro de empleado de los serialized_query_params
+        empleado = self.request.GET.get('empleado')
+
+        #print(f"{empleado=}")
+
+        if empleado:
+            qs = qs.filter(empleado=empleado)
+        #print(f"{qs=}")
+
+        if filtros:                 # creo que esta linea
+            qs = filtros.apply(qs)  # y esta no son necesarias
+        #print(f"{qs=}")
+
+        qs = qs.order_by('id')
+        #print(f"{qs=}")
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        periodos = self.get_queryset()
+
+        empleado = self.get_empleado()
         context['tnav'] = "Gestion de Periodo" if not empleado else f"Gestion de periodos de empleado: {empleado}"
+
+        filtros = self.get_filtros(self.request.GET)
+
+        #print(f"{filtros=}")
+        # if filtros is not None:
+        #     context['filtros'] = filtros
+        context['serialized_query_params'] = filtros.serialize_query_params()
+        context['query'] = self.get_queryset()
+        #periodos = self.get_queryset()    #ACA ESTA EL PROBLEMA Y LA SOLUCION     
+
+
         context["empleado"] = empleado
         context["periodo"] = periodos
         return context

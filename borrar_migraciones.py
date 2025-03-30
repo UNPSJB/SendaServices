@@ -5,6 +5,9 @@ def borrar_contenido(carpeta):
     if os.path.exists(carpeta) and os.path.isdir(carpeta):
         for elemento in os.listdir(carpeta):
             path = os.path.join(carpeta, elemento)
+            if path.endswith("__init__.py"):
+                continue
+            
             if os.path.isfile(path) or os.path.islink(path):
                 os.remove(path)  
                 print(f"Archivo eliminado: {path}")

@@ -16,7 +16,7 @@ django.setup()
 from core.models import Cliente, Inmueble, Producto, Categoria, Empleado
 from servicios.models import TipoServicio, Servicio
 from facturas.models import Factura
-from turnos.models import Horario, Periodo
+from turnos.models import Horario
 
 def load_tests_data():
     # Eliminar datos previos (Opcional)
@@ -29,7 +29,6 @@ def load_tests_data():
     Servicio.objects.all().delete()
     Factura.objects.all().delete()
     Horario.objects.all().delete()
-    Periodo.objects.all().delete()
 
     print("📌 Cargando datos de prueba...")
 

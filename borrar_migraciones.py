@@ -17,10 +17,15 @@ def borrar_contenido(carpeta):
 if __name__ == "__main__":
     carpetas_migrations = [
         "core/migrations",
+        "core/__pycache__",
         "turnos/migrations",
+        "turnos/__pycache__",
         "servicios/migrations",
-        "facturas/migrations"
+        "servicios/__pycache__",
+        "facturas/migrations",
+        "facturas/__pycache__"
     ]
+
     
     for carpeta in carpetas_migrations:
         borrar_contenido(carpeta)

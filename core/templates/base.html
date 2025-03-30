@@ -96,14 +96,14 @@
           <!-- Turnos -->
           {% if perms.core %}
           <li class="sidebar-item">
-            <a href="{% url 'turnos:listarPeriodos' %}" class="sidebar-link"> 
-              <i class="bi bi-alarm"></i> Turnos
+            <a href="{% url 'turnos:listarHorarios' %}" class="sidebar-link"> 
+              <i class="bi bi-alarm"></i> Horarios
             </a>
           </li>
           {% else %}
           <li class="sidebar-item">
-            <a href="{% url 'turnos:listarPeriodosDeEmpleado' user.empleado.pk %}" class="sidebar-link"> 
-              <i class="bi bi-alarm"></i> Turnos
+            <a href="{% url 'turnos:listarHorariosDeEmpleado' user.empleado.pk %}" class="sidebar-link"> 
+              <i class="bi bi-alarm"></i> Horarios
             </a>
           </li>
           {% endif %}

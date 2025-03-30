@@ -137,119 +137,119 @@ class HorarioModForm(ModelForm):
         self.helper.form_tag = False
 
 
-class PeriodoForm(forms.ModelForm):
+# class PeriodoForm(forms.ModelForm):
 
-    class Meta:
-        model = Periodo
-        fields = '__all__'
+#     class Meta:
+#         model = Periodo
+#         fields = '__all__'
 
-        widgets = {
-            "fechaDesde": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
-            "fechaHasta": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'})
-        }
+#         widgets = {
+#             "fechaDesde": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
+#             "fechaHasta": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'})
+#         }
     
-    def clean(self):
-        cleaned_data = super().clean()
-        fechaDesde = cleaned_data.get('fechaDesde')
-        fechaHasta = cleaned_data.get('fechaHasta')
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         fechaDesde = cleaned_data.get('fechaDesde')
+#         fechaHasta = cleaned_data.get('fechaHasta')
 
-        if fechaDesde and fechaHasta and fechaHasta < fechaDesde:
-            raise ValidationError("La fecha 'Hasta' debe ser mayor o igual a la fecha 'Desde'.")
-        return cleaned_data
+#         if fechaDesde and fechaHasta and fechaHasta < fechaDesde:
+#             raise ValidationError("La fecha 'Hasta' debe ser mayor o igual a la fecha 'Desde'.")
+#         return cleaned_data
 
-    def __init__(self, *args, **kwargs):
-        servicio = kwargs.pop('servicio', None)  # Extrae 'servicio' correctamente
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
+#     def __init__(self, *args, **kwargs):
+#         servicio = kwargs.pop('servicio', None)  # Extrae 'servicio' correctamente
+#         super().__init__(*args, **kwargs)
+#         self.helper = FormHelper()
+#         self.helper.form_tag = False
     
-        if servicio:
-            fechaDesde = servicio.desde.strftime('%Y-%m-%d')
-            fechaHasta = servicio.hasta.strftime('%Y-%m-%d')
+#         if servicio:
+#             fechaDesde = servicio.desde.strftime('%Y-%m-%d')
+#             fechaHasta = servicio.hasta.strftime('%Y-%m-%d')
 
-            if fechaDesde == fechaHasta:
-                # Establecemos la fecha como valor predeterminado
-                self.fields["fechaDesde"].initial = fechaDesde
-                self.fields["fechaHasta"].initial = fechaHasta
+#             if fechaDesde == fechaHasta:
+#                 # Establecemos la fecha como valor predeterminado
+#                 self.fields["fechaDesde"].initial = fechaDesde
+#                 self.fields["fechaHasta"].initial = fechaHasta
 
-                # Hacemos los campos de solo lectura (deshabilitados en el formulario)
-                self.fields["fechaDesde"].widget.attrs["readonly"] = True
-                self.fields["fechaHasta"].widget.attrs["readonly"] = True
-            else:
-                self.fields['fechaDesde'].widget.attrs['min'] = fechaDesde # '2025-03-16'
-                self.fields['fechaDesde'].widget.attrs['max'] = fechaHasta # '2025-03-23' 
-                self.fields['fechaHasta'].widget.attrs['min'] = fechaDesde # '2025-03-16' 
-                self.fields['fechaHasta'].widget.attrs['max'] = fechaHasta # '2025-03-23'
-
-
-class PeriodoFiltrosForm(FiltrosForm):
-    #Campos del modelo
-    ORDEN_CHOICES = [
-        ("empleado", "Empleado"),
-        ("fechaDesde", "Fecha Desde"),
-        ("fechaHasta", "Fecha Hasta"),
-
-    ]
-    ATTR_CHOICES = [
-        ("empleado", "Empleado"),
-        ("fechaDesde", "Fecha Desde"),
-        ("fechaHasta", "Fecha Hasta"),
-    ]
-
-    #Formulario de filtrado
-    fechaDesde = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Inicio"))
-    fechaHasta = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Fin"))
-    empleado = forms.ModelChoiceField(queryset=Empleado.objects.all(), required=False, label='Empleado')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        #self.initial['turno'] = '' 
-        self.helper = FormHelper()
-        self.helper.form_method = 'get'
-        self.helper.layout = Layout(
-            Fieldset(
-                "",
-                HTML(
-                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "empleado","fechaDesde","fechaHasta",  #Remplazar campos formulario
-            ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
-        )
-
-class PeriodoCustomFiltrosForm(PeriodoFiltrosForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper.layout = Layout(
-            Fieldset(
-                "",
-                HTML(
-                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "fechaDesde","fechaHasta", #Remplazar campos formulario
-            ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
-        )
+#                 # Hacemos los campos de solo lectura (deshabilitados en el formulario)
+#                 self.fields["fechaDesde"].widget.attrs["readonly"] = True
+#                 self.fields["fechaHasta"].widget.attrs["readonly"] = True
+#             else:
+#                 self.fields['fechaDesde'].widget.attrs['min'] = fechaDesde # '2025-03-16'
+#                 self.fields['fechaDesde'].widget.attrs['max'] = fechaHasta # '2025-03-23' 
+#                 self.fields['fechaHasta'].widget.attrs['min'] = fechaDesde # '2025-03-16' 
+#                 self.fields['fechaHasta'].widget.attrs['max'] = fechaHasta # '2025-03-23'
 
 
+# class PeriodoFiltrosForm(FiltrosForm):
+#     #Campos del modelo
+#     ORDEN_CHOICES = [
+#         ("empleado", "Empleado"),
+#         ("fechaDesde", "Fecha Desde"),
+#         ("fechaHasta", "Fecha Hasta"),
+
+#     ]
+#     ATTR_CHOICES = [
+#         ("empleado", "Empleado"),
+#         ("fechaDesde", "Fecha Desde"),
+#         ("fechaHasta", "Fecha Hasta"),
+#     ]
+
+#     #Formulario de filtrado
+#     fechaDesde = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Inicio"))
+#     fechaHasta = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Fin"))
+#     empleado = forms.ModelChoiceField(queryset=Empleado.objects.all(), required=False, label='Empleado')
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         #self.initial['turno'] = '' 
+#         self.helper = FormHelper()
+#         self.helper.form_method = 'get'
+#         self.helper.layout = Layout(
+#             Fieldset(
+#                 "",
+#                 HTML(
+#                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+#                 "empleado","fechaDesde","fechaHasta",  #Remplazar campos formulario
+#             ),
+#             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+#         )
+
+# class PeriodoCustomFiltrosForm(PeriodoFiltrosForm):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.helper.layout = Layout(
+#             Fieldset(
+#                 "",
+#                 HTML(
+#                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+#                 "fechaDesde","fechaHasta", #Remplazar campos formulario
+#             ),
+#             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+#         )
 
 
-# Tipo Servicio - Producto - Inlines
-def PeriodoInline(extra=1):
-    return forms.inlineformset_factory(
-        Horario,
-        Periodo,
-        form=PeriodoForm,
-        extra=extra,
-    )
 
-class PeriodoInlineFormSetHelper(FormHelper):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form_method = 'post'
-        self.form_tag = False
-        self.template = 'bootstrap5/table_inline_formset.html'
-        self.layout = Layout(
-            'empleado',
-            'fechaDesde',
-            'fechaHasta'
-        )
-        self.render_required_fields = True
+
+# # Tipo Servicio - Producto - Inlines
+# def PeriodoInline(extra=1):
+#     return forms.inlineformset_factory(
+#         Horario,
+#         Periodo,
+#         form=PeriodoForm,
+#         extra=extra,
+#     )
+
+# class PeriodoInlineFormSetHelper(FormHelper):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.form_method = 'post'
+#         self.form_tag = False
+#         self.template = 'bootstrap5/table_inline_formset.html'
+#         self.layout = Layout(
+#             'empleado',
+#             'fechaDesde',
+#             'fechaHasta'
+#         )
+#         self.render_required_fields = True

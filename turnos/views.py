@@ -20,10 +20,6 @@ from .forms import (
     HorarioModForm,
     HorarioFiltrosForm,
     HorarioCustomFiltrosForm
-    # PeriodoFiltrosForm,
-    # PeriodoCustomFiltrosForm,
-    # PeriodoInline,
-    # PeriodoInlineFormSetHelper
   )
 
 # Create your views here.s
@@ -39,51 +35,54 @@ class HorarioListView(ListFilterView):
     def get_servicio(self):
         pk = self.kwargs.get('pk')
         if pk is not None:
-            return Servicio.objects.get(pk=pk)
-        else:
-            return None
+            try:
+                return Servicio.objects.get(pk=pk)
+            except Servicio.DoesNotExist:
+                return None
+        return None
         
     def get_empleado(self):
         pk = self.kwargs.get('pk')
         if pk is not None:
-            return Empleado.objects.get(pk=pk)
-        else:
-            return None
-        
-    # def get_queryset(self):
-    #     servicio = self.get_servicio()
-    #     if servicio:
-    #         # Filtrar los horarios por el servicio
-    #         return Horario.objects.filter(servicio=servicio)
-    #     else:
-    #         # Si no hay servicio, mostrar todos lo horarios
-    #         return Horario.objects.all()
+            try:
+                return Empleado.objects.get(pk=pk)
+            except Empleado.DoesNotExist:
+                return None
+        return None
         
     def get_queryset(self):
         empleado = self.get_empleado()
+        servicio = self.get_servicio()
         if empleado:
-            # Filtrar los horarios por el servicio
+            # Filtrar los horarios por el empleado
             return Horario.objects.filter(empleado=empleado)
+        elif servicio:
+            # Filtrar los horarios por el servicio
+            return Horario.objects.filter(servicio=servicio)
         else:
-            # Si no hay servicio, mostrar todos lo horarios
+            # Si no hay servicio ni empleado, mostrar todos lo horarios
             return Horario.objects.all()
-
-    # def get_filtros(self, *args, **kwargs):
-    #     return HorarioFiltrosForm(*args, **kwargs) if not self.get_servicio() else HorarioCustomFiltrosForm(*args, **kwargs)
     
     def get_filtros(self, *args, **kwargs):
-        return HorarioFiltrosForm(*args, **kwargs) if not self.get_empleado() else HorarioCustomFiltrosForm(*args, **kwargs)
+        empleado = self.get_empleado()
+        servicio = self.get_servicio()
+        if empleado:
+            return HorarioCustomFiltrosForm(*args, **kwargs)
+        elif servicio:
+            return HorarioCustomFiltrosForm(*args, **kwargs)
+        else:
+            return HorarioFiltrosForm(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # servicio = self.get_servicio()
-
-        # context['tnav'] = "Gestion de Horarios" if not servicio else f"Gestion de horarios: {servicio}"
-        # context["servicio"] = servicio
         empleado = self.get_empleado()
-
-        context['tnav'] = "Gestion de Horarios" if not empleado else f"Gestion de horarios: {empleado}"
-        context["empleado"] = empleado
+        servicio = self.get_servicio()
+        if empleado:
+            context['tnav'] = "Gestion de Horarios" if not empleado else f"Gestion de horarios: {empleado}"
+            context["empleado"] = empleado
+        elif servicio:
+            context['tnav'] = "Gestion de Horarios" if not servicio else f"Gestion de horarios: {servicio}"
+            context["servicio"] = servicio        
         return context
 
 

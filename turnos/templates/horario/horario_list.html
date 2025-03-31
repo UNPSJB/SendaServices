@@ -9,34 +9,66 @@ Buscar Horario
 {% block tlista %} Listado de {% if empleado %} Turnos para empleado {% else %} Turnos {% endif %} {% endblock %}
 
 {% block tExtras %}     
-    {% if empleado %}
-        <a href="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
-    {% endif %}
+    
 {% endblock %}
 
-{% block thextras %}
+{% comment %} {% block thextras %}
     <th colspan="">Fecha Desde</th>
-    <th colspan="">Fecha Hasta</th>
+    <th colspan="">Fecha Hasta</th> 
+{% endblock %} {% endcomment %}
+
+{% comment %} {% block tcuerpo %}
+     {% for h in horario %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{h.empleado }}</td>
+        <td>{{h.servicio}}</td>
+        <td>{{h.diaSemana}}</td>
+        <td>{{h.turno}}</td>
+        <td>{{h.asistencia}}</td>s
+        <td>{{h.servicio.desde }}</td>
+        <td>{{h.servicio.hasta }}</td>
+    </tr>
+    {% empty %}
+        <tr> <td> No hay turnos registrados </td> </tr>
+    {% endfor %} 
+    <div id="calendar"></div>
+
+{% endblock %} {% endcomment %}
+
+{% block cmain %} 
+    {% for msg in messages %}
+
+    <div class="alert {% if msg.tags != "error" %} alert-{{msg.tags}} {% else %} alert-danger {% endif %} alert-dismissible fade show" role="alert">
+        <strong>Hey!</strong> {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+        
+    {% endfor %}
+
+    <!--Filtro cabecera-->
+    <div class="col-12 col-md-3 mx-auto">
+        <div class="card flex-fill border-0">
+            <div class="card-body py-4">
+                    {% crispy filtros filtros.helper %}
+                    {{ serialized }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-9 mx-auto">
+        <div class="card flex-fill border-0">
+            <div class="card-body py-4 pb-2">
+                {% if empleado %}
+                    <a href="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+                {% endif %}
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
-{% block tcuerpo %}
-{% for h in horario %}
-<tr>
-    <td>{{forloop.counter}}</td>
-    <td>{{h.empleado }}</td>
-    <td>{{h.servicio}}</td>
-    <td>{{h.diaSemana}}</td>
-    <td>{{h.turno}}</td>
-    <td>{{h.asistencia}}</td>
-    <td>{{h.servicio.desde }}</td>
-    <td>{{h.servicio.hasta }}</td>
-</tr>
-{% empty %}
-    <tr> <td> No hay turnos registrados </td> </tr>
-{% endfor %}
-{% endblock %}
-
-{% block pagination %}
+{% comment %} % block pagination %}
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
@@ -54,7 +86,7 @@ Buscar Horario
         {% endif %}
     </span>
 </div>
-{% endblock %}
+{% endblock %}{ {% endcomment %}
 
 {% comment %} {% block custom_actions %}
     <div class="d-flex justify-content-end">
@@ -73,6 +105,19 @@ Buscar Horario
 
 
 {% block extrajs %}
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth'
+    });
+    calendar.render();
+    });
+
+</script>
+
 <!--Modal-->
 <script type="text/javascript">
 var $ = jQuery.noConflict();

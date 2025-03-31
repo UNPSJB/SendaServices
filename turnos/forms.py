@@ -42,34 +42,36 @@ class HorarioForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        servicio = kwargs.pop("servicio", None)  # Extraemos el servicio de los kwargs
+        empleado = kwargs.pop("empleado", None)  # Extraemos el servicio de los kwargs
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
         self.helper.form_tag = False
 
-        if servicio and servicio.desde == servicio.hasta:
-            # Calculamos el día de la semana
-            dia_semana = servicio.desde.strftime("%A").lower()  # "monday", "tuesday", etc.
-            # Mapeo a las opciones en español
-            mapeo_dias = {
-                "monday": "lunes",
-                "tuesday": "martes",
-                "wednesday": "miércoles",
-                "thursday": "jueves",
-                "friday": "viernes",
-                "saturday": "sábado",
-                "sunday": "domingo",
-            }
-            dia_defecto = mapeo_dias.get(dia_semana, "")
+        # fechaDesde = empleado.servicio.desde
+        # fechaHasta = empleado.servicio.hasta
+        # if empleado and fechaDesde == fechaHasta:
+        #     # Calculamos el día de la semana
+        #     dia_semana = fechaDesde.strftime("%A").lower()  # "monday", "tuesday", etc.
+        #     # Mapeo a las opciones en español
+        #     mapeo_dias = {
+        #         "monday": "lunes",
+        #         "tuesday": "martes",
+        #         "wednesday": "miércoles",
+        #         "thursday": "jueves",
+        #         "friday": "viernes",
+        #         "saturday": "sábado",
+        #         "sunday": "domingo",
+        #     }
+        #     dia_defecto = mapeo_dias.get(dia_semana, "")
 
-            # Si el día obtenido está en las opciones, lo establecemos
-            if dia_defecto in dict(Horario.DiaSemana.choices):
-                self.fields["diaSemana"].widget = forms.HiddenInput()
-                self.fields["diaSemana"].initial = dia_defecto
-                # self.fields["diaSemana"].initial = dia_defecto
-                # self.fields["diaSemana"].widget.attrs["readonly"] = True
+        #     # Si el día obtenido está en las opciones, lo establecemos
+        #     if dia_defecto in dict(Horario.DiaSemana.choices):
+        #         self.fields["diaSemana"].widget = forms.HiddenInput()
+        #         self.fields["diaSemana"].initial = dia_defecto
+        #         # self.fields["diaSemana"].initial = dia_defecto
+        #         # self.fields["diaSemana"].widget.attrs["readonly"] = True
 
 class HorarioFiltrosForm(FiltrosForm):
     #Campos del modelo

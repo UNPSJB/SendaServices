@@ -13,10 +13,7 @@ Crear Turno
 
   <form action="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}" method="POST">
     {% csrf_token %}
-    {% comment %} {% crispy form form.helper %}
-    <div data-formset="periodo_formset" id="periodos" >
-      {% crispy periodo_formset periodo_formset_helper %}
-    </div> {% endcomment %}
+    {% crispy form form.helper %}
 
     <div class="d-grid gap-2">
       <button type="submit" class="btn btn-primary btn-block text-white">

@@ -1,4 +1,4 @@
-{% extends '../baselist.html' %}
+{% extends 'baselist.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
 
@@ -68,41 +68,6 @@ Buscar Horario
     </div>
 {% endblock %}
 
-{% comment %} % block pagination %}
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; primera</a>
-            <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
-        {% endif %}
-        
-        <span class="current">
-            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-        </span>
-        
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">siguiente</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
-        {% endif %}
-    </span>
-</div>
-{% endblock %}{ {% endcomment %}
-
-{% comment %} {% block custom_actions %}
-    <div class="d-flex justify-content-end">
-        {% if servicio.estado_actual.tipo == "presupuestado" %}
-            {% if servicio.requiereSeña %}
-                <a href="#" 
-                
-                onclick="abrir_modal('{% url 'servicios:señarServicio' pk=servicio.pk %}')"  class="btn btn-success">Señar</a>
-
-            {% else %}
-                <a href="{% url 'servicios:contratarServicio' pk=servicio.pk %}" class="btn btn-success">Confirmar</a>
-            {% endif %}
-        {% endif %}
-    </div>  
-{% endblock %} {% endcomment %}
-
 
 {% block extrajs %}
 
@@ -111,7 +76,16 @@ Buscar Horario
     document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth'
+        //initialView: 'dayGridMonth'
+        events: [
+            {% for horario in object_list %}
+                {
+                    title: "{{ horario.servicio }}",
+                    start: "{{ horario.servicio.desde | date:'Y-m-d' }}",
+                    end: "{{ horario.servicio.hasta | date:'Y-m-d' }}",
+                },
+            {% endfor %}
+        ]
     });
     calendar.render();
     });

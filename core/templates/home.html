@@ -9,6 +9,12 @@ Senda
 {% block volver %}
 {% endblock volver %}
 
+{% block navbtn %}
+<a href="{% url 'servicios:crearServicio' %}" class="btn btn-primary me-3"> 
+  <i class="bi bi-plus"></i> Crear Servicio
+</a>
+{% endblock %}
+
 {% block cmain %}
 
 <div class="col-12 col-md-6 d-flex">
@@ -44,7 +50,7 @@ Senda
             <p class="text-danger">
                 2
             </p>
-            <button class="btn btn-primary">Ver</button>
+            <a href="{% url 'listarEmpleado' %}" class="btn btn-primary">Ver</a>
           </div>
         </div>
       </div>
@@ -52,18 +58,120 @@ Senda
     {% endif %}
   </div>
 
-
   <div class="col-12 col-md-6 w-100">
     <div class="card flex-fill border-0">
       <div class="card-body py-4">
+        <h2>Estadísticas de Ventas</h2>
+        <p>Total vendido este mes: ${{ total_mes }}</p>
+        <p>Total vendido este año: ${{ total_año }}</p>
+        <p>Facturas emitidas este mes: {{ facturas_mes }}</p>
+        <p>Facturas emitidas este año: {{ facturas_año }}</p>
         <div class="d-flex align-items-start">
           <div class="flex-grow-1">
-                <img src="{% static 'img/cleanweb.gif' %}"  class="img-fluid" alt="Responsive image">
-            </div>
+            <canvas id="ctx_ventas_mes"></canvas>
+            <canvas id="ctx_ventas_tipo_servicio"></canvas>
+            <canvas id="ctx_cant_servicios_estados"></canvas>
+            <!--img src="{% static 'img/cleanweb.gif' %}"  class="img-fluid" alt="Responsive image"-->
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  {% block extrajs %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctx_ventas_mes = document.getElementById("ctx_ventas_mes").getContext("2d");
+        var ctx_ventas_tipo_servicio = document.getElementById("ctx_ventas_tipo_servicio").getContext("2d");
+        var ctx_cant_servicios_estados = document.getElementById("ctx_cant_servicios_estados").getContext("2d");
+
+        var labels_ventas_mes = JSON.parse('{{ labels_ventas_mes|escapejs }}'); 
+        var data_ventas_mes = JSON.parse('{{ data_ventas_mes|escapejs }}');
+
+        var labels_ventas_tipo_servicio = JSON.parse('{{ labels_ventas_tipo_servicio|escapejs }}'); 
+        var data_ventas_tipo_servicio = JSON.parse('{{ data_ventas_tipo_servicio|escapejs }}');
+
+        var labels_cant_servicios_estados = JSON.parse('{{ labels_cant_servicios_estados|escapejs }}'); 
+        var data_cant_servicios_estados = JSON.parse('{{ data_cant_servicios_estados|escapejs }}');
+
+        var Ventas_Mes_Chart = new Chart(ctx_ventas_mes, {
+            type: "bar",
+            data: {
+                labels: labels_ventas_mes,
+                datasets: [{
+                    label: "Ventas",
+                    data: data_ventas_mes,
+                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var Ventas_Tipo_Servicio_Chart = new Chart(ctx_ventas_tipo_servicio, {
+            type: "pie",
+            data: {
+                labels: labels_ventas_tipo_servicio,
+                datasets: [{
+                    label: "Ventas",
+                    data: data_ventas_tipo_servicio,
+                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var Cant_Servicios_Estados_Chart = new Chart(ctx_cant_servicios_estados, {
+            type: "line", 
+            data: {
+                labels: labels_cant_servicios_estados,
+                datasets: [{
+                    label: "Cantidad",
+                    data: data_cant_servicios_estados,
+                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+    </script>    
+
+  {% endblock %}
 {% endblock %}

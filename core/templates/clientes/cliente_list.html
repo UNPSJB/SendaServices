@@ -6,63 +6,67 @@
 Buscar Cliente
 {% endblock %}
 
-    {% block tlista %} Listado de Clientes {% endblock %}
+{% block tlista %} Listado de Clientes {% endblock %}
 
-    {% block thextras %}
-        <th colspan="">Opciones</th>
-    {% endblock%}
-    
-    {% block tcuerpo %}
-        {% for c in clientes %}
-            <tr>
-                <td>{{forloop.counter}}</td>
-                <td>{{c.cuil_cuit}}</td>
-                <td>{{c.apellido}}</td>
-                <td>{{c.nombre}}</td>
-                <td>{{c.correo}}</td>
-                {% if c.habitual %}
-                <td>Si</td>
-                {% else %}
-                <td>No</td>
-                {% endif %}
-                {% if c.gubernamental %}
-                <td>Si</td>
-                {% else %}
-                <td>No</td>
-                {% endif %}
+{% block tExtras %} 
+    <a href="{% url 'crearCliente' %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+{% endblock %}
+
+{% block thextras %}
+    <th colspan="">Opciones</th>
+{% endblock%}
+
+{% block tcuerpo %}
+    {% for c in clientes %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{c.cuil_cuit}}</td>
+            <td>{{c.apellido}}</td>
+            <td>{{c.nombre}}</td>
+            <td>{{c.correo}}</td>
+            {% if c.habitual %}
+            <td>Si</td>
+            {% else %}
+            <td>No</td>
+            {% endif %}
+            {% if c.gubernamental %}
+            <td>Si</td>
+            {% else %}
+            <td>No</td>
+            {% endif %}
 
 
-                <td>
-                    <!--Si queremos abrir un moda, se utiliza abrir-->
+            <td>
+                <!--Si queremos abrir un moda, se utiliza abrir-->
 
-                    <a href="#" class="bi bi-pencil-square" 
-                    onclick="abrir_modal('{% url "modificarCliente" c.pk %}')"
-                    data-bs-toggle="tooltip" 
-                    data-bs-placement="top" 
-                    title="Modificar"></a>
+                <a href="#" class="bi bi-pencil-square" 
+                onclick="abrir_modal('{% url "modificarCliente" c.pk %}')"
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Modificar"></a>
 
-                    <a href="#"><i class="bi bi-trash3 icon-danger" 
-                    onclick=""
-                    data-bs-toggle="tooltip" 
-                    data-bs-placement="top" 
-                    title="Eliminar"></i></a>
+                <a href="#"><i class="bi bi-trash3 icon-danger" 
+                onclick=""
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Eliminar"></i></a>
 
-                    <a href='{% url "listarInmueblesDeCliente" c.pk %}' 
-                    class="bi bi-building-fill text-success"
-                    data-bs-toggle="tooltip" 
-                    data-bs-placement="top" 
-                    title="Agregar Inmueble"></a>
+                <a href='{% url "listarInmueblesDeCliente" c.pk %}' 
+                class="bi bi-building-fill text-success"
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Agregar Inmueble"></a>
 
-                    <a href='{% url "servicios:listarServiciosDeCliente" c.pk %}' 
-                    class="bi bi-file-medical-fill"
-                    data-bs-toggle="tooltip" 
-                    data-bs-placement="top" 
-                    title="Contratar Servicio"></a>
-                </td>
+                <a href='{% url "servicios:listarServiciosDeCliente" c.pk %}' 
+                class="bi bi-file-medical-fill"
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Contratar Servicio"></a>
+            </td>
 
-            </tr>
-            {% empty %}
-                <tr> <td> No hay clientes registrados </td> </tr>
+        </tr>
+    {% empty %}
+        <tr> <td> No hay clientes registrados </td> </tr>
     {% endfor %}
 {% endblock %}
 

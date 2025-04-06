@@ -15,11 +15,6 @@ Buscar Turno
     {% endblock %}
 
 
-    {% block thextras %}
-        {% if servicio.estado_actual.tipo == "presupuestado" %}
-            <th colspan="">Opciones</th>
-        {% endif %}
-    {% endblock%}
     
     {% block tcuerpo %}
     {% for h in horario %}
@@ -28,12 +23,7 @@ Buscar Turno
         <td>{{h.turno}}</td>
         <td>{{h.diaSemana}}</td>
         <td>{{h.servicio}}</td>
-        {% if servicio.estado_actual.tipo == "presupuestado" %}
-        <td>
-            <!--Si queremos abrir un moda, se utiliza abrir-->
-            <a href="#" class="bi bi-pencil-square" onclick="abrir_modal('{% url "turnos:modificarHorarioParaServicio" pk=h.pk %}')"></a>
-        </td>
-        {% endif %}
+        
     </tr>
     {% empty %}
         <tr> <td> No hay turnos registrados </td> </tr>

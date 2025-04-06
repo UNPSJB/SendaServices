@@ -18,6 +18,9 @@
   {% url 'servicios:modificarTipoServicio' object.pk %}
 {% endblock %}
 
+<!--Boton del modal-->
+{% block btnmodal %} Guardar {% endblock %} 
+
 {% block cform %}
 <form action="{% url 'servicios:modificarTipoServicio' object.pk %}" method="POST">
   {% csrf_token %}

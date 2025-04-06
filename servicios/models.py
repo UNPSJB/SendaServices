@@ -14,9 +14,8 @@ from dateutil.relativedelta import relativedelta
 
 class TipoServicio(models.Model):
     descripcion= models.CharField( max_length=250)
-    ganancia= models.IntegerField(default=1, validators=[MaxValueValidator(100),MinValueValidator(1)])
-    #Costo fijo adicional
-    productos= models.ManyToManyField("core.Producto", through='TipoServicioProducto')
+    ganancia= models.IntegerField(default=1, validators=[MaxValueValidator(100),MinValueValidator(1)]) #ganancia aplicada 
+    productos= models.ManyToManyField("core.Producto", through='TipoServicioProducto')    #productos que involucra el tipo de servicio
 
     def __str__(self):
         return self.descripcion
@@ -25,6 +24,16 @@ class TipoServicio(models.Model):
         ganancia_decimal = Decimal(str(self.ganancia))
         total= (1+(ganancia_decimal/100)) * sum([p.importe() for p in self.productos_cantidad.all()])
         return total.quantize(Decimal('0.00'))
+
+class TipoServicioProducto(models.Model):
+    tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE, related_name="productos_cantidad")
+    producto= models.ForeignKey("core.Producto",on_delete=models.CASCADE, related_name="productos_cantidad")
+    cantidad= models.DecimalField("Cantidad utilizada por m²", max_digits=10,
+        decimal_places=2, validators=[MinValueValidator(0)])
+
+    def importe(self):
+        return self.cantidad * self.producto.precioUnitario
+        
 
 
 class TipoEstado (models.TextChoices):
@@ -58,9 +67,16 @@ class Servicio(models.Model):
 
     inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
 
-    total = models.DecimalField(decimal_places=2,max_digits=10, default=0)
+    total = models.DecimalField(decimal_places=2,max_digits=100, default=0)
 
-   
+    def get_fecha_inicio(self):
+        """Retorna la fecha de inicio del servicio."""
+        return self.desde
+
+    def get_fecha_fin(self):
+        """Retorna la fecha de fin del servicio."""
+        return self.hasta
+
     @property
     def requiereSeña(self):
         return not self.inmueble.cliente.habitual
@@ -285,13 +301,5 @@ class EstadoIniciado(EstadoStrategy):
 
 Servicio.STRATEGIES.append(EstadoIniciado())
 
-        #return self.costoServicio
     
-class TipoServicioProducto(models.Model):
-    tipoServicio= models.ForeignKey(TipoServicio,on_delete=models.CASCADE, related_name="productos_cantidad")
-    producto= models.ForeignKey("core.Producto",on_delete=models.CASCADE, related_name="productos_cantidad")
-    cantidad= models.DecimalField("Cantidad de m² por dia ", max_digits=10,
-        decimal_places=2, validators=[MinValueValidator(0)])
 
-    def importe(self):
-        return self.cantidad * self.producto.precioUnitario

@@ -4,12 +4,15 @@
 Buscar Producto
 {% endblock %}
 
-
 {% block tmain %}
 <h4 class="mx-3">{{ titulo }}</h4>
 {% endblock %}
 
 {% block tlista %} Listado de Productos {% endblock %}
+
+{% block tExtras %} 
+    <a href="{% url 'crearProducto' %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
+{% endblock %}
 
 {% block thextras %}
 <th colspan="">Opciones</th>

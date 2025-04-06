@@ -46,7 +46,7 @@ from .views import (
     CategoriaUpdateView
 )
 
-print("llegue a las url de modificar inmueble")
+#print("llegue a las url de modificar inmueble")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -61,8 +61,6 @@ urlpatterns = [
     path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
-    
-    # Gestion Inmuebles
     
     # Gestion Inmuebles
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
@@ -84,9 +82,10 @@ urlpatterns = [
   
     #Gestion Empleados
     path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),
-    path('empleadoList/', EmpleadoListView.as_view(), name="listarEmpleado"),
-    path('empleadoModificar/<int:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
+    path('empleado/listar', EmpleadoListView.as_view(), name="listarEmpleado"),
+    path('empleado/modificar/<int:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
     path('empleado/eliminar/<int:pk>', EmpleadoDeleteView.as_view(), name='eliminarEmpleado'),
+    
     
     #Gestion Categoria
     path('categorias/',CategoriaCreateView.as_view(),name='crearCategoria'),

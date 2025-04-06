@@ -1,4 +1,3 @@
-
 from django import forms 
 from servicios.models import Servicio
 from core.models import Empleado
@@ -9,6 +8,8 @@ from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
+from servicios.forms import Servicio
+from servicios.models import Servicio
 
 
 class HorarioForm(ModelForm):
@@ -39,25 +40,37 @@ class HorarioForm(ModelForm):
                     'placeholder':'Ingrese el dia de la semana del turno',
                 }
             ),
-            # 'servicio': forms.Select(
-            #     attrs = {
-            #         'class': 'form-control',
-            #         'placeholder':'Ingrese el servicio del turno',
-
-            #     }
-            # ),
-        
         }
 
     def __init__(self, *args, **kwargs):
+        servicio = kwargs.pop("servicio", None)  # Extraemos el servicio de los kwargs
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
         self.helper.form_tag = False
 
-        #self.helper.add_input(Submit('submit', 'Guardar'))
+        if servicio and servicio.desde == servicio.hasta:
+            # Calculamos el día de la semana
+            dia_semana = servicio.desde.strftime("%A").lower()  # "monday", "tuesday", etc.
+            # Mapeo a las opciones en español
+            mapeo_dias = {
+                "monday": "lunes",
+                "tuesday": "martes",
+                "wednesday": "miércoles",
+                "thursday": "jueves",
+                "friday": "viernes",
+                "saturday": "sábado",
+                "sunday": "domingo",
+            }
+            dia_defecto = mapeo_dias.get(dia_semana, "")
 
+            # Si el día obtenido está en las opciones, lo establecemos
+            if dia_defecto in dict(Horario.DiaSemana.choices):
+                self.fields["diaSemana"].widget = forms.HiddenInput()
+                self.fields["diaSemana"].initial = dia_defecto
+                # self.fields["diaSemana"].initial = dia_defecto
+                # self.fields["diaSemana"].widget.attrs["readonly"] = True
 
 class HorarioFiltrosForm(FiltrosForm):
     #Campos del modelo
@@ -77,12 +90,10 @@ class HorarioFiltrosForm(FiltrosForm):
     #Formulario de filtrado
     turno = forms.ChoiceField(required=False, choices=Horario.Turno.choices)
     diaSemana = forms.ChoiceField(required=False, choices=Horario.DiaSemana.choices)
-    #servicio = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Servicio'}))
     servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Servicio')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        #self.initial['turno'] = '' 
         self.helper = FormHelper()
         self.helper.form_method = 'get'
         self.helper.layout = Layout(
@@ -125,9 +136,6 @@ class HorarioModForm(ModelForm):
         self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
         self.helper.form_tag = False
-        #horario = kwargs["horario"] 
-        #self.helper.form_action = reverse_lazy("turnos:modificarHorario", kwargs={"pk": horario.pk})
-        #self.helper.add_input(Submit('submit', 'Guardar'))
 
 
 class PeriodoForm(forms.ModelForm):
@@ -140,7 +148,7 @@ class PeriodoForm(forms.ModelForm):
             "fechaDesde": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
             "fechaHasta": forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'})
         }
-
+    
     def clean(self):
         cleaned_data = super().clean()
         fechaDesde = cleaned_data.get('fechaDesde')
@@ -151,11 +159,28 @@ class PeriodoForm(forms.ModelForm):
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
+        servicio = kwargs.pop('servicio', None)  # Extrae 'servicio' correctamente
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.fields['fechaDesde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
-        self.fields['fechaHasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+    
+        if servicio:
+            fechaDesde = servicio.desde.strftime('%Y-%m-%d')
+            fechaHasta = servicio.hasta.strftime('%Y-%m-%d')
+
+            if fechaDesde == fechaHasta:
+                # Establecemos la fecha como valor predeterminado
+                self.fields["fechaDesde"].initial = fechaDesde
+                self.fields["fechaHasta"].initial = fechaHasta
+
+                # Hacemos los campos de solo lectura (deshabilitados en el formulario)
+                self.fields["fechaDesde"].widget.attrs["readonly"] = True
+                self.fields["fechaHasta"].widget.attrs["readonly"] = True
+            else:
+                self.fields['fechaDesde'].widget.attrs['min'] = fechaDesde # '2025-03-16'
+                self.fields['fechaDesde'].widget.attrs['max'] = fechaHasta # '2025-03-23' 
+                self.fields['fechaHasta'].widget.attrs['min'] = fechaDesde # '2025-03-16' 
+                self.fields['fechaHasta'].widget.attrs['max'] = fechaHasta # '2025-03-23'
 
 
 class PeriodoFiltrosForm(FiltrosForm):
@@ -164,19 +189,18 @@ class PeriodoFiltrosForm(FiltrosForm):
         ("empleado", "Empleado"),
         ("fechaDesde", "Fecha Desde"),
         ("fechaHasta", "Fecha Hasta"),
+
     ]
     ATTR_CHOICES = [
         ("empleado", "Empleado"),
         ("fechaDesde", "Fecha Desde"),
         ("fechaHasta", "Fecha Hasta"),
-        ("servicio", "Servicio"),
     ]
 
     #Formulario de filtrado
-    fechaHasta = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Inicio"))
-    fechaDesde = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Fin"))
+    fechaDesde = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Inicio"))
+    fechaHasta = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False,label=("Fecha Fin"))
     empleado = forms.ModelChoiceField(queryset=Empleado.objects.all(), required=False, label='Empleado')
-    servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Servicio')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -188,7 +212,7 @@ class PeriodoFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "empleado","fechaDesde","fechaHasta","servicio",  #Remplazar campos formulario
+                "empleado","fechaDesde","fechaHasta",  #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
@@ -201,7 +225,7 @@ class PeriodoCustomFiltrosForm(PeriodoFiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "fechaDesde","fechaHasta","servicio", #Remplazar campos formulario
+                "fechaDesde","fechaHasta", #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
@@ -216,7 +240,6 @@ class AsistenciaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-
 
 
 # Tipo Servicio - Producto - Inlines

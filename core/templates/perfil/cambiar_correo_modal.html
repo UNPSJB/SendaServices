@@ -1,0 +1,11 @@
+{% extends "../basemodal.html" %}
+
+{% block tmodal %} Cambiar correo electrónico: {% endblock %}
+{% block tobjectmodal %} {{ user.get_full_name }} {% endblock %}
+{% block url %} {% url 'cambiar_correo' %} {% endblock %}
+{% block btnmodal %} Actualizar {% endblock %}
+
+{% block campos %}
+  {% csrf_token %}
+  {{ form.as_p }}
+{% endblock %}

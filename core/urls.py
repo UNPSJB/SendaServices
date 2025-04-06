@@ -23,7 +23,10 @@ from django.contrib.auth.decorators import login_required
 from .views import (
     salir, 
     index, 
-    login_view , 
+    login_view, 
+    perfil_view,
+    CambiarCorreoView,
+    CambiarContraseñaView,
     ClienteListView, 
     ClienteCreateView, 
     ClienteUpdateView, 
@@ -54,6 +57,11 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('salir/', salir, name="salir"),
     path('accounts/', include('django.contrib.auth.urls')),
+
+    # Perfil
+    path('perfil/', perfil_view, name='perfil'),
+    path('perfil/cambiar-contrasena/', CambiarContraseñaView.as_view(), name='cambiar_contrasena'),
+    path('perfil/cambiar-correo/', CambiarCorreoView.as_view(), name='cambiar_correo'),
 
     # Gestion Cliente
     path('cliente/', ClienteCreateView.as_view(), name="crearCliente"),

@@ -40,7 +40,7 @@ class EmpleadoRestringidoMiddleware:
 
 
             # Vistas que el EMPLEADO puede ver
-            vistas_permitidas_empleado = ['home', 'listarPeriodosDeEmpleado', 'salir']
+            vistas_permitidas_empleado = ['home', 'listarPeriodosDeEmpleado', 'salir', 'perfil', 'cambiar_contrasena', 'cambiar_correo']
 
             if nombre_vista not in vistas_permitidas_empleado:
                 return redirect('home')

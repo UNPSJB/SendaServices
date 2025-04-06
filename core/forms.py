@@ -5,6 +5,15 @@ from .models import Producto, Cliente, Inmueble, Empleado,Categoria
 from .utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from django.contrib.auth.forms import PasswordChangeForm
+from django.urls import reverse_lazy
+from django.contrib.auth.forms import PasswordChangeForm
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from django import forms
+from django.contrib.auth.models import User
 
 
 
@@ -50,6 +59,51 @@ class ClienteFiltrosForm(FiltrosForm):
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
+
+class CambiarCorreoForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email']
+        widgets = {
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nuevo correo electrónico',
+            })
+        }
+        labels = {
+            'email': 'Nuevo correo electrónico',
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('Este correo ya está registrado por otro usuario.')
+        return email
+    
+class CambiarContraseñaUpdateForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.form_action = ''  # Se completa desde el template con block url
+        self.helper.add_input(Submit('submit', 'Actualizar'))
+
+        # Acá podés personalizar los placeholders o clases
+        self.fields['old_password'].widget.attrs.update({
+            'placeholder': 'Contraseña actual',
+            'class': 'form-control'
+        })
+
+        self.fields['new_password1'].widget.attrs.update({
+            'placeholder': 'Nueva contraseña',
+            'class': 'form-control'
+        })
+
+        self.fields['new_password2'].widget.attrs.update({
+            'placeholder': 'Confirmar nueva contraseña',
+            'class': 'form-control'
+        })
 
 
 class ClienteForm(ModelForm):
@@ -251,7 +305,7 @@ class EmpleadoFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "nombre", "apellido", "correo","cuil","categoria" #Remplazar campos formulario
+                "legajo","nombre", "apellido", "correo","cuil","categoria" #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

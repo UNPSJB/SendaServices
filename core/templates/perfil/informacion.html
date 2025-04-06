@@ -1,0 +1,104 @@
+{% extends "../base.html" %}
+{% load static %}
+
+{% block title %} Perfil {% endblock %}
+{% block volver %} {% endblock %}
+{% block navbtn %} {% endblock %}
+
+{% block cmain %}
+<h1 class="text-center mb-4">Perfil de {{ user.first_name }} {{ user.last_name }}</h1>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h4 class="mb-3">Información de usuario</h4>
+
+                    {% if messages %}
+                      {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                          {{ message }}
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                        </div>
+                      {% endfor %}
+                  {% endif %}
+                  
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Nombre completo:</strong> {{ user.first_name }} {{ user.last_name }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Email:</strong> {{ user.email }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Cuil:</strong> {{ user.empleado.cuil }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Categoría:</strong> {{ user.empleado.categoria }}
+                        </li>
+                    </ul>
+
+                    <div class="mt-4 d-grid gap-2">
+                        <!-- Modal Cambiar contraseña -->
+                        <a href="#" class="btn btn-outline-primary"
+                            onclick="abrir_modal('{% url 'cambiar_contrasena' %}')" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="Cambiar contraseña">
+                            <i class="bi bi-lock-fill me-1"></i> Cambiar contraseña
+                        </a>
+
+                        <!-- Modal Cambiar contraseña -->
+                        <a href="#" class="btn btn-outline-secondary"
+                        onclick="abrir_modal('{% url 'cambiar_correo' %}')"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="Cambiar correo">
+                         <i class="bi bi-envelope-fill me-1"></i> Cambiar correo
+                     </a>
+                     
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Div para mostrar el modal -->
+<div class="modal fade" id="modal" tabindex="-1" aria-hidden="true"></div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    function abrir_modal(url) {
+        $('#modal').load(url, function () {
+            $(this).modal('show');
+        });
+    }
+
+    $(document).on("submit", "#modal form", function (e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr("action");
+        var method = form.attr("method");
+        var data = form.serialize();
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: data,
+            success: function (data) {
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                }
+            },
+            error: function (xhr) {
+                // Reemplaza el contenido del modal con el nuevo HTML que incluye errores
+                $('#modal').html(xhr.responseJSON.form_html);
+            }
+        });
+    });
+
+</script>
+{% endblock %}

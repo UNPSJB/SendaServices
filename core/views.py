@@ -14,10 +14,16 @@ from datetime import datetime
 from facturas.models import Factura
 from servicios.models import TipoServicio, Servicio
 import json
-
-
-from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 from django.urls import reverse_lazy, reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth.models import User
+
 from .models import Cliente, Producto, Inmueble,Empleado,Categoria
 from .forms import (
     ProductoForm, 
@@ -36,8 +42,13 @@ from .forms import (
     EmpleadoFiltrosForm,
     CategoriaForm,
     CategoriaUpdateForm,
-    CategoriaFiltrosForm,
+    CategoriaFiltrosForm, 
+    CambiarContraseñaUpdateForm,
+    CambiarCorreoForm
   )
+
+
+from .forms import CambiarCorreoForm
 
 # Login
 
@@ -118,6 +129,52 @@ def login_view(request):
             messages.error(request, "La contraseña no es válida. Por favor, inténtalo de nuevo.")
 
     return render(request, "registration/login.html")
+
+def perfil_view(request):
+    return render(request, "perfil/informacion.html")
+
+
+class CambiarCorreoView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = CambiarCorreoForm
+    template_name = 'perfil/cambiar_correo_modal.html'
+    success_url = reverse_lazy('perfil')
+    success_message = 'Tu correo electrónico ha sido actualizado correctamente.'
+
+    def get_object(self):
+        return self.request.user
+
+    def form_valid(self, form):
+        messages.success(self.request, self.success_message)
+        response = super().form_valid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'redirect_url': self.get_success_url()})
+        return response
+
+    def form_invalid(self, form):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            html = render_to_string(self.template_name, {'form': form}, request=self.request)
+            return JsonResponse({'form_html': html}, status=400)
+        return super().form_invalid(form)
+
+class CambiarContraseñaView(SuccessMessageMixin, PasswordChangeView):
+    template_name = 'perfil/cambiar_contrasena_modal.html'
+    form_class = CambiarContraseñaUpdateForm
+    success_url = reverse_lazy('login')
+    success_message = 'La contraseña ha sido modificada. Por favor, volvé a iniciar sesión.'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        logout(self.request)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'redirect_url': self.get_success_url()})
+        return response
+
+    def form_invalid(self, form):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            html = render_to_string(self.template_name, {'form': form}, request=self.request)
+            return JsonResponse({'form_html': html}, status=400)
+        return super().form_invalid(form)
 
 class ClienteInmuebleUpdateView(UpdateView):
     model = Inmueble

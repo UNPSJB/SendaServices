@@ -125,8 +125,7 @@
                 <img src="{% static 'img/user.png' %}" alt="" class="avatar img-fluid rounded">
               </a>
               <div class="dropdown-menu dropdown-menu-end">
-                <a href="#" class="dropdown-item">Perfil</a>
-                <a href="#" class="dropdown-item">Informacion</a>
+                <a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a>
                 {% block salir %}
                 <a href="{% url 'salir' %}" class="dropdown-item">Salir</a> 
                 {% endblock salir %}

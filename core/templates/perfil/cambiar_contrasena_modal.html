@@ -1,0 +1,19 @@
+{% extends "../basemodal.html" %}
+
+<!-- Título del modal -->
+{% block tmodal %} Cambiar contraseña: {% endblock %}
+
+<!-- Objeto del título del modal -->
+{% block tobjectmodal %} {{ user.get_full_name }} {% endblock %}
+
+<!-- Acción del form -->
+{% block url %} {% url 'cambiar_contrasena' %} {% endblock %}
+
+<!-- Botón del modal -->
+{% block btnmodal %} Actualizar {% endblock %}
+
+<!-- Contenido del formulario -->
+{% block campos %}
+  {% csrf_token %}
+  {{ form.as_p }}
+{% endblock %}

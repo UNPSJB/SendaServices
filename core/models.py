@@ -94,28 +94,6 @@ class Empleado(models.Model):
     baja= models.BooleanField(default=False)
     usuario = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
 
-    class Meta:
-        default_permissions = ()
-        permissions = [
-            ("es_empleado","puede ver sus horarios y marcar sus asistencias"),
-            ]
-        
-    def crear_usuario(self):
-        # base_username = (self.nombre[0] + self.apellido).lower()
-        # cantidad = User.objects.filter(username__startswith=base_username).count()
-        # if cantidad == 0:
-        #     username = f"{base_username}"
-        # else:
-        #     username = f"{base_username}{cantidad}"
-
-
-        user = User.objects.create_user(
-            username=self.correo, password=self.cuil, first_name=self.nombre, last_name=self.apellido)
- 
-        self.usuario = user
-        self.save()
-        return user
-
     def __str__(self):
         return f"{self.apellido}{self.nombre}"
 

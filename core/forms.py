@@ -203,25 +203,8 @@ class EmpleadoForm(ModelForm):
         
         }
 
-    def save(self):
-        empleado = super().save(commit=False)
-        empleado.crear_usuario()
-        empleado.save()
-        empleado.usuario.save()
-        return empleado
-    
-    # def save(self, is_new_instance=False, commit=True):
-    #     empleado = super().save(commit=False)
-    #     if is_new_instance:
-    #         empleado.crear_usuario()
-    #         empleado.añadir_grupos(grupos=self.cleaned_data['grupos'])
-    #     else:
-    #         empleado.usuario.groups.clear() #Ver por que entra aca
-    #         empleado.usuario.groups.add(*self.cleaned_data['grupos'])
-    #     if commit:
-    #         empleado.save()
-    #         empleado.usuario.save()
-    #     return empleado
+    def save(self, commit=True):
+        return super().save(commit=commit)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -268,7 +251,7 @@ class EmpleadoFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "legajo","nombre", "apellido", "correo","cuil","categoria" #Remplazar campos formulario
+                "nombre", "apellido", "correo","cuil","categoria" #Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

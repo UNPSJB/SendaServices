@@ -46,8 +46,6 @@ from .views import (
     CategoriaUpdateView
 )
 
-#print("llegue a las url de modificar inmueble")
-
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -58,7 +56,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     # Gestion Cliente
-    path('cliente/', login_required(ClienteCreateView.as_view()), name="crearCliente"),
+    path('cliente/', ClienteCreateView.as_view(), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
     
@@ -81,7 +79,7 @@ urlpatterns = [
 
   
     #Gestion Empleados
-    path('empleado/', login_required(EmpleadoCreateView.as_view()), name="crearEmpleado"),
+    path('empleado/', EmpleadoCreateView.as_view(), name="crearEmpleado"),
     path('empleado/listar', EmpleadoListView.as_view(), name="listarEmpleado"),
     path('empleado/modificar/<int:pk>', EmpleadoUpdateView.as_view(), name="modificarEmpleado"),
     path('empleado/eliminar/<int:pk>', EmpleadoDeleteView.as_view(), name='eliminarEmpleado'),

@@ -40,83 +40,65 @@
         <!--Menu sidebar-->
         <ul class="sidebar-nav">
 
+          <li class="sidebar-header">Opciones Generales</li>
           <li class="sidebar-item">
-            <li class="sidebar-header">
-              Opciones Generales
-            </li>
             <a href="{% url 'home' %}" class="sidebar-link">
               <i class="bi bi-house-fill"></i> Home
             </a>
           </li>
-
-          {% if perms.core %}
-          <!-- Empleados -->
-          <li class="sidebar-item">
-            <a href="{% url 'listarEmpleado' %}" class="sidebar-link"> 
-              <i class="bi bi-person-square"></i> Empelados
-            </a>
-          </li>
-
-          <!-- Categorias -->
-          <li class="sidebar-item">
-            <a href="{% url 'listarCategoria' %}" class="sidebar-link"> 
-              <i class="bi bi-clipboard2-fill"></i> Categorias
-            </a>
-          </li>             
-          
-          <!-- Clientes -->
-          <li class="sidebar-item">
-            <a href="{% url 'listarCliente' %}" class="sidebar-link"> 
-              <i class="bi bi-person-fill"></i> Clientes
-            </a>
-          </li>
         
-          <!-- Inmuebles -->
-          <li class="sidebar-item">
-            <a href="{% url 'listarInmuebles' %}" class="sidebar-link"> 
-              <i class="bi bi-building-fill"></i> Inmuebles
-            </a>
-          </li>
-         
-          <!-- Productos -->    
-          <li class="sidebar-item">
-            <a href="{% url 'listarProductos' %}" class="sidebar-link"> 
-              <i class="bi bi-box-seam"></i> Productos
-            </a>
-          </li> 
-
-          <!-- Tipo Servicios -->   
-          <li class="sidebar-item">
-            <a href="{% url 'servicios:listarTipoServicio' %}" class="sidebar-link"> 
-              <i class="bi bi-file-earmark-text-fill"></i> Tipos de Servicios
-            </a>
-          </li>
-          {% endif %}
-
-          <!-- Turnos -->
-          {% if perms.core %}
-          <li class="sidebar-item">
-            <a href="{% url 'turnos:listarPeriodos' %}" class="sidebar-link"> 
-              <i class="bi bi-alarm"></i> Turnos
-            </a>
-          </li>
+          {% if user.groups.all.0.name == "Empleado" %}
+            <!-- SOLO EMPLEADOS -->
+            <li class="sidebar-item">
+              <a href="{% url 'turnos:listarPeriodosDeEmpleado' user.empleado.pk %}" class="sidebar-link">
+                <i class="bi bi-alarm"></i> Mis Turnos
+              </a>
+            </li>
+          
           {% else %}
-          <li class="sidebar-item">
-            <a href="{% url 'turnos:listarPeriodosDeEmpleado' user.empleado.pk %}" class="sidebar-link"> 
-              <i class="bi bi-alarm"></i> Turnos
-            </a>
-          </li>
+            <!-- ADMIN / OTROS -->
+            <li class="sidebar-item">
+              <a href="{% url 'listarEmpleado' %}" class="sidebar-link">
+                <i class="bi bi-person-square"></i> Empleados
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a href="{% url 'listarCategoria' %}" class="sidebar-link">
+                <i class="bi bi-clipboard2-fill"></i> Categorías
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a href="{% url 'listarCliente' %}" class="sidebar-link">
+                <i class="bi bi-person-fill"></i> Clientes
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a href="{% url 'listarInmuebles' %}" class="sidebar-link">
+                <i class="bi bi-building-fill"></i> Inmuebles
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a href="{% url 'listarProductos' %}" class="sidebar-link">
+                <i class="bi bi-box-seam"></i> Productos
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a href="{% url 'servicios:listarTipoServicio' %}" class="sidebar-link">
+                <i class="bi bi-file-earmark-text-fill"></i> Tipos de Servicios
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a href="{% url 'turnos:listarPeriodos' %}" class="sidebar-link">
+                <i class="bi bi-alarm"></i> Turnos
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a href="{% url 'servicios:listarServicio' %}" class="sidebar-link">
+                <i class="bi bi-file-medical-fill"></i> Servicios
+              </a>
+            </li>
           {% endif %}
-
-          {% if perms.core %}
-          <!-- Menu servicios -->
-          <li class="sidebar-item">
-            <a href="{% url 'servicios:listarServicio' %}" class="sidebar-link"> 
-              <i class="bi bi-file-medical-fill"></i> Servicios
-            </a>
-          </li>  
-          {% endif %}
-
+        
         </ul>
       </div>
     </aside>

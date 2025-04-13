@@ -4,7 +4,7 @@ from .views import (
     ServicioCreateView, ServicioListView,ServicioUpdateView, ServicioCancelarView, ServicioSeñarView, TipoServicioListView,
     TipoServicioCreateView,TipoServicioUpdateView,
     validar_tipo_servicio_form_en_modal,validar_servicio_form_en_modal, validar_contrato_form_en_modal,
-    contratar_servicio, pagar_servicio, facturar_servicio, cancelar_servicio, generar_presupuesto_pdf)
+    contratar_servicio, pagar_servicio, facturar_servicio, cancelar_servicio, generar_presupuesto_pdf, exportar_servicios_excel)
 
 app_name= "servicios"
 
@@ -31,4 +31,5 @@ urlpatterns = [
     path('tipo-servicio/validar_form/<int:pk>',validar_tipo_servicio_form_en_modal,name="validarTipoServicioFormAjax"),   
 
     path('presupuesto/pdf/<int:presupuesto_id>/', generar_presupuesto_pdf, name='presupuesto_pdf'),
+    path('servicios/exportar_excel/', exportar_servicios_excel, name='exportar_excel'),
 ]

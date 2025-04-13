@@ -26,6 +26,36 @@ import os
 from django.conf import settings
 from .models import Servicio
 from django.shortcuts import get_object_or_404
+from openpyxl import Workbook
+
+
+# --------------------- VISTA PARA GENERAR PRESUPUESTOS EN EXCEL ----------------------------
+
+def exportar_servicios_excel(request):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Servicios"
+
+    # Cabecera
+    ws.append(["#", "Estado", "Fecha Inicio", "Fecha Fin", "Empleados Estimados", "Total Estimado"])
+
+    # Filas de datos
+    servicios = Servicio.objects.all()
+    for i, s in enumerate(servicios, start=1):
+        ws.append([
+            i,
+            s.estado,
+            s.desde.strftime("%d/%m/%Y"),
+            s.hasta.strftime("%d/%m/%Y"),
+            s.cantidadEstimadaEmpleados,
+            s.totalEstimado()
+        ])
+
+    # Respuesta HTTP con archivo Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=servicios.xlsx'
+    wb.save(response)
+    return response
 
 # --------------------- VISTA PARA GENERAR PRESUPUESTO PDF ----------------------------
 

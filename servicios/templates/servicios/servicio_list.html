@@ -14,9 +14,22 @@ Buscar Servicio
     
         {% if cliente %}
             <a href="{% url 'servicios:crearServicioParaCliente' cliente.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
-        {% else %}
-            <a href="{% url 'servicios:crearServicio' %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
-        {% endif %}
+            {% else %}
+            <div class="d-inline-flex align-items-center gap-2">
+                <a href="{% url 'servicios:crearServicio' %}"
+                   class="bi bi-plus-circle-fill text-success fs-5"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   title="Crear Servicio"></a>
+            
+                <a href="{% url 'servicios:exportar_excel' %}"
+                   class="bi bi-file-earmark-excel-fill text-success fs-5"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   title="Exportar Excel"></a>
+            </div>
+            {% endif %}
+            
     {% endblock %}
     {% block thextras %}
         <th colspan="">Opciones</th>

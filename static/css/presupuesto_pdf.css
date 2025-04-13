@@ -1,0 +1,66 @@
+body {
+    font-family: "Arial", sans-serif;
+    font-size: 14px;
+    color: #333;
+    margin: 40px;
+}
+
+h1 {
+    color: #105736;
+    margin-bottom: 0;
+}
+
+h3 {
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #105736;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.datos {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.seccion {
+    width: 48%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f5f5f5;
+    color: #105736;
+}
+
+.total {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.footer {
+    margin-top: 30px;
+    font-size: 12px;
+    color: #666;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}

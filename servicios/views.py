@@ -6,20 +6,36 @@ from core.utils import ListFilterView
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
-
+from django.template.loader import get_template
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
+
 from .forms import (
     ServicioForm, ServicioUpdateForm, ServicioContratarForm, DetalleServicioInline, ServiciosFiltrosForm, 
     DetalleServicioFormSetHelper, TipoServicioForm, 
     TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm,TipoServicioUpdateForm)
+
 from .models import TipoServicio, Servicio
 from core.models import Cliente, Inmueble
 from turnos.models import Horario
 
+from xhtml2pdf import pisa  # ✅ nueva librería
+import io, os
 
-# Create your views here.
+# --------------------- VISTA PARA GENERAR PRESUPUESTO PDF ----------------------------
+from django.conf import settings
 
+def generar_presupuesto_pdf(request, presupuesto_id):
+    servicio = get_object_or_404(Servicio, pk=presupuesto_id)
+    template = get_template('pdf/presupuesto.html')
+    html = template.render({'presupuesto': servicio})
+
+    result = io.BytesIO()
+    pisa.CreatePDF(io.StringIO(html), dest=result)  # sin CSS
+
+    response = HttpResponse(result.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'filename=presupuesto_{presupuesto_id}.pdf'
+    return response
 
 # -----------------------------------------------------------------VISTA TIPO SERVICIO------------------------------------------------------------------------------------------
 

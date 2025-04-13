@@ -44,6 +44,16 @@ Buscar Servicio
             title="Añadir horarios">
             </a>
 
+            <a 
+            href="{% url 'servicios:presupuesto_pdf' presupuesto_id=s.pk %}" 
+            class="bi bi-file-earmark-pdf-fill text-danger fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Descargar PDF de Presupuesto" 
+            target="_blank">
+        </a>
+        
+
     
         {% elif s.estado_actual.tipo == "contratado" %}
 

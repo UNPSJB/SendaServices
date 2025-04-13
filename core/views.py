@@ -1,102 +1,122 @@
-from typing import Any
-from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpRequest, HttpResponse
-from django.utils.decorators import method_decorator
-from django.views.generic import View, ListView
-from .utils import ListFilterView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.shortcuts import render, redirect
-from django.db.models import Sum, Count
 from datetime import datetime
-from facturas.models import Factura
-from servicios.models import TipoServicio, Servicio
+from collections import defaultdict
+from calendar import month_name
 import json
-from django.contrib.auth.views import PasswordChangeView
-from django.contrib.messages.views import SuccessMessageMixin
+
 from django.contrib import messages
-from django.template.loader import render_to_string
-from django.http import JsonResponse
-from django.urls import reverse_lazy, reverse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.views import PasswordChangeView
+from django.db.models import Count, OuterRef, Subquery, Sum
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView, View
+from django.contrib.messages.views import SuccessMessageMixin
 
-from .models import Cliente, Producto, Inmueble,Empleado,Categoria
+from .models import Cliente, Producto, Inmueble, Empleado, Categoria
 from .forms import (
-    ProductoForm, 
-    ProductoUpdateForm, 
-    ProductoFiltrosForm, 
-    ClienteForm, 
-    ClienteModForm, 
-    ClienteFiltrosForm, 
-    #InmueblesClienteFiltrosForm,
-    InmuebleForm, 
-    InmuebleUpdateForm, 
-    InmuebleFiltrosForm,
-    InmuebleCustomFiltrosForm,
-    EmpleadoForm,
-    EmpleadoModForm,
-    EmpleadoFiltrosForm,
-    CategoriaForm,
-    CategoriaUpdateForm,
-    CategoriaFiltrosForm, 
-    CambiarContraseñaUpdateForm,
-    CambiarCorreoForm
-  )
+    ProductoForm, ProductoUpdateForm, ProductoFiltrosForm,
+    ClienteForm, ClienteModForm, ClienteFiltrosForm,
+    InmuebleForm, InmuebleUpdateForm, InmuebleFiltrosForm, InmuebleCustomFiltrosForm,
+    EmpleadoForm, EmpleadoModForm, EmpleadoFiltrosForm,
+    CategoriaForm, CategoriaUpdateForm, CategoriaFiltrosForm,
+    CambiarContraseñaUpdateForm, CambiarCorreoForm
+)
+from .utils import ListFilterView
+
+from facturas.models import Factura
+from servicios.models import Servicio, TipoEstado, Estado
 
 
-from .forms import CambiarCorreoForm
-
-# Login
 
 @login_required
 def index(request):
+    MESES_ES = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 
     hoy = datetime.today()
-    año_actual = hoy.year
-    mes_actual = hoy.month
+    año_actual = int(request.GET.get("año", hoy.year))
+    mes_actual = request.GET.get("mes")
+    estado_actual = request.GET.get("estado")
 
-    # Total vendido en el mes actual
-    total_mes = Factura.objects.filter(emision__year=año_actual, emision__month=mes_actual).aggregate(Sum("total"))["total__sum"] or 0
+    # Filtros principales
+    servicios = Servicio.objects.filter(desde__year=año_actual)
+    if mes_actual:
+        servicios = servicios.filter(desde__month=int(mes_actual))
 
-    # Total vendido en el año actual
-    total_año = Factura.objects.filter(emision__year=año_actual).aggregate(Sum("total"))["total__sum"] or 0
+    facturas = Factura.objects.filter(emision__year=año_actual)
+    if mes_actual:
+        facturas = facturas.filter(emision__month=int(mes_actual))
 
-    # Cantidad de facturas emitidas en el mes actual
-    facturas_mes = Factura.objects.filter(emision__year=año_actual, emision__month=mes_actual).count()
+    if estado_actual:
+        servicios = servicios.filter(estado=estado_actual)
+        facturas = facturas.filter(servicio__estado=estado_actual)
 
-    # Cantidad de facturas emitidas en el año actual
+    total_mes = facturas.aggregate(Sum("total"))['total__sum'] or 0
+    total_año = Factura.objects.filter(emision__year=año_actual).aggregate(Sum("total"))['total__sum'] or 0
+    facturas_mes = facturas.count()
     facturas_año = Factura.objects.filter(emision__year=año_actual).count()
 
-    # Ventas por mes en el año actual (para gráficos)
-    ventas_por_mes = Factura.objects.filter(emision__year=año_actual).values("emision__month").annotate(
-        total=Sum("total")
-    ).order_by("emision__month")
+    ventas_por_mes = facturas.values("emision__month").annotate(total=Sum("total")).order_by("emision__month")
+    ventas_por_tipo_servicio = facturas.values("servicio__detalles_servicio__tipoServicio__descripcion").annotate(total=Sum("total"))
 
-    # Ventas por Tipo de Servicio (para gráficos)
-    ventas_por_tipo_servicio = Factura.objects.values("servicio__detalles_servicio__tipoServicio__descripcion").annotate(
-        total=Sum("total")
-    )
+    # Últimos estados de cada servicio
+    servicios_estado_qs = Servicio.objects.filter(desde__year=año_actual)
+    if mes_actual:
+        servicios_estado_qs = servicios_estado_qs.filter(desde__month=int(mes_actual))
+    if estado_actual:
+        servicios_estado_qs = servicios_estado_qs.filter(estado=estado_actual)
 
-    # Cantidad de Servicios en cada Estado (para gráficos)
-    cant_servicios_estados = Servicio.objects.values("estado").annotate(
-        cantidad=Count("id")
-    )
+    ultimo_estado_subquery = Estado.objects.filter(servicio=OuterRef("pk")).order_by('-timestamp').values('tipo')[:1]
+    servicios_con_estado_real = servicios_estado_qs.annotate(estado_real=Subquery(ultimo_estado_subquery))
+    cant_servicios_estados = servicios_con_estado_real.values("estado_real").annotate(cantidad=Count("id"))
 
-    # Formatear datos para pasarlos al template
-    labels_ventas_mes = [f"Mes {item['emision__month']}" for item in ventas_por_mes]
+    # Datos para gráficos
+    labels_ventas_mes = [MESES_ES[item['emision__month']] for item in ventas_por_mes]
     data_ventas_mes = [float(item["total"]) for item in ventas_por_mes]
 
-    labels_ventas_tipo_servicio = [item['servicio__detalles_servicio__tipoServicio__descripcion'] for item in ventas_por_tipo_servicio]
+    labels_ventas_tipo_servicio = [item['servicio__detalles_servicio__tipoServicio__descripcion'] or "Total Facturación" for item in ventas_por_tipo_servicio]
     data_ventas_tipo_servicio = [float(item["total"]) for item in ventas_por_tipo_servicio]
 
-    labels_cant_servicios_estados = [item['estado'] for item in cant_servicios_estados]
+    labels_cant_servicios_estados = [
+        str(dict(TipoEstado.choices).get(item['estado_real'], item['estado_real'])) for item in cant_servicios_estados
+    ]
     data_cant_servicios_estados = [float(item["cantidad"]) for item in cant_servicios_estados]
 
+    # Facturación por tipo de servicio por mes
+    facturacion_tipo_servicio_mes = Factura.objects.filter(emision__year=año_actual).values(
+        'servicio__detalles_servicio__tipoServicio__descripcion',
+        'emision__month'
+    ).annotate(total=Sum('total'))
+
+    facturacion_por_tipo = defaultdict(lambda: [0] * 12)
+    for fila in facturacion_tipo_servicio_mes:
+        desc = fila['servicio__detalles_servicio__tipoServicio__descripcion'] or "Sin nombre"
+        mes = fila['emision__month'] - 1
+        facturacion_por_tipo[desc][mes] += float(fila['total'])
+
+    labels_tipos_servicio = list(facturacion_por_tipo.keys())
+    colores_por_mes = [
+        "#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1", "#20c997",
+        "#fd7e14", "#6610f2", "#6f42c1", "#0dcaf0", "#198754", "#f8f9fa"
+    ]
+
+    datasets_por_mes = [
+        {
+            "label": MESES_ES[i + 1],
+            "data": [valores[i] for valores in facturacion_por_tipo.values()],
+            "backgroundColor": colores_por_mes[i % len(colores_por_mes)]
+        }
+        for i in range(12)
+    ]
+
     context = {
+        "labels_cant_servicios_estados": json.dumps(labels_cant_servicios_estados),
+        "data_cant_servicios_estados": json.dumps(data_cant_servicios_estados),
         "total_mes": total_mes,
         "total_año": total_año,
         "facturas_mes": facturas_mes,
@@ -105,8 +125,15 @@ def index(request):
         "data_ventas_mes": json.dumps(data_ventas_mes),
         "labels_ventas_tipo_servicio": json.dumps(labels_ventas_tipo_servicio),
         "data_ventas_tipo_servicio": json.dumps(data_ventas_tipo_servicio),
-        "labels_cant_servicios_estados": json.dumps(labels_cant_servicios_estados),
-        "data_cant_servicios_estados": json.dumps(data_cant_servicios_estados)
+        "año_actual": año_actual,
+        "mes_actual": int(mes_actual) if mes_actual else '',
+        "estado_actual": estado_actual,
+        "meses": [(i, MESES_ES[i]) for i in range(1, 13)],
+        "estados": TipoEstado.choices,
+        "años_disponibles": range(2023, hoy.year + 1),
+        "empleados_sin_asignar": Servicio.objects.filter(estado=TipoEstado.PRESUPUESTADO).count(),
+        "labels_tipos_servicio_mes": json.dumps(labels_tipos_servicio),
+        "datasets_tipo_servicio_mes": json.dumps(datasets_por_mes),
     }
 
     return render(request, "home.html", context)

@@ -1,182 +1,196 @@
-{% extends "base.html" %}
 
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-Senda
-{% endblock %}
+{% block title %}Senda{% endblock %}
 
-{% block volver %}
-{% endblock volver %}
+{% block volver %}{% endblock volver %}
 
 {% block navbtn %}
-{% if user.groups.all.0.name != "Empleado" %}
-<a href="{% url 'servicios:crearServicio' %}" class="btn btn-primary me-3"> 
-  <i class="bi bi-plus"></i> Crear Servicio
-</a>
-{% endif %}
+  {% if user.groups.all.0.name != "Empleado" %}
+    <a href="{% url 'servicios:crearServicio' %}" class="btn btn-primary me-2" title="Crear nuevo servicio">
+      <i class="bi bi-plus"></i> Crear Servicio
+    </a>
+    <a href="{% url 'servicios:exportar_excel' %}" class="btn btn-success" title="Exportar lista de servicios en Excel">
+      <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+    </a>
+  {% endif %}
 {% endblock %}
 
 {% block cmain %}
-{% if user.groups.all.0.name == "Empleado" %}
+{% if user.groups.all.0.name != "Empleado" %}
 
-  
-
-{% else %}
-
-<div class="col-12 col-md-6 d-flex">
-    <div class="card flex-fill border-0 illustration">
-      <div class="card-body p-0 d-flex flex-fill">
-        <div class="row g-0 w-100">
-          <div class="col-6">
-            <div class="p-3 m-1">
-              {% if perms.core%}
-                <h4>Bienvenido de nuevo, Admin</h4>
-                <p class="mb-0">Panel admin, senda</p>
-              {% else %}
-                <h4>Bienvenido de nuevo, {{ user.first_name }} {{ user.last_name }}</h4>
-              {% endif %}
-            </div>
-            <div class="col-6 align-self-end text-end">
-            </div>
-          </div>
-        </div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h4>Bienvenido, {{ user.first_name }} {{ user.last_name }}</h4>
+        <p class="mb-0">Panel de administración</p>
       </div>
     </div>
   </div>
 
-  <div class="col-12 col-md-6 d-flex">
-    <div class="card flex-fill border-0">
-      <div class="card-body py-4">
-        <div class="d-flex align-items-start">
-          <div class="flex-grow-1">
-            <h4 class="mb-2">
-              Empleados sin asignar:             
-            </h4>
-            <p class="text-danger">
-                2
-            </p>
-            <a href="{% url 'listarEmpleado' %}" class="btn btn-primary">Ver</a>
-          </div>
-        </div>
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h4>Empleados sin asignar:</h4>
+        <p class="text-danger fs-4">{{ empleados_sin_asignar }}</p>
+        <a href="{% url 'listarEmpleado' %}" class="btn btn-outline-primary">Ver</a>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="col-12 col-md-6 w-100">
-    <div class="card flex-fill border-0">
-      <div class="card-body py-4">
-        <h2>Estadísticas de Ventas</h2>
-        <p>Total vendido este mes: ${{ total_mes }}</p>
-        <p>Total vendido este año: ${{ total_año }}</p>
-        <p>Facturas emitidas este mes: {{ facturas_mes }}</p>
-        <p>Facturas emitidas este año: {{ facturas_año }}</p>
-        <div class="d-flex align-items-start">
-          <div class="flex-grow-1">
-            <canvas id="ctx_ventas_mes"></canvas>
-            <canvas id="ctx_ventas_tipo_servicio"></canvas>
-            <canvas id="ctx_cant_servicios_estados"></canvas>
-            <!--img src="{% static 'img/cleanweb.gif' %}"  class="img-fluid" alt="Responsive image"-->
-          </div>
-        </div>
+<div class="card border-0 mt-4 shadow-sm">
+  <div class="card-body">
+    <h2 class="mb-4">Estadísticas de Ventas</h2>
+
+    <!-- Filtros -->
+    <form method="get" class="mb-4 row g-3">
+      <div class="col-md-3">
+        <label class="form-label">Año</label>
+        <select class="form-select" name="año">
+          {% for año in años_disponibles %}
+            <option value="{{ año }}" {% if año == año_actual %}selected{% endif %}>{{ año }}</option>
+          {% endfor %}
+        </select>
       </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Mes</label>
+        <select class="form-select" name="mes">
+          <option value="">Todos</option>
+          {% for num, nombre in meses %}
+            <option value="{{ num }}" {% if num == mes_actual %}selected{% endif %}>{{ nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" name="estado">
+          <option value="">Todos</option>
+          {% for est in estados %}
+            <option value="{{ est.0 }}" {% if est.0 == estado_actual %}selected{% endif %}>{{ est.1 }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2 align-self-end">
+        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+      </div>
+    </form>
+
+    <!-- Resumen -->
+    <div class="mb-3">
+      <p><strong>Total vendido este mes:</strong> ${{ total_mes|floatformat:2 }}</p>
+      <p><strong>Total vendido este año:</strong> ${{ total_año|floatformat:2 }}</p>
+      <p><strong>Facturas este mes:</strong> {{ facturas_mes }}</p>
+      <p><strong>Facturas este año:</strong> {{ facturas_año }}</p>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row g-4">
+      {% if not mes_actual %}
+      <div class="col-md-6">
+        <canvas id="ctx_facturacion_tipo_mes"></canvas>
+      </div>
+      {% endif %}
+
+      <div class="col-md-3">
+        <canvas id="ctx_facturacion_total"></canvas>
+      </div>
+      
     </div>
   </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block extrajs %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const colores = [
+    "#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1", "#20c997",
+    "#fd7e14", "#6610f2", "#d63384", "#0dcaf0", "#6c757d", "#b02a37"
+  ];
+
+  const baseOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: true, position: 'bottom' },
+      title: { display: true, font: { size: 18 } },
+      datalabels: {
+        color: '#000',
+        font: { weight: 'bold' },
+        formatter: v => `$${v.toLocaleString()}`
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const value = ctx.parsed.y ?? ctx.parsed;
+            const label = ctx.dataset.label || ctx.label;
+            return `${label}: $${value.toLocaleString()}`;
+          }
+        }
+      }
+    },
+    scales: { y: { beginAtZero: true } }
+  };
+
+  {% if not mes_actual %}
+  new Chart("ctx_facturacion_tipo_mes", {
+    type: "bar",
+    data: {
+      labels: JSON.parse('{{ labels_tipos_servicio_mes|escapejs }}'),
+      datasets: JSON.parse('{{ datasets_tipo_servicio_mes|safe }}')
+    },
+    options: {
+      ...baseOptions,
+      plugins: {
+        ...baseOptions.plugins,
+        title: { ...baseOptions.plugins.title, text: "Facturación por servicio (discriminado por mes)" },
+        datalabels: { ...baseOptions.plugins.datalabels, anchor: 'end', align: 'top' },
+        legend: { display: true, position: 'bottom' }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
   {% endif %}
-  {% block extrajs %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var ctx_ventas_mes = document.getElementById("ctx_ventas_mes").getContext("2d");
-        var ctx_ventas_tipo_servicio = document.getElementById("ctx_ventas_tipo_servicio").getContext("2d");
-        var ctx_cant_servicios_estados = document.getElementById("ctx_cant_servicios_estados").getContext("2d");
-
-        var labels_ventas_mes = JSON.parse('{{ labels_ventas_mes|escapejs }}'); 
-        var data_ventas_mes = JSON.parse('{{ data_ventas_mes|escapejs }}');
-
-        var labels_ventas_tipo_servicio = JSON.parse('{{ labels_ventas_tipo_servicio|escapejs }}'); 
-        var data_ventas_tipo_servicio = JSON.parse('{{ data_ventas_tipo_servicio|escapejs }}');
-
-        var labels_cant_servicios_estados = JSON.parse('{{ labels_cant_servicios_estados|escapejs }}'); 
-        var data_cant_servicios_estados = JSON.parse('{{ data_cant_servicios_estados|escapejs }}');
-
-        var Ventas_Mes_Chart = new Chart(ctx_ventas_mes, {
-            type: "bar",
-            data: {
-                labels: labels_ventas_mes,
-                datasets: [{
-                    label: "Ventas",
-                    data: data_ventas_mes,
-                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        var Ventas_Tipo_Servicio_Chart = new Chart(ctx_ventas_tipo_servicio, {
-            type: "pie",
-            data: {
-                labels: labels_ventas_tipo_servicio,
-                datasets: [{
-                    label: "Ventas",
-                    data: data_ventas_tipo_servicio,
-                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        var Cant_Servicios_Estados_Chart = new Chart(ctx_cant_servicios_estados, {
-            type: "line", 
-            data: {
-                labels: labels_cant_servicios_estados,
-                datasets: [{
-                    label: "Cantidad",
-                    data: data_cant_servicios_estados,
-                    backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"],
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: true }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    });
-    </script>    
-
-  {% endblock %}
+  new Chart("ctx_facturacion_total", {
+    type: "pie",
+    data: {
+      labels: JSON.parse('{{ labels_ventas_tipo_servicio|escapejs }}'),
+      datasets: [{
+        label: "Facturación total",
+        data: JSON.parse('{{ data_ventas_tipo_servicio|escapejs }}'),
+        backgroundColor: colores
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        ...baseOptions.plugins,
+        title: { ...baseOptions.plugins.title, text: "Facturación total por tipo de servicio" },
+        datalabels: {
+          anchor: 'center',
+          align: 'center',
+          color: '#fff',
+          font: { weight: 'bold' },
+          formatter: (value, ctx) => {
+            const label = ctx.chart.data.labels[ctx.dataIndex];
+            return `${label}
+$${value.toLocaleString()}`;
+          }
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+});
+</script>
 {% endblock %}

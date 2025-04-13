@@ -3,29 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <title>Presupuesto</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            margin: 20px;
+            color: #212529;
+        }
+
+        .header, .footer, .total {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .header img {
+            width: 130px;
+        }
+
+        .separador {
+            border-top: 3px solid #0f5132; /* Verde oscuro */
+            margin: 10px 0;
+        }
+
+        .titulo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f5132;
+        }
+
+        .datos {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .seccion {
+            width: 45%;
+        }
+
+        .badge-box {
+            background-color: #198754; /* Verde bootstrap */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .servicios-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        .servicios-table th {
+            background-color: #e3f2fd; /* Azul clarito */
+            color: #0d6efd;
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        .servicios-table td {
+            border: 1px solid #dee2e6;
+            padding: 6px;
+        }
+
+        .total-final {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
-    <h1>Presupuesto N° {{ presupuesto.id }}</h1>
 
-    <h2>Cliente</h2>
-    <p><strong>Nombre:</strong> {{ presupuesto.inmueble.cliente.nombre }}</p>
-    <p><strong>Correo:</strong> {{ presupuesto.inmueble.cliente.correo }}</p>
+    <!-- Logo -->
+    <div class="header">
+        <img src="{{ logo_url }}" alt="Logo Empresa" />
+    </div>
 
-    <h2>Datos del Servicio</h2>
-    <p><strong>Inmueble:</strong> {{ presupuesto.inmueble.domicilio }}</p>
-    <p><strong>Tipo de inmueble:</strong> {{ presupuesto.inmueble.tipo }}</p>
-    <p><strong>Desde:</strong> {{ presupuesto.desde }}</p>
-    <p><strong>Hasta:</strong> {{ presupuesto.hasta }}</p>
-    <p><strong>Estado:</strong> {{ presupuesto.estado }}</p>
+    <hr>
 
-    <h2>Detalle del Servicio</h2>
-    <table border="1" cellspacing="0" cellpadding="5">
+    <!-- Info Presupuesto -->
+    <div class="datos">
+        <div class="seccion">
+            <span>Presupuesto N° {{ presupuesto.id }}</span>
+        </div>
+        <div class="seccion" style="text-align: right;">
+            {% if presupuesto.desde == presupuesto.hasta %}
+                <p><strong>Fecha:</strong> {{ presupuesto.desde }}</p>
+            {% else %}
+                <p><strong>Fecha Inicio:</strong> {{ presupuesto.desde }}</p>
+                <p><strong>Fecha Fin:</strong> {{ presupuesto.hasta }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cliente + Total -->
+    <div class="datos">
+        <div class="seccion">
+            <p><strong>Cliente:</strong> {{ presupuesto.inmueble.cliente }}</p>
+            <p><strong>Email:</strong> {{ presupuesto.inmueble.cliente.correo }}</p>
+            <p><strong>Domicilio:</strong> {{ presupuesto.inmueble.domicilio }}</p>
+        </div>
+        <div class="seccion" style="text-align: right;">
+            <p><strong>Total Estimado:</strong> ${{ presupuesto.totalEstimado }}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Tabla de Servicios -->
+    <table class="servicios-table">
         <thead>
             <tr>
                 <th>Descripción</th>
                 <th>m²</th>
-                <th>Precio por m²</th>
-                <th>Total</th>
+                <th>Precio x m²</th>
+                <th>Subtotal</th>
             </tr>
         </thead>
         <tbody>
@@ -36,18 +136,13 @@
                 <td>${{ detalle.tipoServicio.importe }}</td>
                 <td>${{ detalle.importe }}</td>
             </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">No hay detalles cargados</td>
-            </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <h2>Total</h2>
-    <p><strong>Total estimado:</strong> ${{ presupuesto.totalEstimado }}</p>
+    <div class="total-final">
+        Total Final: ${{ presupuesto.totalEstimado }}
+    </div>
 
-    <hr>
-    <p>Este presupuesto es válido por 15 días desde su emisión.</p>
 </body>
 </html>

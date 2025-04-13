@@ -19,23 +19,38 @@ from .models import TipoServicio, Servicio
 from core.models import Cliente, Inmueble
 from turnos.models import Horario
 
-from xhtml2pdf import pisa  # ✅ nueva librería
-import io, os
+from django.template.loader import get_template
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+import os
+from django.conf import settings
+from .models import Servicio
+from django.shortcuts import get_object_or_404
 
 # --------------------- VISTA PARA GENERAR PRESUPUESTO PDF ----------------------------
-from django.conf import settings
 
 def generar_presupuesto_pdf(request, presupuesto_id):
     servicio = get_object_or_404(Servicio, pk=presupuesto_id)
     template = get_template('pdf/presupuesto.html')
-    html = template.render({'presupuesto': servicio})
 
-    result = io.BytesIO()
-    pisa.CreatePDF(io.StringIO(html), dest=result)  # sin CSS
+    # Generar URL absoluta a la imagen en /static/img/senda.png
+    logo_url = request.build_absolute_uri('/static/img/senda.png')
 
-    response = HttpResponse(result.getvalue(), content_type='application/pdf')
+    html = template.render({
+        'presupuesto': servicio,
+        'logo_url': logo_url
+    })
+
+    response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'filename=presupuesto_{presupuesto_id}.pdf'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('Error al generar el PDF', status=500)
+    
     return response
+
 
 # -----------------------------------------------------------------VISTA TIPO SERVICIO------------------------------------------------------------------------------------------
 

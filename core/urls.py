@@ -46,7 +46,8 @@ from .views import (
     EmpleadoDeleteView,
     CategoriaCreateView,
     CategoriaListView,
-    CategoriaUpdateView
+    CategoriaUpdateView,
+    buscar
 )
 
 urlpatterns = [
@@ -57,6 +58,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('salir/', salir, name="salir"),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('buscar/', buscar, name='buscar'),
 
     # Perfil
     path('perfil/', perfil_view, name='perfil'),

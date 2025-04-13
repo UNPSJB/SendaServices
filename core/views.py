@@ -31,7 +31,48 @@ from .utils import ListFilterView
 from facturas.models import Factura
 from servicios.models import Servicio, TipoEstado, Estado
 
+from django.shortcuts import render
+from core.models import Cliente, Empleado, Inmueble  # importá lo que necesites
+from django.db.models import Q
 
+from django.db.models import Q
+from core.models import Cliente, Empleado, Inmueble
+def buscar(request):
+    query = request.GET.get('q', '').strip()
+
+    if not query:
+        return render(request, 'buscar_resultados.html', {
+            'query': '',
+            'clientes': [],
+            'empleados': [],
+            'inmuebles': [],
+        })
+
+    resultados_clientes = Cliente.objects.filter(
+        Q(nombre__icontains=query) |
+        Q(apellido__icontains=query) |
+        Q(correo__icontains=query) |
+        Q(cuil_cuit__icontains=query)
+    )
+
+    resultados_empleados = Empleado.objects.filter(
+        Q(nombre__icontains=query) |
+        Q(apellido__icontains=query) |
+        Q(correo__icontains=query) |
+        Q(cuil__icontains=query) |
+        Q(categoria__nombre__icontains=query)
+    )
+
+    resultados_inmuebles = Inmueble.objects.filter(
+        Q(domicilio__icontains=query)
+    )
+
+    return render(request, 'buscar_resultados.html', {
+        'query': query,
+        'clientes': resultados_clientes,
+        'empleados': resultados_empleados,
+        'inmuebles': resultados_inmuebles,
+    })
 
 @login_required
 def index(request):
@@ -114,7 +155,13 @@ def index(request):
         for i in range(12)
     ]
 
+    hay_facturacion_total = any(data_ventas_tipo_servicio)
+    hay_facturacion_mensual = any([sum(dataset["data"]) for dataset in datasets_por_mes]) if datasets_por_mes else False
+
+
     context = {
+        "hay_facturacion_total": hay_facturacion_total,
+        "hay_facturacion_mensual": hay_facturacion_mensual,
         "labels_cant_servicios_estados": json.dumps(labels_cant_servicios_estados),
         "data_cant_servicios_estados": json.dumps(data_cant_servicios_estados),
         "total_mes": total_mes,

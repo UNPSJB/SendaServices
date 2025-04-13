@@ -20,90 +20,183 @@
 {% block cmain %}
 {% if user.groups.all.0.name != "Empleado" %}
 
-<div class="row">
-  <div class="col-md-6">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
-        <h4>Bienvenido, {{ user.first_name }} {{ user.last_name }}</h4>
-        <p class="mb-0">Panel de administración</p>
-      </div>
-    </div>
-  </div>
+<div class="container py-3">
 
-  <div class="col-md-6">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
-        <h4>Empleados sin asignar:</h4>
-        <p class="text-danger fs-4">{{ empleados_sin_asignar }}</p>
-        <a href="{% url 'listarEmpleado' %}" class="btn btn-outline-primary">Ver</a>
+  <!-- Bienvenida + Filtros -->
+  <div class="row g-3 mb-4">
+
+<!-- Bienvenida -->
+<div class="col-md-4">
+  <div class="card border-0 shadow-sm h-100">
+    <div class="card-body p-3 text-center">
+      <h4 class="fw-bold">
+        Bienvenido, {% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}Admin!{% endif %}
+      </h4>
+      <p class="text-muted mb-3">Panel de administración de Senda Services.</p>
+
+      <!-- Botones redondos con texto -->
+      <div class="d-flex flex-wrap justify-content-center gap-4">
+
+        <!-- Crear Servicio -->
+        <div class="text-center">
+          <a href="{% url 'servicios:crearServicio' %}" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center mx-auto"
+             style="width: 56px; height: 56px;" title="Crear Servicio">
+            <i class="bi bi-plus-circle fs-5 text-white"></i>
+          </a>
+          <small class="d-block mt-1 text-muted">Crear Servicio</small>
+        </div>
+
+        <!-- Crear Cliente -->
+        <div class="text-center">
+          <a href="{% url 'crearCliente' %}" class="btn btn-success rounded-circle d-flex align-items-center justify-content-center mx-auto"
+             style="width: 56px; height: 56px;" title="Crear Cliente">
+            <i class="bi bi-person-plus fs-5 text-white"></i>
+          </a>
+          <small class="d-block mt-1 text-muted">Crear Cliente</small>
+        </div>
+
+        <!-- Listar Servicios -->
+        <div class="text-center">
+          <a href="{% url 'servicios:listarServicio' %}" class="btn btn-secondary rounded-circle d-flex align-items-center justify-content-center mx-auto"
+             style="width: 56px; height: 56px;" title="Listar Servicios">
+            <i class="bi bi-list-ul fs-5 text-white"></i>
+          </a>
+          <small class="d-block mt-1 text-muted">Ver Servicios</small>
+        </div>
+
+        <!-- Listar Clientes -->
+        <div class="text-center">
+          <a href="{% url 'listarCliente' %}" class="btn btn-info rounded-circle d-flex align-items-center justify-content-center mx-auto"
+             style="width: 56px; height: 56px;" title="Listar Clientes">
+            <i class="bi bi-people fs-5 text-white"></i>
+          </a>
+          <small class="d-block mt-1 text-muted">Ver Clientes</small>
+        </div>
+
       </div>
     </div>
   </div>
 </div>
 
-<div class="card border-0 mt-4 shadow-sm">
-  <div class="card-body">
-    <h2 class="mb-4">Estadísticas de Ventas</h2>
+
 
     <!-- Filtros -->
-    <form method="get" class="mb-4 row g-3">
-      <div class="col-md-3">
-        <label class="form-label">Año</label>
-        <select class="form-select" name="año">
-          {% for año in años_disponibles %}
-            <option value="{{ año }}" {% if año == año_actual %}selected{% endif %}>{{ año }}</option>
-          {% endfor %}
-        </select>
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-3">
+          <form method="get" class="row g-2">
+            <div class="col-md-4">
+              <label class="form-label">Año</label>
+              <select class="form-select" name="año">
+                {% for año in años_disponibles %}
+                  <option value="{{ año }}" {% if año == año_actual %}selected{% endif %}>{{ año }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Mes</label>
+              <select class="form-select" name="mes">
+                <option value="">Todos</option>
+                {% for num, nombre in meses %}
+                  <option value="{{ num }}" {% if num == mes_actual %}selected{% endif %}>{{ nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Estado</label>
+              <select class="form-select" name="estado">
+                <option value="">Todos</option>
+                {% for est in estados %}
+                  <option value="{{ est.0 }}" {% if est.0 == estado_actual %}selected{% endif %}>{{ est.1 }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12 text-center">
+              <button type="submit" class="btn btn-primary px-4">Filtrar</button>
+            </div>
+          </form>
+        </div>
       </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Mes</label>
-        <select class="form-select" name="mes">
-          <option value="">Todos</option>
-          {% for num, nombre in meses %}
-            <option value="{{ num }}" {% if num == mes_actual %}selected{% endif %}>{{ nombre }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Estado</label>
-        <select class="form-select" name="estado">
-          <option value="">Todos</option>
-          {% for est in estados %}
-            <option value="{{ est.0 }}" {% if est.0 == estado_actual %}selected{% endif %}>{{ est.1 }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class="col-md-2 align-self-end">
-        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-      </div>
-    </form>
-
-    <!-- Resumen -->
-    <div class="mb-3">
-      <p><strong>Total vendido este mes:</strong> ${{ total_mes|floatformat:2 }}</p>
-      <p><strong>Total vendido este año:</strong> ${{ total_año|floatformat:2 }}</p>
-      <p><strong>Facturas este mes:</strong> {{ facturas_mes }}</p>
-      <p><strong>Facturas este año:</strong> {{ facturas_año }}</p>
-    </div>
-
-    <!-- Gráficos -->
-    <div class="row g-4">
-      {% if not mes_actual %}
-      <div class="col-md-6">
-        <canvas id="ctx_facturacion_tipo_mes"></canvas>
-      </div>
-      {% endif %}
-
-      <div class="col-md-3">
-        <canvas id="ctx_facturacion_total"></canvas>
-      </div>
-      
     </div>
   </div>
-</div>
+
+  <!-- Tarjetas resumen -->
+  <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
+
+    <div class="col">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center p-3">
+          <i class="bi bi-cash-coin display-5 text-primary mb-2"></i>
+          <h6 class="mb-1">Total vendido este mes</h6>
+          <h5 class="fw-bold text-success mb-0">${{ total_mes|floatformat:2 }}</h5>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center p-3">
+          <i class="bi bi-wallet2 display-5 text-success mb-2"></i>
+          <h6 class="mb-1">Total vendido este año</h6>
+          <h5 class="fw-bold text-primary mb-0">${{ total_año|floatformat:2 }}</h5>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center p-3">
+          <i class="bi bi-receipt-cutoff display-5 text-warning mb-2"></i>
+          <h6 class="mb-1">Facturas este mes</h6>
+          <h5 class="fw-bold text-dark mb-0">{{ facturas_mes }}</h5>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center p-3">
+          <i class="bi bi-clipboard-data display-5 text-danger mb-2"></i>
+          <h6 class="mb-1">Facturas este año</h6>
+          <h5 class="fw-bold text-dark mb-0">{{ facturas_año }}</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <h2 class="mb-3">Estadísticas de Ventas</h2>
+
+      <div class="row g-4">
+        {% if not mes_actual %}
+        <div class="col-md-6">
+          {% if hay_facturacion_mensual %}
+            <canvas id="ctx_facturacion_tipo_mes"></canvas>
+          {% else %}
+            <div class="alert alert-info text-center">
+              No hubo facturación en este mes para mostrar.
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+
+        <div class="col-md-3">
+          {% if hay_facturacion_total %}
+            <canvas id="ctx_facturacion_total"></canvas>
+          {% else %}
+            <div class="alert alert-info text-center">
+              No hubo facturación en el año o en este período.
+            </div>
+          {% endif %}
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
 
 {% endif %}
 {% endblock %}

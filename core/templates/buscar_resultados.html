@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Resultados de Búsqueda{% endblock %}
+{% block volver %}{% endblock volver %}
+
+{% block navbtn %}{% endblock %}
+
+{% block tnav %}
+  Resultados de Búsqueda
+{% endblock %}
+
+{% block cmain %}
+<div class="container-fluid">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h3 class="mb-4">Resultados para: <span class="text-primary">"{{ query }}"</span></h3>
+
+      <!-- Clientes -->
+      <div class="mb-4">
+        <h4>Clientes</h4>
+        <ul class="list-group">
+          {% for cliente in clientes %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ cliente.nombre }} {{ cliente.apellido }}
+              <a href="{% url 'listarCliente' %}?cuil_cuit={{ cliente.cuil_cuit }}" class="btn btn-outline-primary btn-sm">
+                Ver en listado
+              </a>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-center text-muted">
+              No se encontraron clientes
+              <div class="mt-2 d-flex justify-content-center gap-2">
+                <a href="{% url 'crearCliente' %}" class="btn btn-sm btn-success">
+                  <i class="bi bi-person-plus"></i> Crear Cliente
+                </a>
+                <a href="{% url 'listarCliente' %}" class="btn btn-sm btn-secondary">
+                  <i class="bi bi-list-ul"></i> Ver listado
+                </a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Empleados -->
+      <div class="mb-4">
+        <h4>Empleados</h4>
+        <ul class="list-group">
+          {% for empleado in empleados %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ empleado.nombre }} {{ empleado.apellido }}
+              <a href="{% url 'listarEmpleado' %}?cuil={{ empleado.cuil }}" class="btn btn-outline-primary btn-sm">
+                Ver en listado
+              </a>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-center text-muted">
+              No se encontraron empleados
+              <div class="mt-2 d-flex justify-content-center gap-2">
+                <a href="{% url 'crearEmpleado' %}" class="btn btn-sm btn-success">
+                  <i class="bi bi-person-plus"></i> Crear Empleado
+                </a>
+                <a href="{% url 'listarEmpleado' %}" class="btn btn-sm btn-secondary">
+                  <i class="bi bi-list-ul"></i> Ver listado
+                </a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Inmuebles -->
+      <div class="mb-4">
+        <h4>Inmuebles</h4>
+        <ul class="list-group">
+          {% for inmueble in inmuebles %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ inmueble.domicilio }}
+              <a href="{% url 'listarInmuebles' %}?domicilio={{ inmueble.domicilio }}" class="btn btn-outline-primary btn-sm">
+                Ver en listado
+              </a>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-center text-muted">
+              No se encontraron inmuebles
+              <div class="mt-2 d-flex justify-content-center gap-2">
+                <a href="{% url 'crearInmueble' %}" class="btn btn-sm btn-success">
+                  <i class="bi bi-building"></i> Crear Inmueble
+                </a>
+                <a href="{% url 'listarInmuebles' %}" class="btn btn-sm btn-secondary">
+                  <i class="bi bi-list-ul"></i> Ver listado
+                </a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

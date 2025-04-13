@@ -7,13 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
     {% block title %}
-      
+
     {% endblock %}
   </title>
 
   <!--Boostrap, Iconos Boostrap-->
   <link rel="stylesheet" href="{% static 'third-party/css/bootstrap.min.css'%}">
-  <link rel="stylesheet" href="{% static 'third-party/css/bootstrap-icons.css' %}"> 
+  <link rel="stylesheet" href="{% static 'third-party/css/bootstrap-icons.css' %}">
   <!--Hoja de estilos-->
   <link rel="stylesheet" type="text/css" href='{% static "css/style.css" %}'>
   <!--Icono-->
@@ -23,7 +23,7 @@
 </head>
 
 <body>
-{% block body %}
+  {% block body %}
 
   {%block aside %}
   <!--MENU-->
@@ -32,73 +32,150 @@
       <!--Contenido del sidebar-->
       <div class="h-100">
         <div class="sidebar-logo p-0 m-0">
-          <a href="#">
+          <a href="{% url 'home' %}">
+
             <div class="d-flex justify-content-center align-items-center" style="width: 264px; height: 64.4px;">
               <img src="{% static 'img/senda.png' %}" class="p-0">
+
+
           </a>
         </div>
         <!--Menu sidebar-->
         <ul class="sidebar-nav">
+          <li class="sidebar-header"></li>
 
-          <li class="sidebar-header">Opciones Generales</li>
+          <!-- Home -->
           <li class="sidebar-item">
             <a href="{% url 'home' %}" class="sidebar-link">
               <i class="bi bi-house-fill"></i> Home
             </a>
           </li>
-        
-          {% if user.groups.all.0.name == "Empleado" %}
-            <!-- SOLO EMPLEADOS -->
-            <li class="sidebar-item">
-              <a href="{% url 'turnos:listarPeriodosDeEmpleado' user.empleado.pk %}" class="sidebar-link">
-                <i class="bi bi-alarm"></i> Mis Turnos
-              </a>
-            </li>
-          
-          {% else %}
-            <!-- ADMIN / OTROS -->
-            <li class="sidebar-item">
-              <a href="{% url 'listarEmpleado' %}" class="sidebar-link">
-                <i class="bi bi-person-square"></i> Empleados
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a href="{% url 'listarCategoria' %}" class="sidebar-link">
-                <i class="bi bi-clipboard2-fill"></i> Categorías
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a href="{% url 'listarCliente' %}" class="sidebar-link">
-                <i class="bi bi-person-fill"></i> Clientes
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a href="{% url 'listarInmuebles' %}" class="sidebar-link">
-                <i class="bi bi-building-fill"></i> Inmuebles
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a href="{% url 'listarProductos' %}" class="sidebar-link">
-                <i class="bi bi-box-seam"></i> Productos
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a href="{% url 'servicios:listarTipoServicio' %}" class="sidebar-link">
-                <i class="bi bi-file-earmark-text-fill"></i> Tipos de Servicios
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a href="{% url 'turnos:listarPeriodos' %}" class="sidebar-link">
-                <i class="bi bi-alarm"></i> Turnos
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a href="{% url 'servicios:listarServicio' %}" class="sidebar-link">
-                <i class="bi bi-file-medical-fill"></i> Servicios
-              </a>
-            </li>
+
+          {% if perms.core %}
+
+          <!-- Servicios -->
+          <li class="sidebar-item">
+            <span class="sidebar-header"><i class="bi bi-file-medical-fill"></i> Servicios</span>
+            <ul class="sidebar-dropdown list-unstyled">
+              <li class="sidebar-item">
+                <a href="{% url 'servicios:crearServicio' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-plus"></i> Crear Servicio
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="{% url 'servicios:listarServicio' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-list-ul"></i> Listar Servicios
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Clientes -->
+          <li class="sidebar-item">
+            <span class="sidebar-header"><i class="bi bi-person-lines-fill"></i> Clientes</span>
+            <ul class="sidebar-dropdown list-unstyled">
+              <li class="sidebar-item">
+                <a href="{% url 'crearCliente' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-plus"></i> Crear
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="{% url 'listarCliente' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-list-ul"></i> Buscar
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Inmuebles -->
+          <li class="sidebar-item">
+            <span class="sidebar-header"><i class="bi bi-building-fill"></i> Inmuebles</span>
+            <ul class="sidebar-dropdown list-unstyled">
+              <li class="sidebar-item">
+                <a href="{% url 'crearInmueble' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-plus"></i> Crear
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="{% url 'listarInmuebles' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-list-ul"></i> Buscar
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Empleados -->
+          <li class="sidebar-item">
+            <span class="sidebar-header"><i class="bi bi-person-bounding-box"></i> Empleados</span>
+            <ul class="sidebar-dropdown list-unstyled">
+              <li class="sidebar-item">
+                <a href="{% url 'crearEmpleado' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-plus"></i> Crear
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="{% url 'listarEmpleado' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-list-ul"></i> Buscar
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Productos -->
+          <li class="sidebar-item">
+            <span class="sidebar-header"><i class="bi bi-box-seam"></i> Productos</span>
+            <ul class="sidebar-dropdown list-unstyled">
+              <li class="sidebar-item">
+                <a href="{% url 'crearProducto' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-plus"></i> Crear
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="{% url 'listarProductos' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-list-ul"></i> Buscar
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Tipo Servicio -->
+          <li class="sidebar-item">
+            <span class="sidebar-header"><i class="bi bi-file-earmark-text-fill"></i> Tipo Servicio</span>
+            <ul class="sidebar-dropdown list-unstyled">
+              <li class="sidebar-item">
+                <a href="{% url 'servicios:crearTipoServicio' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-plus"></i> Crear
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="{% url 'servicios:listarTipoServicio' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-list-ul"></i> Buscar
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Categorías -->
+          <li class="sidebar-item">
+            <span class="sidebar-header"><i class="bi bi-clipboard2-fill"></i> Categorías</span>
+            <ul class="sidebar-dropdown list-unstyled">
+              <li class="sidebar-item">
+                <a href="{% url 'crearCategoria' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-plus"></i> Crear
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="{% url 'listarCategoria' %}" class="sidebar-link mx-3">
+                  <i class="bi bi-list-ul"></i> Buscar
+                </a>
+              </li>
+            </ul>
+          </li>
+
+
+
           {% endif %}
-        
+
         </ul>
       </div>
     </aside>
@@ -108,30 +185,42 @@
     <div class="main">
       <!--Contenido del nav-->
       <nav class="navbar navbar-expand px-3 border-bottom bg-light">
+
         <button class="btn" id="sidebar-toggle" type="button">
           <span class="navbar-toggler-icon"></span>
         </button>
 
         {% block tnav %}
-          <div class="container-fluid"><h4 class="mt-2">{{ tnav }}</h4></div> 
+        <div class="container-fluid">
+          <h4 class="mt-2">{{ tnav }}</h4>
+        </div>
         {% endblock %}
 
-        {% block navbtn %}{% endblock %}
+        <div class="d-flex align-items-center ms-auto gap-3">
+          <form class="d-flex align-items-center" method="get" action="{% url 'buscar' %}">
+            <input class="form-control me-2" type="search" name="q" placeholder="Buscar..." aria-label="Buscar">
+            <button type="submit"
+            class="btn d-flex align-items-center justify-content-center"
+            style="width: 42px; height: 42px; border-radius: 50%; background: none; border: none;"
+            data-bs-toggle="tooltip" data-bs-placement="top" title="Filtrar">
+      <i class="bi bi-search fs-5 text-primary"></i>
+    </button>
+    
+          </form>
+          
 
-        <div class="navbar-collapse navbar">
-          <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-              <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
-                <img src="{% static 'img/user.png' %}" alt="" class="avatar img-fluid rounded">
-              </a>
-              <div class="dropdown-menu dropdown-menu-end">
-                <a href="{% url 'perfil' %}" class="dropdown-item">Perfil</a>
-                {% block salir %}
-                <a href="{% url 'salir' %}" class="dropdown-item">Salir</a> 
-                {% endblock salir %}
-              </div>
-            </li>
-          </ul>
+          <div class="dropdown">
+            <a href="#" data-bs-toggle="dropdown" class="nav-icon d-flex align-items-center">
+              <i class="bi bi-person-circle fs-2 text-success"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end">
+              <a href="{% url 'perfil' %}" class="dropdown-item">Información</a>
+              {% block salir %}
+              <a href="{% url 'salir' %}" class="dropdown-item">Salir</a>
+              {% endblock salir %}
+            </div>
+          </div>
+          
         </div>
       </nav>
       {% endblock %}
@@ -146,7 +235,7 @@
 
           </div>
           <div class="row">
-            
+
             {% block cmain %}
 
             {% endblock %}
@@ -154,11 +243,14 @@
           </div>
         </div>
       </main>
-      
+
     </div>
 
   </div>
   {% endblock %}
+
+
+
 
   <script src="{% static 'third-party/js/jquery.min.js' %}"></script>
 
@@ -171,8 +263,9 @@
   <script src="{% static 'js/aside.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/modal_form_validation.js' %}"></script>
 
-  {% block extrajs %}{% endblock %}
 
+  {% block extrajs %}
+  {% endblock %}
 </body>
 
 </html>

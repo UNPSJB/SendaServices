@@ -17,10 +17,84 @@ from servicios.models import Servicio
 from core.models import Empleado
 from .forms import (
     HorarioForm, 
-    HorarioModForm,
+    # HorarioModForm,
     HorarioFiltrosForm,
     HorarioCustomFiltrosForm
   )
+
+
+class HorarioCreateView(CreateView):
+    model = Horario
+    form_class = HorarioForm
+    template_name = "horario_form.html"
+
+    def get_servicio(self):
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return Servicio.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_empleado(self):
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            return Empleado.objects.get(pk=pk)
+        else:
+            return None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        empleado = self.get_empleado()
+        if empleado is not None:
+            kwargs["empleado"] = empleado
+        return kwargs
+
+    def get_success_url(self, **kwargs):
+        empleado = self.get_empleado()
+        if empleado is not None:
+            return reverse_lazy('turnos:listarHorariosDeEmpleado', kwargs={"pk": empleado.pk})
+        else:
+            return reverse_lazy('listarHorarios')
+
+    def get_form(self, form_class=None):
+        """Return an instance of the form to be used in this view."""
+        form = super().get_form(form_class=form_class)
+        # empleado = self.get_empleado()
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        empleado = self.get_empleado()
+        context["titulo"] = "Registrar Horario"
+        context["empleado"] = empleado
+        return context
+
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        form = self.get_form(form_class=self.get_form_class())
+        self.object = form.save(commit=False)
+        empleado = self.get_empleado()
+        self.object.empleado = empleado
+        if request.method == "POST":
+            data = json.loads(request.body)
+            servicio_id = data.get('servicio_id')
+            fecha_inicio = data.get('fecha_inicio')
+            fecha_fin = data.get('fecha_fin')
+
+            # Crear el horario
+            servicio = Servicio.objects.get(id=servicio_id)
+            empleado = Empleado.objects.get(id=empleado.pk)
+
+            horario = Horario.objects.create(
+                servicio=servicio,
+                empleado=empleado,
+                fecha_inicio=fecha_inicio,
+                fecha_fin=fecha_fin,
+            )
+        self.object.save()
+        messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
+        return super().form_valid(form)
+    
 
 # Create your views here.s
 class HorarioListView(ListFilterView):
@@ -82,93 +156,6 @@ class HorarioListView(ListFilterView):
             context["empleado"] = empleado
         elif servicio:
             context['tnav'] = "Gestion de Horarios" if not servicio else f"Gestion de horarios: {servicio}"
-            context["servicio"] = servicio        
+            context["servicio"] = servicio 
+        context["servicios"] = Servicio.objects.all()   
         return context
-
-
-class HorarioUpdateView(UpdateView):
-    model = Horario
-    form_class = HorarioModForm
-    success_url = reverse_lazy('turnos:listarHorarios')
-    template_name = "horario_modal.html"
-
-    def get_horario(self):
-        pk = self.kwargs.get('pk')
-        if pk is not None:
-            return Horario.objects.get(pk=pk)
-        else:
-            return 
-
-    def get_form(self, form_class=None):
-        """Return an instance of the form to be used in this view."""
-        form = super().get_form(form_class=form_class)
-        return form
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        horario = self.get_horario()
-        context["titulo"] = "Registrar Horario"
-        context["horario"] = horario
-        return context
-
-    def form_valid(self, form):
-        """If the form is valid, save the associated model."""
-        self.object = form.save()
-        messages.success(self.request, "✨ ¡Éxito! El turno se ha modificado exitosamente. 🔄")
-        return super().form_valid(form)
-
-
-class HorarioCreateView(CreateView):
-    model = Horario
-    form_class = HorarioForm
-    template_name = "horario_form.html"
-
-    def get_servicio(self):
-        pk = self.kwargs.get('pk')
-        if pk is not None:
-            return Servicio.objects.get(pk=pk)
-        else:
-            return None
-
-    def get_empleado(self):
-        pk = self.kwargs.get('pk')
-        if pk is not None:
-            return Empleado.objects.get(pk=pk)
-        else:
-            return None
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        empleado = self.get_empleado()
-        if empleado is not None:
-            kwargs["empleado"] = empleado
-        return kwargs
-
-    def get_success_url(self, **kwargs):
-        empleado = self.get_empleado()
-        if empleado is not None:
-            return reverse_lazy('turnos:listarHorariosDeEmpleado', kwargs={"pk": empleado.pk})
-        else:
-            return reverse_lazy('listarHorarios')
-
-    def get_form(self, form_class=None):
-        """Return an instance of the form to be used in this view."""
-        form = super().get_form(form_class=form_class)
-        empleado = self.get_empleado()
-        return form
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        empleado = self.get_empleado()
-        context["titulo"] = "Registrar Horario"
-        context["empleado"] = empleado
-        return context
-
-    def form_valid(self, form):
-        """If the form is valid, save the associated model."""
-        form = self.get_form(form_class=self.get_form_class())
-        self.object = form.save(commit=False)
-        self.object.empleado = self.get_empleado()
-        self.object.save()
-        messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
-        return super().form_valid(form)

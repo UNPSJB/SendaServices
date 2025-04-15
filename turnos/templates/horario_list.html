@@ -12,30 +12,6 @@ Buscar Horario
     
 {% endblock %}
 
-{% comment %} {% block thextras %}
-    <th colspan="">Fecha Desde</th>
-    <th colspan="">Fecha Hasta</th> 
-{% endblock %} {% endcomment %}
-
-{% comment %} {% block tcuerpo %}
-     {% for h in horario %}
-    <tr>
-        <td>{{forloop.counter}}</td>
-        <td>{{h.empleado }}</td>
-        <td>{{h.servicio}}</td>
-        <td>{{h.diaSemana}}</td>
-        <td>{{h.turno}}</td>
-        <td>{{h.asistencia}}</td>s
-        <td>{{h.servicio.desde }}</td>
-        <td>{{h.servicio.hasta }}</td>
-    </tr>
-    {% empty %}
-        <tr> <td> No hay turnos registrados </td> </tr>
-    {% endfor %} 
-    <div id="calendar"></div>
-
-{% endblock %} {% endcomment %}
-
 {% block cmain %} 
     {% for msg in messages %}
 
@@ -64,6 +40,54 @@ Buscar Horario
                 {% endif %}
                 <div id="calendar"></div>
             </div>
+            <div class="modal fade" id="nuevoHorarioModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="formNuevoHorario">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Nuevo Horario</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="servicioSelect">Servicio:</label>
+                                    <select id="servicioSelect" class="form-select" required>
+                                        {% for s in servicios %}
+                                            <option value="{{ s.id }}">{{ s }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fechaInicio">Fecha de inicio:</label>
+                                    <input type="date" class="form-control" id="fechaInicio" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fechaFin">Fecha de fin:</label>
+                                    <input type="date" class="form-control" id="fechaFin" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+              
+            <!-- Modal para ver detalles -->
+            <div class="modal fade" id="detalleHorarioModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detalle del Horario</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Servicio:</strong> <span id="detalleServicio"></span></p>
+                            <p><strong>Inicio:</strong> <span id="detalleInicio"></span></p>
+                            <p><strong>Fin:</strong> <span id="detalleFin"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -74,37 +98,98 @@ Buscar Horario
 <script>
 
     document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        //initialView: 'dayGridMonth'
-        events: [
-            {% for horario in object_list %}
+        var calendarEl = document.getElementById('calendar');
+        var today = new Date(); 
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            initialDate: today,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,list'
+            },
+            navLinks: true, // can click day/week names to navigate views
+            selectable: true,
+            selectMirror: true,
+            editable: true,
+            dayMaxEvents: true, // allow "more" link when too many events
+            // events: {{ events|safe }},
+            events: [
+                {% for horario in object_list %}
                 {
                     title: "{{ horario.servicio }}",
-                    start: "{{ horario.servicio.desde | date:'Y-m-d' }}",
-                    end: "{{ horario.servicio.hasta | date:'Y-m-d' }}",
+                    start: "{{ horario.fecha_inicio | date:'Y-m-d' }}",
+                    end: "{{ horario.fecha_fin | date:'Y-m-d' }}",
+                    //url: 'turnos/horarios/<int:pk>/listar/horarios/<int:pk>/crear/',
                 },
-            {% endfor %}
-        ]
-    });
-    calendar.render();
+                {% endfor %}
+            ],
+
+            dateClick: function(info) {
+                document.getElementById('fechaInicio').value = info.dateStr;
+                document.getElementById('fechaFin').value = info.dateStr;
+                new bootstrap.Modal(document.getElementById('nuevoHorarioModal')).show();
+            },
+    
+            eventClick: function(info) {
+                const props = info.event.extendedProps;
+                document.getElementById('detalleServicio').innerText = info.event.title;
+                document.getElementById('detalleInicio').innerText = props.fechaInicio;
+                document.getElementById('detalleFin').innerText = props.fechaFin;
+                new bootstrap.Modal(document.getElementById('detalleHorarioModal')).show();
+            }
+        });
+        calendar.render();
+
+        // Manejo del formulario para crear nuevo evento
+        document.getElementById('formNuevoHorario').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const servicioId = document.getElementById('servicioSelect').value;
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+
+            try {
+                const response = await fetch("{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: JSON.stringify({
+                        servicio_id: servicioId,
+                        fecha_inicio: fechaInicio,
+                        fecha_fin: fechaFin,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Error al crear el horario.");
+                }
+
+                const nuevoHorario = await response.json();
+
+                calendar.addEvent({
+                    title: nuevoHorario.servicio_nombre,
+                    start: nuevoHorario.fecha_inicio,
+                    end: nuevoHorario.fecha_fin,
+                    extendedProps: {
+                        servicioId: nuevoHorario.servicio_id,
+                        fechaInicio: nuevoHorario.fecha_inicio,
+                        fechaFin: nuevoHorario.fecha_fin
+                    }
+                });
+
+                bootstrap.Modal.getInstance(document.getElementById('nuevoHorarioModal')).hide();
+                this.reset();
+
+            } catch (err) {
+                alert(err.message);
+            }
+        });
     });
 
-</script>
-
-<!--Modal-->
-<script type="text/javascript">
-var $ = jQuery.noConflict();
-function abrir_modal(url){
-    $('#modal').load(url, function(){
-        $(this).modal('show');
-        bindFormSet($('#modal'));
-    });
-}
-
-function cerrar_modal() {
-    $('#modal').modal('hide');
-}
 </script>
 
 {% endblock %}

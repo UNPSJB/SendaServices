@@ -156,6 +156,17 @@ Buscar Horario
 
             try {
                 const response = await fetch("{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}", {
+                /*
+                const form = document.getElementById('formNuevoHorario');
+                const empleadoId = form.dataset.empleadoId;
+                
+                if (!empleadoId) {
+                    alert("No se encontró el ID del empleado.");
+                    return;
+                }
+                
+                const url = `/turnos/horarios/${empleadoId}/crear/`;*/
+                             
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -191,7 +202,7 @@ Buscar Horario
                 this.reset();
 
             } catch (err) {
-                alert(err.message);
+                alert(err.message + "hola");
             }
         });
     });

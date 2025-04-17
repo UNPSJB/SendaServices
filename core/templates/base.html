@@ -96,21 +96,6 @@
           </li>
           {% endif %}
 
-          <!-- Turnos -->
-          {% if perms.core %}
-          <li class="sidebar-item">
-            <a href="{% url 'turnos:listarHorarios' %}" class="sidebar-link"> 
-              <i class="bi bi-alarm"></i> Horarios
-            </a>
-          </li>
-          {% else %}
-          <li class="sidebar-item">
-            <a href="{% url 'turnos:listarHorariosDeEmpleado' user.empleado.pk %}" class="sidebar-link"> 
-              <i class="bi bi-alarm"></i> Horarios
-            </a>
-          </li>
-          {% endif %}
-
           {% if perms.core %}
           <!-- Menu servicios -->
           <li class="sidebar-item">

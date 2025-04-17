@@ -130,6 +130,12 @@ def buscar(request):
         'empleados': resultados_empleados,
         'inmuebles': resultados_inmuebles,
     })
+from collections import defaultdict
+from django.db.models import Sum, Count, OuterRef, Subquery
+import json
+from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 
 @login_required
 def index(request):
@@ -141,7 +147,6 @@ def index(request):
     mes_actual = request.GET.get("mes")
     estado_actual = request.GET.get("estado")
 
-    # Filtros principales
     servicios = Servicio.objects.filter(desde__year=año_actual)
     if mes_actual:
         servicios = servicios.filter(desde__month=int(mes_actual))
@@ -159,10 +164,28 @@ def index(request):
     facturas_mes = facturas.count()
     facturas_año = Factura.objects.filter(emision__year=año_actual).count()
 
-    ventas_por_mes = facturas.values("emision__month").annotate(total=Sum("total")).order_by("emision__month")
+    # Facturación mensual total como 12 datasets individuales
+    facturacion_mensual_completa = {i: 0 for i in range(1, 13)}
+    ventas_por_mes = facturas.values("emision__month").annotate(total=Sum("total"))
+    for item in ventas_por_mes:
+        facturacion_mensual_completa[item["emision__month"]] = float(item["total"])
+
+    labels_ventas_mes = ["Facturación"]
+    colores_mes = [
+        "#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1", "#20c997",
+        "#fd7e14", "#6610f2", "#6f42c1", "#0dcaf0", "#6c757d", "#b02a37"
+    ]
+    datasets_ventas_mes = [
+        {
+            "label": MESES_ES[mes],
+            "data": [facturacion_mensual_completa[mes]],
+            "backgroundColor": colores_mes[(mes - 1) % len(colores_mes)]
+        }
+        for mes in range(1, 13)
+    ]
+
     ventas_por_tipo_servicio = facturas.values("servicio__detalles_servicio__tipoServicio__descripcion").annotate(total=Sum("total"))
 
-    # Últimos estados de cada servicio
     servicios_estado_qs = Servicio.objects.filter(desde__year=año_actual)
     if mes_actual:
         servicios_estado_qs = servicios_estado_qs.filter(desde__month=int(mes_actual))
@@ -173,10 +196,6 @@ def index(request):
     servicios_con_estado_real = servicios_estado_qs.annotate(estado_real=Subquery(ultimo_estado_subquery))
     cant_servicios_estados = servicios_con_estado_real.values("estado_real").annotate(cantidad=Count("id"))
 
-    # Datos para gráficos
-    labels_ventas_mes = [MESES_ES[item['emision__month']] for item in ventas_por_mes]
-    data_ventas_mes = [float(item["total"]) for item in ventas_por_mes]
-
     labels_ventas_tipo_servicio = [item['servicio__detalles_servicio__tipoServicio__descripcion'] or "Total Facturación" for item in ventas_por_tipo_servicio]
     data_ventas_tipo_servicio = [float(item["total"]) for item in ventas_por_tipo_servicio]
 
@@ -185,7 +204,7 @@ def index(request):
     ]
     data_cant_servicios_estados = [float(item["cantidad"]) for item in cant_servicios_estados]
 
-    # Facturación por tipo de servicio por mes
+    # Facturación por tipo de servicio y mes (gráfico agrupado)
     facturacion_tipo_servicio_mes = Factura.objects.filter(emision__year=año_actual).values(
         'servicio__detalles_servicio__tipoServicio__descripcion',
         'emision__month'
@@ -198,10 +217,7 @@ def index(request):
         facturacion_por_tipo[desc][mes] += float(fila['total'])
 
     labels_tipos_servicio = list(facturacion_por_tipo.keys())
-    colores_por_mes = [
-        "#0d6efd", "#198754", "#ffc107", "#dc3545", "#6f42c1", "#20c997",
-        "#fd7e14", "#6610f2", "#6f42c1", "#0dcaf0", "#198754", "#f8f9fa"
-    ]
+    colores_por_mes = colores_mes  # Reutilizamos mismos colores
 
     datasets_por_mes = [
         {
@@ -215,8 +231,29 @@ def index(request):
     hay_facturacion_total = any(data_ventas_tipo_servicio)
     hay_facturacion_mensual = any([sum(dataset["data"]) for dataset in datasets_por_mes]) if datasets_por_mes else False
 
+    servicios_por_mes = Servicio.objects.filter(desde__year=año_actual).values("desde__month").annotate(cantidad=Count("id"))
+
+    servicios_mensual_completo = {i: 0 for i in range(1, 13)}
+    for item in servicios_por_mes:
+        servicios_mensual_completo[item["desde__month"]] = item["cantidad"]
+
+    labels_servicios_mes = [MESES_ES[mes] for mes in range(1, 13)]
+    data_servicios_mes = [servicios_mensual_completo[mes] for mes in range(1, 13)]
+
+    servicios_por_tipo = Servicio.objects.values("detalles_servicio__tipoServicio__descripcion").annotate(cantidad=Count("id"))
+    labels_servicios_tipo = [item["detalles_servicio__tipoServicio__descripcion"] or "Sin tipo" for item in servicios_por_tipo]
+    data_servicios_tipo = [item["cantidad"] for item in servicios_por_tipo]
+
+    promedio_mensual = total_año / max(1, facturas.values("emision__month").distinct().count())
 
     context = {
+        "promedio_mensual": promedio_mensual,
+        "servicios_por_tipo": json.dumps(list(servicios_por_tipo)),"labels_servicios_tipo" : json.dumps(labels_servicios_tipo),
+        "data_servicios_tipo" : json.dumps(data_servicios_tipo),
+        "labels_servicios_mes" : json.dumps(labels_servicios_mes),
+        "data_servicios_mes" : json.dumps(data_servicios_mes),
+        "labels_ventas_mes": json.dumps(labels_ventas_mes),  # ["Facturación"]
+        "datasets_ventas_mes": json.dumps(datasets_ventas_mes),  # 12 datasets, uno por mes
         "hay_facturacion_total": hay_facturacion_total,
         "hay_facturacion_mensual": hay_facturacion_mensual,
         "labels_cant_servicios_estados": json.dumps(labels_cant_servicios_estados),
@@ -225,8 +262,6 @@ def index(request):
         "total_año": total_año,
         "facturas_mes": facturas_mes,
         "facturas_año": facturas_año,
-        "labels_ventas_mes": json.dumps(labels_ventas_mes),
-        "data_ventas_mes": json.dumps(data_ventas_mes),
         "labels_ventas_tipo_servicio": json.dumps(labels_ventas_tipo_servicio),
         "data_ventas_tipo_servicio": json.dumps(data_ventas_tipo_servicio),
         "año_actual": año_actual,

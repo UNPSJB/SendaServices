@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% load static %}
 
@@ -26,7 +25,7 @@
   <div class="row g-3 mb-4">
 
 <!-- Bienvenida -->
-<div class="col-md-4">
+<div class="col-md-6">
   <div class="card border-0 shadow-sm h-100">
     <div class="card-body p-3 text-center">
       <h4 class="fw-bold">
@@ -78,129 +77,172 @@
   </div>
 </div>
 
-
-
-    <!-- Filtros -->
-    <div class="col-md-8">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body p-3">
-          <form method="get" class="row g-2">
-            <div class="col-md-4">
-              <label class="form-label">Año</label>
-              <select class="form-select" name="año">
-                {% for año in años_disponibles %}
-                  <option value="{{ año }}" {% if año == año_actual %}selected{% endif %}>{{ año }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Mes</label>
-              <select class="form-select" name="mes">
-                <option value="">Todos</option>
-                {% for num, nombre in meses %}
-                  <option value="{{ num }}" {% if num == mes_actual %}selected{% endif %}>{{ nombre }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Estado</label>
-              <select class="form-select" name="estado">
-                <option value="">Todos</option>
-                {% for est in estados %}
-                  <option value="{{ est.0 }}" {% if est.0 == estado_actual %}selected{% endif %}>{{ est.1 }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-12 text-center">
-              <button type="submit" class="btn btn-primary px-4">Filtrar</button>
-            </div>
-          </form>
+<!-- Filtros -->
+<div class="col-md-6">
+  <div class="card border-0 shadow-sm h-100">
+    <div class="card-body p-3">
+      <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label">Año</label>
+          <select class="form-select" name="año">
+            {% for año in años_disponibles %}
+              <option value="{{ año }}" {% if año == año_actual %}selected{% endif %}>{{ año }}</option>
+            {% endfor %}
+          </select>
         </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Mes</label>
+          <select class="form-select" name="mes">
+            <option value="">Todos</option>
+            {% for num, nombre in meses %}
+              <option value="{{ num }}" {% if num == mes_actual %}selected{% endif %}>{{ nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Estado</label>
+          <select class="form-select" name="estado">
+            <option value="">Todos</option>
+            {% for est in estados %}
+              <option value="{{ est.0 }}" {% if est.0 == estado_actual %}selected{% endif %}>{{ est.1 }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-12 text-center mt-3">
+          <button type="submit" class="btn btn-primary px-4 me-2">Filtrar</button>
+          <a href="{% url 'home' %}" class="btn btn-secondary px-4">Borrar filtros</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+  {% if mes_actual %}
+  <div class="row row-cols-1 row-cols-md-4 g-3 mb-2">
+{% else %}
+  <div class="row row-cols-1 row-cols-md-3 g-3 mb-2">
+{% endif %}
+
+  {% if mes_actual %}
+  <!-- Total vendido en el mes -->
+  <div class="col">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center p-2">
+        <i class="bi bi-cash-coin display-5 text-primary mb-2"></i>
+        <h6 class="mb-1">Total vendido en el mes</h6>
+        <h5 class="fw-bold text-success mb-0">${{ total_mes|floatformat:2 }}</h5>
       </div>
     </div>
   </div>
 
-  <!-- Tarjetas resumen -->
-  <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
-
-    <div class="col">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body text-center p-3">
-          <i class="bi bi-cash-coin display-5 text-primary mb-2"></i>
-          <h6 class="mb-1">Total vendido este mes</h6>
-          <h5 class="fw-bold text-success mb-0">${{ total_mes|floatformat:2 }}</h5>
-        </div>
+  <!-- Facturas emitidas ese mes -->
+  <div class="col">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center p-2">
+        <i class="bi bi-receipt-cutoff display-5 text-warning mb-2"></i>
+        <h6 class="mb-1">Facturas del mes</h6>
+        <h5 class="fw-bold text-dark mb-0">{{ facturas_mes }}</h5>
       </div>
     </div>
+  </div>
+  {% endif %}
 
-    <div class="col">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body text-center p-3">
-          <i class="bi bi-wallet2 display-5 text-success mb-2"></i>
-          <h6 class="mb-1">Total vendido este año</h6>
-          <h5 class="fw-bold text-primary mb-0">${{ total_año|floatformat:2 }}</h5>
-        </div>
-      </div>
-    </div>
-
-    <div class="col">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body text-center p-3">
-          <i class="bi bi-receipt-cutoff display-5 text-warning mb-2"></i>
-          <h6 class="mb-1">Facturas este mes</h6>
-          <h5 class="fw-bold text-dark mb-0">{{ facturas_mes }}</h5>
-        </div>
-      </div>
-    </div>
-
-    <div class="col">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body text-center p-3">
-          <i class="bi bi-clipboard-data display-5 text-danger mb-2"></i>
-          <h6 class="mb-1">Facturas este año</h6>
-          <h5 class="fw-bold text-dark mb-0">{{ facturas_año }}</h5>
-        </div>
+  <!-- Total anual -->
+  <div class="col">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center p-2">
+        <i class="bi bi-wallet2 display-5 text-success mb-2"></i>
+        <h6 class="mb-1">Total vendido en el año</h6>
+        <h5 class="fw-bold text-primary mb-0">${{ total_año|floatformat:2 }}</h5>
       </div>
     </div>
   </div>
 
-  <!-- Gráficos -->
-  <div class="card border-0 shadow-sm mb-4">
-    <div class="card-body p-4">
-      <h2 class="mb-3">Estadísticas de Ventas</h2>
+  <!-- Facturas anuales -->
+  <div class="col">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center p-2">
+        <i class="bi bi-clipboard-data display-5 text-danger mb-2"></i>
+        <h6 class="mb-1">Facturas del año</h6>
+        <h5 class="fw-bold text-dark mb-0">{{ facturas_año }}</h5>
+      </div>
+    </div>
+  </div>
 
-      <div class="row g-4">
-        {% if not mes_actual %}
-        <div class="col-md-6">
-          {% if hay_facturacion_mensual %}
-            <canvas id="ctx_facturacion_tipo_mes"></canvas>
-          {% else %}
-            <div class="alert alert-info text-center">
+  {% if not mes_actual %}
+  <!-- Promedio mensual -->
+  <div class="col">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center p-3">
+        <i class="bi bi-graph-up display-5 text-info mb-2"></i>
+        <h6 class="mb-1">Promedio mensual</h6>
+        <h5 class="fw-bold text-secondary mb-0">${{ promedio_mensual|floatformat:2 }}</h5>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+  <div class="card border-0 shadow-sm mb-2">
+    <div class="card-body p-2">
+      <h2 class="mb-3 text-center">📊 Estadísticas de Ventas</h2>
+  
+      <div class="row gx-3">
+        {% if not mes_actual and hay_facturacion_mensual %}
+          <div class="col-md-6">
+            <div class="text-center mb-1 fw-semibold text-muted">💵 Facturación por mes</div>
+            <div class="chart-container">
+              <canvas id="ctx_facturacion_tipo_mes"></canvas>
+            </div>
+          </div>
+  
+          <div class="col-md-6">
+            <div class="text-center mb-1 fw-semibold text-muted">📈 Servicios contratados por mes</div>
+            <div class="chart-container">
+              <canvas id="ctx_servicios_mes"></canvas>
+            </div>
+          </div>
+  
+          <div class="col-md-6">
+            <div class="text-center mb-1 fw-semibold text-muted">📋 Servicios por tipo</div>
+            <div class="chart-container">
+              <canvas id="ctx_servicios_tipo"></canvas>
+            </div>
+          </div>
+        {% elif not mes_actual %}
+          <div class="col-12">
+            <div class="alert alert-info text-center w-100">
               No hubo facturación en este mes para mostrar.
             </div>
-          {% endif %}
-        </div>
-      {% endif %}
-      
-
-        <div class="col-md-3">
-          {% if hay_facturacion_total %}
+          </div>
+        {% endif %}
+  
+        {% if hay_facturacion_total %}
+        <div class="col-md-6 {% if mes_actual %}offset-md-3{% endif %}">
+          <div class="text-center mb-1 fw-semibold text-muted">🧾 Facturación total por tipo de servicio</div>
+          <div class="chart-container">
             <canvas id="ctx_facturacion_total"></canvas>
-          {% else %}
-            <div class="alert alert-info text-center">
-              No hubo facturación en el año o en este período.
-            </div>
-          {% endif %}
+          </div>
         </div>
-        
+        {% else %}
+        <div class="col-12">
+          <div class="alert alert-info text-center w-100">
+            No se realizó ninguna facturación todavía.
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
-
-
+  
 {% endif %}
 {% endblock %}
-
 {% block extrajs %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
@@ -211,46 +253,93 @@ document.addEventListener("DOMContentLoaded", function () {
     "#fd7e14", "#6610f2", "#d63384", "#0dcaf0", "#6c757d", "#b02a37"
   ];
 
-  const baseOptions = {
-    responsive: true,
-    plugins: {
-      legend: { display: true, position: 'bottom' },
-      title: { display: true, font: { size: 18 } },
-      datalabels: {
-        color: '#000',
-        font: { weight: 'bold' },
-        formatter: v => `$${v.toLocaleString()}`
-      },
-      tooltip: {
-        callbacks: {
-          label: ctx => {
-            const value = ctx.parsed.y ?? ctx.parsed;
-            const label = ctx.dataset.label || ctx.label;
-            return `${label}: $${value.toLocaleString()}`;
-          }
-        }
-      }
-    },
-    scales: { y: { beginAtZero: true } }
-  };
-
   {% if not mes_actual %}
   new Chart("ctx_facturacion_tipo_mes", {
     type: "bar",
     data: {
-      labels: JSON.parse('{{ labels_tipos_servicio_mes|escapejs }}'),
-      datasets: JSON.parse('{{ datasets_tipo_servicio_mes|safe }}')
+      labels: JSON.parse('{{ labels_ventas_mes|escapejs }}'),
+      datasets: JSON.parse('{{ datasets_ventas_mes|safe }}')
     },
     options: {
-      ...baseOptions,
+      responsive: true,
       plugins: {
-        ...baseOptions.plugins,
-        title: { ...baseOptions.plugins.title, text: "Facturación por servicio (discriminado por mes)" },
-        datalabels: { ...baseOptions.plugins.datalabels, anchor: 'end', align: 'top' },
-        legend: { display: true, position: 'bottom' }
+        legend: {
+          display: true,
+          position: 'bottom',
+          onClick: (e, legendItem, legend) => {
+            const index = legendItem.datasetIndex;
+            const ci = legend.chart;
+            const meta = ci.getDatasetMeta(index);
+            meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+            ci.update();
+          }
+        },
+        title: {
+          display: true,
+          text: "Facturación mensual (clic para mostrar/ocultar)"
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          font: { weight: 'bold' },
+          color: '#000',
+          formatter: v => `$${v.toLocaleString()}`
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const value = ctx.parsed.y ?? ctx.parsed;
+              const label = ctx.dataset.label || ctx.label;
+              return `${label}: $${value.toLocaleString()}`;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return '$' + value.toLocaleString();
+            }
+          }
+        }
       }
     },
     plugins: [ChartDataLabels]
+  });
+
+  new Chart("ctx_servicios_mes", {
+    type: "line",
+    data: {
+      labels: {{ labels_servicios_mes|safe }},
+      datasets: [{
+        label: "Servicios contratados",
+        data: {{ data_servicios_mes|safe }},
+        borderColor: "#0d6efd",
+        backgroundColor: "rgba(13, 110, 253, 0.2)",
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+
+  new Chart("ctx_servicios_tipo", {
+    type: "bar",
+    data: {
+      labels: {{ labels_servicios_tipo|safe }},
+      datasets: [{
+        label: "Servicios por tipo",
+        data: {{ data_servicios_tipo|safe }},
+        backgroundColor: colores
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y'
+    }
   });
   {% endif %}
 
@@ -267,8 +356,12 @@ document.addEventListener("DOMContentLoaded", function () {
     options: {
       responsive: true,
       plugins: {
-        ...baseOptions.plugins,
-        title: { ...baseOptions.plugins.title, text: "Facturación total por tipo de servicio" },
+        legend: { display: true, position: 'bottom' },
+        title: {
+          display: true,
+          text: "Facturación total por tipo de servicio",
+          font: { size: 18 }
+        },
         datalabels: {
           anchor: 'center',
           align: 'center',
@@ -276,14 +369,23 @@ document.addEventListener("DOMContentLoaded", function () {
           font: { weight: 'bold' },
           formatter: (value, ctx) => {
             const label = ctx.chart.data.labels[ctx.dataIndex];
-            return `${label}
-$${value.toLocaleString()}`;
+            return `${label}\n$${value.toLocaleString()}`;
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const value = ctx.parsed.y ?? ctx.parsed;
+              const label = ctx.dataset.label || ctx.label;
+              return `${label}: $${value.toLocaleString()}`;
+            }
           }
         }
       }
     },
     plugins: [ChartDataLabels]
   });
+
 });
 </script>
 {% endblock %}

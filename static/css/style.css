@@ -13,6 +13,12 @@
     box-sizing: border-box;
 }
 
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+  }
+
 body {
     font-size: 0.875rem;
     opacity: 1;

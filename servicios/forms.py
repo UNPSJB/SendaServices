@@ -356,3 +356,45 @@ class TipoServicioFiltrosForm(FiltrosForm):
                 Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
                 css_class="d-grid gap-2")
         )
+
+from core.models import Categoria
+from .models import ServicioCantidadEmpleado
+from django.forms import inlineformset_factory
+
+class ServicioCantidadEmpleadoForm(forms.ModelForm):
+    class Meta:
+        model = ServicioCantidadEmpleado
+        fields = ['categoria', 'cantidad']
+
+        widgets = {
+            'cantidad': forms.NumberInput(attrs={'min': 1, 'max': 200}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+
+# FORMSET DE EMPLEADOS POR SERVICIO
+def ServicioCantidadEmpleadoInline(extra=1):
+    return inlineformset_factory(
+        Servicio,
+        ServicioCantidadEmpleado,
+        form=ServicioCantidadEmpleadoForm,
+        extra=extra,
+        can_delete=True
+    )
+
+
+class ServicioCantidadEmpleadoFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.form_tag = False
+        self.template = 'bootstrap5/table_inline_formset.html'
+        self.layout = Layout(
+            'categoria',
+            'cantidad'
+        )
+        self.render_required_fields = True

@@ -9,3 +9,4 @@ tzdata==2023.3
 python-dateutil
 xhtml2pdf
 openpyxl
+faker

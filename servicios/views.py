@@ -13,7 +13,8 @@ from crispy_forms.utils import render_crispy_form
 from .forms import (
     ServicioForm, ServicioUpdateForm, ServicioContratarForm, DetalleServicioInline, ServiciosFiltrosForm, 
     DetalleServicioFormSetHelper, TipoServicioForm, 
-    TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm,TipoServicioUpdateForm)
+    TipoServicioProductoFormSetHelper,TipoServicioProductoInline, TipoServicioFiltrosForm,TipoServicioUpdateForm
+    ,ServicioCantidadEmpleadoInline, ServicioCantidadEmpleadoFormSetHelper)
 
 from .models import TipoServicio, Servicio
 from core.models import Cliente, Inmueble
@@ -307,6 +308,10 @@ class ServicioCreateView(CreateView):
         self.detalleServicio_formset = DetalleServicioInline()(
             data=self.request.POST if self.request.method in ["POST", "PUT"] else None
         )
+        self.cantidades_empleados_formset = ServicioCantidadEmpleadoInline()(
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None
+        )
+        self.cantidades_empleados_formset_helper = ServicioCantidadEmpleadoFormSetHelper()
         self.detalleServicio_formset_helper = DetalleServicioFormSetHelper()
         return form
 
@@ -339,6 +344,10 @@ class ServicioCreateView(CreateView):
 
         context['detalleServicio_formset'] = self.detalleServicio_formset
         context['detalleServicio_formset_helper'] = self.detalleServicio_formset_helper
+
+        context["cantidades_empleados_formset"] = self.cantidades_empleados_formset
+        context["cantidades_empleados_formset_helper"] = self.cantidades_empleados_formset_helper
+
         
         context['titulo'] = "Registrar Detalle Servicio"
         context['tnav'] = "Gestion de Servicios"
@@ -347,22 +356,41 @@ class ServicioCreateView(CreateView):
         return context
     
     def form_valid(self, form):
-        """If the form is valid, save the associated model."""
-        #self.object = form.save()
-        # tipoServicio_productos = self.tipoServicio_producto_formset.save(commit=False)
-        # for tps in tipoServicio_productos:            
-        #     tps.tipoServicio = self.object
-        #     tps.save()
-
+        # Guarda el servicio primero para obtener el ID
         self.object = form.save()
-        if self.detalleServicio_formset.is_valid():
-            self.detalleServicio_formset.instance = self.object
-            self.detalleServicio_formset.save()
 
+        # Ahora que self.object tiene un pk, podemos asignar los formsets
+        self.detalleServicio_formset.instance = self.object
+        self.cantidades_empleados_formset.instance = self.object
+
+        if not self.detalleServicio_formset.is_valid() or not self.cantidades_empleados_formset.is_valid():
+            return self.form_invalid(form)
+
+        tiene_detalles = any(
+            f.cleaned_data and not f.cleaned_data.get("DELETE", False)
+            for f in self.detalleServicio_formset.forms
+        )
+        tiene_empleados = any(
+            f.cleaned_data and not f.cleaned_data.get("DELETE", False)
+            for f in self.cantidades_empleados_formset.forms
+        )
+
+        if not tiene_detalles or not tiene_empleados:
+            if not tiene_detalles:
+                form.add_error(None, "Debe agregar al menos un detalle de servicio.")
+            if not tiene_empleados:
+                form.add_error(None, "Debe asignar al menos una categoría con cantidad de empleados.")
+            return self.form_invalid(form)
+
+        self.detalleServicio_formset.save()
+        self.cantidades_empleados_formset.save()
 
         messages.success(self.request, "✨ ¡Éxito! El servicio se ha creado exitosamente. 🚀")
         return super().form_valid(form)
-    
+
+
+
+
 class ServicioUpdateView(UpdateView):
     model = Servicio
     form_class = ServicioUpdateForm

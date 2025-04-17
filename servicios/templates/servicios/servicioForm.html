@@ -6,45 +6,46 @@
 Crear Servicio
 {% endblock %}
 
-
-<!-- Titulo del formulario -->
+<!-- Título del formulario -->
 {% block tform %}
   Registrar Servicio
 {% endblock %}
 
-<!-- Url del formulario -->
-
+<!-- Contenido del formulario -->
 {% block cform %}
 
 <label for="chec" class="form-check-label mb-3">Servicio Eventual</label>
-<input name="chec" class="form-check-input" type="checkbox" id="chec" onchange="comprobar();"/>
-
+<input name="chec" class="form-check-input" type="checkbox" id="chec" onchange="comprobar();" />
 
 <form action="{% url 'servicios:crearServicio' %}" method="POST">
+  {% csrf_token %}
 
-  {% csrf_token %}   
+  <!-- Formulario principal del servicio -->
   {% crispy form form.helper %}
-  <div data-formset="detalles_servicio" id="productos" >
+
+  <!-- Tabla de tipos de servicio -->
+  <div data-formset="detalles_servicio" id="productos">
+    <h5 class="mt-4 fw-bold">Tipos de Servicio</h5>
     {% crispy detalleServicio_formset detalleServicio_formset_helper %}
   </div>
 
-  <div class="d-grid gap-2">
+  <!-- Tabla de empleados por categoría -->
+  <div data-formset="cantidades_empleados" id="empleados">
+    <h5 class="mt-4 fw-bold">Empleados por Categoría</h5>
+    {% crispy cantidades_empleados_formset cantidades_empleados_formset_helper %}
+  </div>
+
+  <!-- Botón de guardar -->
+  <div class="d-grid gap-2 mt-4">
     <button type="submit" class="btn btn-primary btn-block text-white">
       Guardar
     </button>
   </div>
 </form>
 
-
-
-
-
-
 {% endblock %}
 
-
-<!-- Boton del formulario -->
+<!-- Botón del formulario en header -->
 {% block btnform %}
   Guardar
 {% endblock %}
-

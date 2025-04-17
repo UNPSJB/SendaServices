@@ -7,7 +7,7 @@ from django.core.validators import MinValueValidator,MaxValueValidator
 from decimal import Decimal
 from facturas.models import Factura
 from dateutil.relativedelta import relativedelta
-
+from django.apps import apps
 
 # Create your models here.
 
@@ -45,7 +45,19 @@ class TipoEstado (models.TextChoices):
     INICIADO = "iniciado", _("Iniciado 😊")
     FINALIZADO = "finalizado", _("Finalizado 😴")
 
+class ServicioCantidadEmpleado(models.Model):
+    servicio = models.ForeignKey("Servicio", on_delete=models.CASCADE, related_name="cantidades_empleados")
+    categoria = models.ForeignKey("core.Categoria", on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(200)])
 
+    class Meta:
+        unique_together = ("servicio", "categoria")
+
+    def __str__(self):
+        # get_model() evita el circular import en métodos que se usan en tiempo de ejecución
+        Categoria = apps.get_model('core', 'Categoria')
+        cat = Categoria.objects.get(pk=self.categoria_id)
+        return f"{self.cantidad} x {cat.nombre}"
 
 class Servicio(models.Model):
     class Tipo(models.IntegerChoices):
@@ -59,8 +71,7 @@ class Servicio(models.Model):
     hasta = models.DateField("Fecha Fin", null=True)
 
     estado = models.CharField(max_length=20, null=False, choices=TipoEstado.choices, default=TipoEstado.PRESUPUESTADO)
-    cantidadEstimadaEmpleados= models.IntegerField("Empleados Estimados", validators=[MaxValueValidator(200),MinValueValidator(1)])
-    
+
     diasSemana = models.IntegerField("Dias por semana estimados", validators=[MaxValueValidator(7),MinValueValidator(1)])
     
     ajuste = models.IntegerField(validators=[MaxValueValidator(100),MinValueValidator(0)])
@@ -93,13 +104,18 @@ class Servicio(models.Model):
         if meses == 0:
             meses = 1
 
-        empleados =   Decimal((self.cantidadEstimadaEmpleados * 58000) * 1.5) * meses
+        empleados_total = Decimal(0)
+        for cantidad_empleado in self.cantidades_empleados.all():
+            sueldo = cantidad_empleado.categoria.sueldoBase
+            empleados_total += Decimal(cantidad_empleado.cantidad * sueldo) * Decimal(1.5) * meses
+
 
         diasTotales =  Decimal((semanas * self.diasSemana)) # Obtener los dias totales de trabajo
         detalles_servicio = self.detalles_servicio.all()
         tdetalles = sum([float(d.importe()) for d in detalles_servicio])
 
-        total = (Decimal(tdetalles) * diasTotales) + empleados 
+        total = (Decimal(tdetalles) * diasTotales) + empleados_total
+
 
         return round((((total *  Decimal((self.ajuste / 100) + 1)))), 2)
 

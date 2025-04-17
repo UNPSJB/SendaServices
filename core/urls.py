@@ -47,8 +47,10 @@ from .views import (
     CategoriaCreateView,
     CategoriaListView,
     CategoriaUpdateView,
-    buscar
+    buscar,
+    buscar_inmuebles
 )
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -71,6 +73,7 @@ urlpatterns = [
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
     
     # Gestion Inmuebles
+    path('buscar-inmuebles/', buscar_inmuebles, name='buscar_inmuebles'),
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
     path('inmuebles/cliente/<str:pk>/crear', InmuebleCreateView.as_view(), name='crearInmuebleParaCliente'),
     path('inmuebles/cliente/<str:cliente_pk>/modificar/<str:pk>', InmuebleUpdateView.as_view(), name='modificarInmuebleParaCliente'),    

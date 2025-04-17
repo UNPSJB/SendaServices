@@ -17,7 +17,10 @@ Contratar Presupuesto
   {% if form.instance.esEventual %}checked{% endif %}
 />
 
-<form method="POST">
+<form method="POST" 
+      action="
+                 {% url 'servicios:contratarServicio' form.instance.pk %}
+              ">
   {% csrf_token %}
 
   {% if messages %}
@@ -29,6 +32,7 @@ Contratar Presupuesto
   <!-- Formulario principal -->
   <div id="form-principal">
     {% crispy form form.helper %}
+    {{ form.inmueble_hidden }}
   </div>
 
   <!-- Tabla de tipos de servicio -->
@@ -43,13 +47,28 @@ Contratar Presupuesto
     {% crispy cantidades_empleados_formset cantidades_empleados_formset_helper %}
   </div>
 
-  <!-- Botón de confirmar -->
+  <!-- Botón de acción -->
   <div class="d-grid gap-2 mt-4">
+    {% if form.instance.requiereSeña %}
+    <a href="#" onclick="abrir_modal('{% url "servicios:señarServicio" pk=form.instance.pk %}')" class="btn btn-warning text-white">
+      Señar Servicio
+    </a>
+    {% else %}
     <button type="submit" class="btn btn-success btn-block text-white">
-      Confirmar Contratación
+        Confirmar Contratación
     </button>
+    {% endif %}
   </div>
 </form>
+
+{% block modal %}
+
+<div class="modal" id="modal" role="dialog">
+    
+</div>
+
+{% endblock %}
+
 {% endblock %}
 
 {% block btnform %}
@@ -57,6 +76,30 @@ Contratar Presupuesto
 {% endblock %}
 
 {% block extrajs %}
+
+<script type="text/javascript">
+  var $ = jQuery.noConflict();
+  function abrir_modal(url){
+      $('#modal').load(url, function(){
+          $(this).modal('show');
+          bindFormSet($('#modal'));
+      });
+  }
+  
+  function cerrar_modal() {
+      $('#modal').modal('hide');
+  }
+  </script>
+
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const esEventual = document.getElementById('chec').checked;
@@ -68,6 +111,39 @@ Contratar Presupuesto
           wrapper.style.display = 'none';
         }
       }
+    }
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    $('.select2-inmueble').select2({
+      width: '100%',
+      ajax: {
+        url: "{% url 'buscar_inmuebles' %}",
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            term: params.term
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: data.results
+          };
+        },
+        cache: true
+      },
+      placeholder: 'Buscar inmueble por domicilio o cliente',
+      minimumInputLength: 1
+    });
+
+    let inmuebleId = "{{ form.instance.inmueble.id|default:'' }}";
+    let inmuebleText = "{{ form.instance.inmueble|default:'' }}";
+    if (inmuebleId && inmuebleText) {
+      let option = new Option(inmuebleText, inmuebleId, true, true);
+      $('.select2-inmueble').append(option).trigger('change');
     }
   });
 </script>

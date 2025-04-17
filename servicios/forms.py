@@ -146,9 +146,8 @@ class ServicioCantidadEmpleadoFormSetHelper(FormHelper):
 
 class ServicioForm(forms.ModelForm):
     class Meta:
-        model= Servicio
-        exclude = ('estado','total')
-
+        model = Servicio
+        exclude = ('estado', 'total')
         widgets = {
             'desde': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
             'hasta': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
@@ -156,19 +155,35 @@ class ServicioForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
         self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
 
-        inmuebles = Inmueble.objects.all()
+        self.fields['inmueble'].widget.attrs.update({
+            'class': 'select2-inmueble form-select',
+            'data-placeholder': 'Buscar inmueble por domicilio o cliente'
+        })
 
-        if "initial" in kwargs:
-            if "cliente" in kwargs["initial"]:
-                cliente = kwargs["initial"]["cliente"] # nos da el Cliente del Inmueble
-                inmuebles = Inmueble.objects.filter(cliente = cliente)
-      
-        self.fields['inmueble'].queryset = inmuebles
+        inmuebles = Inmueble.objects.none()
+
+        if "initial" in kwargs and "cliente" in kwargs["initial"]:
+            cliente = kwargs["initial"]["cliente"]
+            inmuebles = Inmueble.objects.filter(cliente=cliente)
+
+        if self.instance and self.instance.pk:
+            inmuebles = Inmueble.objects.filter(pk=self.instance.inmueble.pk) | inmuebles
+        elif 'inmueble' in self.data:
+            try:
+                inmueble_id = int(self.data.get('inmueble'))
+                inmuebles = Inmueble.objects.filter(pk=inmueble_id) | inmuebles
+            except (ValueError, TypeError):
+                pass
+
+        self.fields['inmueble'].queryset = inmuebles.distinct()
+
         self.helper = FormHelper()
         self.helper.form_tag = False
+
 
     def save(self, commit=True):
         servicio = super().save(commit)
@@ -185,7 +200,7 @@ class ServicioForm(forms.ModelForm):
             raise ValidationError("La fecha 'FIN' debe ser mayor o igual a la fecha 'INICIO'.")
 
         return cleaned_data
-    
+
 
 class ServicioUpdateForm(forms.ModelForm):
 
@@ -213,13 +228,11 @@ class ServicioUpdateForm(forms.ModelForm):
         url_kwargs.update({'cliente_pk': inmueble.cliente.pk})
         #print(f"{url=}, {url_kwargs=}")
         self.helper.form_action = reverse_lazy(url, kwargs=url_kwargs)
-
-
+        
 class ServicioContratarForm(forms.ModelForm):
     class Meta:
         model = Servicio
-        fields = ['inmueble', 'desde', 'hasta']
-
+        fields = ['desde', 'hasta', 'inmueble']
         widgets = {
             'desde': forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
             'hasta': forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
@@ -227,11 +240,22 @@ class ServicioContratarForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+
         self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
         self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+
+        # Mostrar inmueble como solo lectura (disabled), pero también mantenerlo oculto para el POST
         self.fields['inmueble'].disabled = True
+        self.fields['inmueble_hidden'] = forms.ModelChoiceField(
+            queryset=Inmueble.objects.all(),
+            initial=self.instance.inmueble,
+            widget=forms.HiddenInput()
+        )
+
         self.helper = FormHelper()
-        self.helper.form_tag = False  # lo manejás vos en el template
+        self.helper.form_tag = False
 
     def clean(self):
         cleaned_data = super().clean()
@@ -241,6 +265,9 @@ class ServicioContratarForm(forms.ModelForm):
             raise forms.ValidationError("La fecha 'hasta' debe ser posterior a 'desde'.")
         return cleaned_data
 
+    def save(self, commit=True):
+        self.instance.inmueble = self.cleaned_data.get('inmueble_hidden')
+        return super().save(commit)
 
 
 class DetalleServicioForm(forms.ModelForm):

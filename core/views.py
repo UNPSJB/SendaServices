@@ -35,8 +35,34 @@ from django.shortcuts import render
 from core.models import Cliente, Empleado, Inmueble  # importá lo que necesites
 from django.db.models import Q
 
+
+from django.http import JsonResponse
 from django.db.models import Q
-from core.models import Cliente, Empleado, Inmueble
+from .models import Inmueble
+
+def buscar_inmuebles(request):
+    term = request.GET.get('term', '')
+
+    inmuebles = Inmueble.objects.filter(
+        Q(domicilio__icontains=term) |
+        Q(cliente__nombre__icontains=term) |
+        Q(cliente__apellido__icontains=term) |
+        Q(cliente__correo__icontains=term) |
+        Q(cliente__cuil_cuit__icontains=term)
+    )[:10]
+
+    results = [
+        {
+            'id': inmueble.id,
+            'text': f"{inmueble.domicilio} - {inmueble.cliente.apellido} {inmueble.cliente.nombre} CUIT/CUIL: {inmueble.cliente.cuil_cuit} "
+        }
+        for inmueble in inmuebles
+    ]
+
+    return JsonResponse({'results': results})
+
+
+
 def buscar(request):
     query = request.GET.get('q', '').strip()
 

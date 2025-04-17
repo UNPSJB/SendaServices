@@ -549,14 +549,10 @@ def pagar_servicio(request, pk):
 def contratar_servicio(request, pk):
     if request.method == "GET":
         servicio = Servicio.objects.get(pk=pk)
-        horarios = servicio.horarios.count()
-        if horarios == 0:
-            messages.error(request, '⚠️ ¡Error! El servicio requiere horarios para ser CONTRATADO. Por favor, añade horarios antes de continuar. ⏰')
-            return redirect(reverse_lazy('turnos:listarHorariosDeServicio', kwargs={'pk': servicio.pk}))
-        else:
-            servicio.contratar()
-            messages.success(request, '🤝 ¡El servicio se CONTRATÓ con éxito! 🎊')
-            return redirect(reverse_lazy("servicios:listarServicio"))
+
+        servicio.contratar()
+        messages.success(request, '🤝 ¡El servicio se CONTRATÓ con éxito! 🎊')
+        return redirect(reverse_lazy("servicios:listarServicio"))
 
 def facturar_servicio(request, pk):
     pass

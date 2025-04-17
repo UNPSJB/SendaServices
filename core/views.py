@@ -383,6 +383,13 @@ class InmuebleListView(ListFilterView):
     context_object_name = 'inmuebles' #Nombre de la lista usar ''
     queryset = Inmueble.objects.all()
 
+    def get(self, request, *args, **kwargs):
+        if 'clear' in request.GET:
+            # Redirigimos a la misma vista sin parámetros GET para limpiar el formulario
+            return redirect(request.path)
+
+        return super().get(request, *args, **kwargs)
+
     def get_cliente(self):
         pk = self.kwargs.get('pk')
         if pk is not None:
@@ -414,6 +421,7 @@ class InmuebleListView(ListFilterView):
         context = super().get_context_data(**kwargs)
         context["cliente"] = self.get_cliente()
         return context    
+
 
         
 class InmuebleCreateView(CreateView):
@@ -519,6 +527,13 @@ class ProductoListView(ListFilterView):
         print(self.template_name)
         context['tnav'] = "Gestion de Productos"
         return context
+    
+    def get(self, request, *args, **kwargs):
+        if 'clear' in request.GET:
+            # Redirigimos a la misma vista sin parámetros GET para limpiar el formulario
+            return redirect(request.path)
+
+        return super().get(request, *args, **kwargs)
 
 
 class ProductoCreateView(CreateView):
@@ -580,7 +595,7 @@ class ProductoDeleteView(SuccessMessageMixin, DeleteView):
 
 class EmpleadoListView(ListFilterView):
     #Cantidad de elementos por lista
-    paginate_by = 2
+    paginate_by = 10
     #Filtros de la lista
     filtros = EmpleadoFiltrosForm
     model = Empleado #Nombre del modelo
@@ -593,6 +608,13 @@ class EmpleadoListView(ListFilterView):
         # print(self.template_name)
         context['tnav'] = "Gestion de Empleado"
         return context
+    
+    def get(self, request, *args, **kwargs):
+        if 'clear' in request.GET:
+            # Redirigimos a la misma vista sin parámetros GET para limpiar el formulario
+            return redirect(request.path)
+
+        return super().get(request, *args, **kwargs)
 
 
 class EmpleadoCreateView(CreateView):
@@ -656,6 +678,13 @@ class CategoriaListView(ListFilterView):
         print(self.template_name)
         context['tnav'] = "Gestion de Categoria"
         return context
+    
+    def get(self, request, *args, **kwargs):
+        if 'clear' in request.GET:
+            # Redirigimos a la misma vista sin parámetros GET para limpiar el formulario
+            return redirect(request.path)
+
+        return super().get(request, *args, **kwargs)
 
 class CategoriaCreateView(CreateView):
     model = Categoria

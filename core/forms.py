@@ -307,7 +307,10 @@ class EmpleadoFiltrosForm(FiltrosForm):
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
                 "legajo","nombre", "apellido", "correo","cuil","categoria" #Remplazar campos formulario
             ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+            Div(Submit('submit', 'Filtrar'),
+                Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
+                css_class="d-grid gap-2")
+            
         )
 
 
@@ -460,7 +463,9 @@ class CategoriaFiltrosForm(FiltrosForm):
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
                 "nombre", "sueldoBase"
             ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+            Div(Submit('submit', 'Filtrar'),
+                Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
+                css_class="d-grid gap-2")
         )
 
 
@@ -501,7 +506,9 @@ class InmuebleFiltrosForm(FiltrosForm):
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
                 "domicilio","metrosCuadrados", "nroAmbientes", "tipo", "cliente", #Remplazar campos formulario
             ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+            Div(Submit('submit', 'Filtrar'),
+                Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
+                css_class="d-grid gap-2")
         )
 
 
@@ -515,7 +522,9 @@ class InmuebleCustomFiltrosForm(InmuebleFiltrosForm):
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
                 "domicilio","metrosCuadrados", "nroAmbientes", "tipo", #Remplazar campos formulario
             ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+            Div(Submit('submit', 'Filtrar'),
+                Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
+                css_class="d-grid gap-2")
         )
 
 
@@ -651,7 +660,9 @@ class ProductoFiltrosForm(FiltrosForm):
                     '<label class="form-label">Precio Unitario</label>'),
                 Div("precioUnitario__gte", "precioUnitario__lte", css_class="custom-range-form"),
             ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+            Div(Submit('submit', 'Filtrar'),
+                Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
+                css_class="d-grid gap-2")
         )
 
 

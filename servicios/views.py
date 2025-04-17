@@ -197,6 +197,13 @@ class TipoServicioListView(ListFilterView):
         context = super().get_context_data(**kwargs)
         context['tnav'] = "Gestion de Tipo Servicios"
         return context
+    
+    def get(self, request, *args, **kwargs):
+        if 'clear' in request.GET:
+            # Redirigimos a la misma vista sin parámetros GET para limpiar el formulario
+            return redirect(request.path)
+
+        return super().get(request, *args, **kwargs)
 
 class TipoServicioDetailView(DetailView):
     model = TipoServicio
@@ -563,4 +570,11 @@ class ServicioListView(ListFilterView):
         context["cliente"] = self.get_cliente()
         context['tnav'] = "Gestion de Servicios"
         return context    
+    
+    def get(self, request, *args, **kwargs):
+        if 'clear' in request.GET:
+            # Redirigimos a la misma vista sin parámetros GET para limpiar el formulario
+            return redirect(request.path)
+
+        return super().get(request, *args, **kwargs)
     

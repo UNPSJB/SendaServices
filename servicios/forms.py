@@ -88,7 +88,9 @@ class ServiciosFiltrosForm(FiltrosForm):
                 HTML('<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
                 "estado", "hasta", "desde", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
             ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+            Div(Submit('submit', 'Filtrar'),
+                Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
+                css_class="d-grid gap-2")
         )
 
     def get_estado(self, qs, value):
@@ -350,5 +352,7 @@ class TipoServicioFiltrosForm(FiltrosForm):
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
                 "descripcion", "ganancia"
             ),
-            Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
+            Div(Submit('submit', 'Filtrar'),
+                Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
+                css_class="d-grid gap-2")
         )

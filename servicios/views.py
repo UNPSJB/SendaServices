@@ -30,6 +30,8 @@ from django.shortcuts import get_object_or_404
 from openpyxl import Workbook
 
 
+
+
 # --------------------- VISTA PARA GENERAR PRESUPUESTOS EN EXCEL ----------------------------
 
 def exportar_servicios_excel(request):
@@ -295,6 +297,80 @@ class TipoServicioUpdateView(UpdateView):
         return super().form_valid(form)
 
 
+class ContratarPresupuestoView(UpdateView):
+    model = Servicio
+    form_class = ServicioContratarForm
+    template_name = "servicios/contratar_servicio.html"
+    success_url = reverse_lazy('servicios:listarServicio')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        
+        self.detalleServicio_formset = DetalleServicioInline()(
+            instance=self.object,
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None
+        )
+        self.cantidades_empleados_formset = ServicioCantidadEmpleadoInline()(
+            instance=self.object,
+            data=self.request.POST if self.request.method in ["POST", "PUT"] else None
+        )
+
+        self.detalleServicio_formset_helper = DetalleServicioFormSetHelper()
+        self.cantidades_empleados_formset_helper = ServicioCantidadEmpleadoFormSetHelper()
+
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'detalleServicio_formset': self.detalleServicio_formset,
+            'detalleServicio_formset_helper': self.detalleServicio_formset_helper,
+            'cantidades_empleados_formset': self.cantidades_empleados_formset,
+            'cantidades_empleados_formset_helper': self.cantidades_empleados_formset_helper,
+            'titulo': "Confirmar Contratación",
+            'tnav': "Contratar Servicio"
+        })
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        self.detalleServicio_formset.instance = self.object
+        self.cantidades_empleados_formset.instance = self.object
+
+        if not self.detalleServicio_formset.is_valid() or not self.cantidades_empleados_formset.is_valid():
+            return self.form_invalid(form)
+
+        tiene_detalles = any(
+            f.cleaned_data and not f.cleaned_data.get("DELETE", False)
+            for f in self.detalleServicio_formset.forms
+        )
+        tiene_empleados = any(
+            f.cleaned_data and not f.cleaned_data.get("DELETE", False)
+            for f in self.cantidades_empleados_formset.forms
+        )
+
+        if not tiene_detalles or not tiene_empleados:
+            if not tiene_detalles:
+                form.add_error(None, "Debe agregar al menos un detalle de servicio.")
+            if not tiene_empleados:
+                form.add_error(None, "Debe asignar al menos una categoría con cantidad de empleados.")
+            return self.form_invalid(form)
+
+        # Guardar datos antes de aplicar la estrategia
+        self.object.total = self.object.totalEstimado()
+        self.object.save()
+        self.detalleServicio_formset.save()
+        self.cantidades_empleados_formset.save()
+
+        # ✅ Lógica de estado delegada al patrón Strategy
+        self.object.contratar()
+
+        messages.success(self.request, "🌟 El servicio ha sido contratado exitosamente.")
+        return super().form_valid(form)
+
+
+    
 
 class ServicioCreateView(CreateView): 
     model = Servicio

@@ -101,6 +101,49 @@ class ServiciosFiltrosForm(FiltrosForm):
         )) & Q(estados__tipo=value)
         return qs.filter(q)
       
+from core.models import Categoria
+from .models import ServicioCantidadEmpleado
+from django.forms import inlineformset_factory
+
+class ServicioCantidadEmpleadoForm(forms.ModelForm):
+    class Meta:
+        model = ServicioCantidadEmpleado
+        fields = ['categoria', 'cantidad']
+
+        widgets = {
+            'cantidad': forms.NumberInput(attrs={'min': 1, 'max': 200}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+
+# FORMSET DE EMPLEADOS POR SERVICIO
+def ServicioCantidadEmpleadoInline(extra=1):
+    return inlineformset_factory(
+        Servicio,
+        ServicioCantidadEmpleado,
+        form=ServicioCantidadEmpleadoForm,
+        extra=extra,
+        can_delete=True
+    )
+
+
+class ServicioCantidadEmpleadoFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.form_tag = False
+        self.template = 'bootstrap5/table_inline_formset.html'
+        self.layout = Layout(
+            'categoria',
+            'cantidad'
+        )
+        self.render_required_fields = True
+
+
 class ServicioForm(forms.ModelForm):
     class Meta:
         model= Servicio
@@ -142,6 +185,7 @@ class ServicioForm(forms.ModelForm):
             raise ValidationError("La fecha 'FIN' debe ser mayor o igual a la fecha 'INICIO'.")
 
         return cleaned_data
+    
 
 class ServicioUpdateForm(forms.ModelForm):
 
@@ -172,24 +216,31 @@ class ServicioUpdateForm(forms.ModelForm):
 
 
 class ServicioContratarForm(forms.ModelForm):
-
     class Meta:
         model = Servicio
-        #fields = '__all__' 
-        exclude = ('estado', 'inmueble', 'desde', 'hasta', 'ajuste', )
-    
-        widgets = {
-            "diasSemana": forms.NumberInput(attrs={"min": 1, "max": 7}),
-            "cantidadEstimadaEmpleados": forms.NumberInput(attrs={"min": 1, "max": 200})
-        }
+        fields = ['inmueble', 'desde', 'hasta']
 
-    def save(self, commit=False):
-        self.save(commit=False)
+        widgets = {
+            'desde': forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
+            'hasta': forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['desde'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+        self.fields['hasta'].widget.attrs['min'] = datetime.today().strftime('%Y-%m-%d')
+        self.fields['inmueble'].disabled = True
         self.helper = FormHelper()
-        self.helper.form_tag = False
+        self.helper.form_tag = False  # lo manejás vos en el template
+
+    def clean(self):
+        cleaned_data = super().clean()
+        desde = cleaned_data.get('desde')
+        hasta = cleaned_data.get('hasta')
+        if desde and hasta and hasta < desde:
+            raise forms.ValidationError("La fecha 'hasta' debe ser posterior a 'desde'.")
+        return cleaned_data
+
 
 
 class DetalleServicioForm(forms.ModelForm):
@@ -357,44 +408,4 @@ class TipoServicioFiltrosForm(FiltrosForm):
                 css_class="d-grid gap-2")
         )
 
-from core.models import Categoria
-from .models import ServicioCantidadEmpleado
-from django.forms import inlineformset_factory
 
-class ServicioCantidadEmpleadoForm(forms.ModelForm):
-    class Meta:
-        model = ServicioCantidadEmpleado
-        fields = ['categoria', 'cantidad']
-
-        widgets = {
-            'cantidad': forms.NumberInput(attrs={'min': 1, 'max': 200}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-
-
-# FORMSET DE EMPLEADOS POR SERVICIO
-def ServicioCantidadEmpleadoInline(extra=1):
-    return inlineformset_factory(
-        Servicio,
-        ServicioCantidadEmpleado,
-        form=ServicioCantidadEmpleadoForm,
-        extra=extra,
-        can_delete=True
-    )
-
-
-class ServicioCantidadEmpleadoFormSetHelper(FormHelper):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form_method = 'post'
-        self.form_tag = False
-        self.template = 'bootstrap5/table_inline_formset.html'
-        self.layout = Layout(
-            'categoria',
-            'cantidad'
-        )
-        self.render_required_fields = True

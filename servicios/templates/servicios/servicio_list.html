@@ -48,23 +48,27 @@ Buscar Servicio
 
 
         <td>
-        {% if s.estado_actual.tipo == "presupuestado" %}
+            {% if s.estado_actual.tipo == "presupuestado" %}
+            <!-- Botón para contratar presupuesto -->
             <a 
-            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
-            class="bi bi-calendar-date text-info fs-5" 
-            data-bs-toggle="tooltip" 
-            data-bs-placement="top" 
-            title="Añadir horarios">
+                href="{% url 'servicios:contratar_presupuesto' pk=s.pk %}" 
+                class="bi bi-bag-check-fill text-success fs-5" 
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Contratar presupuesto">
+            </a>
+        
+            <!-- Botón para descargar PDF -->
+            <a 
+                href="{% url 'servicios:presupuesto_pdf' presupuesto_id=s.pk %}" 
+                class="bi bi-file-earmark-pdf-fill text-danger fs-5" 
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Descargar PDF de Presupuesto" 
+                target="_blank">
             </a>
 
-            <a 
-            href="{% url 'servicios:presupuesto_pdf' presupuesto_id=s.pk %}" 
-            class="bi bi-file-earmark-pdf-fill text-danger fs-5" 
-            data-bs-toggle="tooltip" 
-            data-bs-placement="top" 
-            title="Descargar PDF de Presupuesto" 
-            target="_blank">
-        </a>
+        
         
 
     

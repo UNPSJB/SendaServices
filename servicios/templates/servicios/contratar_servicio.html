@@ -1,0 +1,74 @@
+{% extends '../baseform.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+Contratar Presupuesto
+{% endblock %}
+
+{% block tform %}
+  Confirmar Contratación
+{% endblock %}
+
+{% block cform %}
+<!-- Checkbox solo informativo -->
+<label for="chec" class="form-check-label mb-3">Servicio Eventual</label>
+<input name="chec" class="form-check-input" type="checkbox" id="chec" disabled
+  {% if form.instance.esEventual %}checked{% endif %}
+/>
+
+<form method="POST">
+  {% csrf_token %}
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Formulario principal -->
+  <div id="form-principal">
+    {% crispy form form.helper %}
+  </div>
+
+  <!-- Tabla de tipos de servicio -->
+  <div data-formset="detalles_servicio" id="productos">
+    <h5 class="mt-4 fw-bold">Tipos de Servicio</h5>
+    {% crispy detalleServicio_formset detalleServicio_formset_helper %}
+  </div>
+
+  <!-- Tabla de empleados por categoría -->
+  <div data-formset="cantidades_empleados" id="empleados">
+    <h5 class="mt-4 fw-bold">Empleados por Categoría</h5>
+    {% crispy cantidades_empleados_formset cantidades_empleados_formset_helper %}
+  </div>
+
+  <!-- Botón de confirmar -->
+  <div class="d-grid gap-2 mt-4">
+    <button type="submit" class="btn btn-success btn-block text-white">
+      Confirmar Contratación
+    </button>
+  </div>
+</form>
+{% endblock %}
+
+{% block btnform %}
+  Confirmar
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const esEventual = document.getElementById('chec').checked;
+    if (esEventual) {
+      const hastaField = document.querySelector('[name="hasta"]');
+      if (hastaField) {
+        const wrapper = hastaField.closest('.form-group') || hastaField.closest('.mb-3') || hastaField.closest('div');
+        if (wrapper) {
+          wrapper.style.display = 'none';
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

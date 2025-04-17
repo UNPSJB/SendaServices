@@ -35,15 +35,15 @@ Buscar Horario
     <div class="col-12 col-md-9 mx-auto">
         <div class="card flex-fill border-0">
             <div class="card-body py-4 pb-2">
-                {% if empleado %}
+                {% comment %} {% if empleado %}
                     <a href="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
-                {% endif %}
+                {% endif %} {% endcomment %}
                 <div id="calendar"></div>
             </div>
             <div class="modal fade" id="nuevoHorarioModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <form id="formNuevoHorario" method="post">
+                        <form id="formNuevoHorario" method="post" action="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}">
                             {% csrf_token %}
                             <div class="modal-header">
                                 <h5 class="modal-title">Nuevo Horario</h5>
@@ -51,22 +51,22 @@ Buscar Horario
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label for="servicioSelect">Servicio:</label>
-                                    <select id="servicioSelect" class="form-select" required>
+                                    {% comment %} <select id="servicioSelect" class="form-select" required>
                                         {% for s in servicios %}
                                             <option value="{{ s.id }}">{{ s }}</option>
                                         {% endfor %}
-                                    </select>
-                                    {% comment %} {{ form.servicio }} {% endcomment %}
+                                    </select> {% endcomment %}
+                                    {{ form.servicio }}
                                 </div>
                                 <div class="mb-3">
                                     <label for="fechaInicio">Fecha de inicio:</label>
-                                    <input type="date" class="form-control" id="fechaInicio" required>
-                                    {% comment %} {{ form.fecha_inicio }} {% endcomment %}
+                                    {% comment %} <input type="date" class="form-control" id="fechaInicio" required> {% endcomment %}
+                                    {{ form.fecha_inicio }}
                                 </div>
                                 <div class="mb-3">
                                     <label for="fechaFin">Fecha de fin:</label>
-                                    <input type="date" class="form-control" id="fechaFin" required>
-                                    {% comment %} {{ form.fecha_fin }} {% endcomment %}
+                                    {% comment %} <input type="date" class="form-control" id="fechaFin" required> {% endcomment %}
+                                    {{ form.fecha_fin }}
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -147,64 +147,6 @@ Buscar Horario
         calendar.render();
 
         // Manejo del formulario para crear nuevo evento
-        document.getElementById('formNuevoHorario').addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const servicioId = document.getElementById('servicioSelect').value;
-            const fechaInicio = document.getElementById('fechaInicio').value;
-            const fechaFin = document.getElementById('fechaFin').value;
-
-            try {
-                const response = await fetch("{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}", {
-                /*
-                const form = document.getElementById('formNuevoHorario');
-                const empleadoId = form.dataset.empleadoId;
-                
-                if (!empleadoId) {
-                    alert("No se encontró el ID del empleado.");
-                    return;
-                }
-                
-                const url = `/turnos/horarios/${empleadoId}/crear/`;*/
-                             
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": "{{ csrf_token }}",
-                    },
-                    body: JSON.stringify({
-                        servicio_id: servicioId,
-                        fecha_inicio: fechaInicio,
-                        fecha_fin: fechaFin,
-                    }),
-                });
-
-                if (!response.ok) {
-                    throw new Error("Error al crear el horario.");
-                }
-
-                const nuevoHorario = await response.json();
-
-                // window.location.href = "{% url 'turnos:listarHorariosDeEmpleado' empleado.pk %}";
-
-                calendar.addEvent({
-                    title: nuevoHorario.servicio,
-                    start: nuevoHorario.fecha_inicio,
-                    end: nuevoHorario.fecha_fin,
-                    extendedProps: {
-                        servicioId: nuevoHorario.servicio_id,
-                        fechaInicio: nuevoHorario.fecha_inicio,
-                        fechaFin: nuevoHorario.fecha_fin
-                    }
-                });
-
-                bootstrap.Modal.getInstance(document.getElementById('nuevoHorarioModal')).hide();
-                this.reset();
-
-            } catch (err) {
-                alert(err.message + "hola");
-            }
-        });
     });
 
 </script>

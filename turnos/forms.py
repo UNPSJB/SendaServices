@@ -114,15 +114,13 @@ class HorarioCustomFiltrosForm(HorarioFiltrosForm):
         self.helper.layout = Layout(
             Fieldset(
                 "",
-                HTML(
-                    '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "fecha_inicio","fecha_fin", #Remplazar campos formulario
+                HTML('<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
+                "desde",  # Campo existente
+                "hasta",  # Campo existente
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
 
-
-HorarioCustomFiltrosForm.base_fields.pop("servicio")
 
 
 # class HorarioModForm(ModelForm):

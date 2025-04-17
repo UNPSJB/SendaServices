@@ -118,17 +118,17 @@ Buscar Horario
             selectMirror: true,
             editable: true,
             dayMaxEvents: true, // allow "more" link when too many events
-            // events: {{ events|safe }},
-            events: [
+            events: {{ events|safe }},
+            /*events: [
                 {% for horario in object_list %}
                 {
                     title: "{{ horario.servicio }}",
                     start: "{{ horario.fecha_inicio | date:'Y-m-d' }}",
                     end: "{{ horario.fecha_fin | date:'Y-m-d' }}",
                     //url: 'turnos/horarios/<int:pk>/listar/horarios/<int:pk>/crear/',
-                },
+                }{% if not forloop.last %},{% endif %}
                 {% endfor %}
-            ],
+            ],*/
 
             dateClick: function(info) {
                 document.getElementById('fechaInicio').value = info.dateStr;

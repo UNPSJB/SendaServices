@@ -26,6 +26,7 @@ from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.urls import reverse
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 @csrf_exempt  # necesario si no estás mandando CSRF correctamente, pero mejor manejarlo con el token
@@ -119,6 +120,7 @@ class HorarioListView(ListFilterView):
     model = Horario #Nombre del modelo
     template_name = "horario_list.html" #Ruta del template
     context_object_name = 'horario' #Nombre de la lista usar ''
+    # form_class = HorarioForm
 
     def get_servicio(self):
         pk = self.kwargs.get('pk')
@@ -175,7 +177,17 @@ class HorarioListView(ListFilterView):
         elif servicio:
             context['tnav'] = "Gestion de Horarios" if not servicio else f"Gestion de horarios: {servicio}"
             context["servicio"] = servicio 
-        context["servicios"] = Servicio.objects.all()   
+        context["servicios"] = Servicio.objects.all() 
+
+        horarios = self.get_queryset()
+        eventos = [
+            {
+                "title": str(h.servicio),
+                "start": h.fecha_inicio.strftime("%Y-%m-%d"),
+                "end": h.fecha_fin.strftime("%Y-%m-%d"),
+            }
+            for h in horarios
+        ]
+        context['events'] = json.dumps(eventos, cls=DjangoJSONEncoder)  
         return context
-    
-    
+

@@ -1,0 +1,29 @@
+{{ formset.management_form }}
+
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      {% for field in formset.forms.0.visible_fields %}
+        <th>{{ field.label }}</th>
+      {% endfor %}
+      {% if formset.can_delete %}
+        <th>Eliminar</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for form in formset %}
+      <tr>
+        {% for field in form.visible_fields %}
+          <td>
+            {{ field.errors.as_ul }}
+            {{ field }}
+          </td>
+        {% endfor %}
+        {% if formset.can_delete %}
+          <td>{{ form.DELETE }}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -33,26 +33,33 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 
 
+
 @login_required(login_url="signup")
 def create_horario(request, pk):
-    # self.object = form.save(commit=False)
     empleado = get_object_or_404(Empleado, pk=pk)
-    # self.object.empleado = empleado
+    form = HorarioForm(request.POST or None, empleado=empleado)  
 
-    form = HorarioForm(request.POST or None)
-    if request.POST and form.is_valid():
+    if request.method == "POST" and form.is_valid():
         servicio = form.cleaned_data["servicio"]
         start_time = form.cleaned_data["fecha_inicio"]
         end_time = form.cleaned_data["fecha_fin"]
-        Horario.objects.get_or_create(
+
+        horario, created = Horario.objects.get_or_create(
             empleado=empleado,
             servicio=servicio,
             fecha_inicio=start_time,
             fecha_fin=end_time,
         )
-    # self.object.save()
-    return HttpResponseRedirect(reverse("turnos:listarHorariosDeEmpleado", args=[pk]))
 
+        try:
+            horario.clean()  # Validación personalizada del modelo
+            horario.save()
+            messages.success(request, "✨ ¡Horario creado correctamente!")
+        except ValidationError as e:
+            messages.error(request, "❌ Error al crear el horario: " + str(e))
+        return redirect("turnos:listarHorariosDeEmpleado", pk=pk)
+
+    return HttpResponseRedirect(reverse("turnos:listarHorariosDeEmpleado", args=[pk]))
 
 class HorarioCreateView(CreateView):
     model = Horario

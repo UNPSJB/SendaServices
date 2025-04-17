@@ -14,12 +14,18 @@ from servicios.forms import Servicio
 class HorarioForm(forms.ModelForm):
     class Meta:
         model = Horario
-        fields = ['empleado', 'servicio', 'fecha_inicio', 'fecha_fin']
+        fields = ['servicio', 'fecha_inicio', 'fecha_fin']
         widgets = {
-            'fecha_inicio': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'fecha_fin': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'fecha_inicio': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'}, 
+                format="%Y-%m-%dT%H:%M"
+            ),
+            'fecha_fin': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'}, 
+                format="%Y-%m-%dT%H:%M"
+            ),
         }
-    
+
     def __init__(self, *args, **kwargs):
         empleado = kwargs.pop("empleado", None)  # Extraemos el servicio de los kwargs
         super().__init__(*args, **kwargs)
@@ -27,6 +33,8 @@ class HorarioForm(forms.ModelForm):
         self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
         self.helper.form_tag = False
+        self.fields["fecha_inicio"].input_formats = ("%Y-%m-%dT%H:%M",)
+        self.fields["fecha_fin"].input_formats = ("%Y-%m-%dT%H:%M",)
 
 # class HorarioForm(ModelForm):
 

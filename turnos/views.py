@@ -22,6 +22,70 @@ from .forms import (
     HorarioCustomFiltrosForm
   )
 
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.urls import reverse
+
+
+@csrf_exempt  # necesario si no estás mandando CSRF correctamente, pero mejor manejarlo con el token
+@login_required(login_url="signup")
+def create_horario(request, pk):
+    try:
+        data = json.loads(request.body)
+
+        servicio_id = data.get("servicio_id")
+        fecha_inicio = data.get("fecha_inicio")
+        fecha_fin = data.get("fecha_fin")
+
+        if not (servicio_id and fecha_inicio and fecha_fin):
+            return HttpResponseBadRequest("Datos incompletos")
+
+        empleado = get_object_or_404(Empleado, pk=pk)
+        servicio = get_object_or_404(Servicio, pk=servicio_id)
+
+        # Convertir las fechas (asumen formato 'YYYY-MM-DD')
+        fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+        fecha_fin_dt = datetime.strptime(fecha_fin, "%Y-%m-%d")
+
+        horario = Horario.objects.create(
+            servicio=servicio,
+            empleado=empleado,
+            fecha_inicio=fecha_inicio_dt,
+            fecha_fin=fecha_fin_dt
+        )
+
+        return JsonResponse({
+            "id": horario.id,
+            "servicio": str(servicio),
+            "servicio_id": servicio.id,
+            "fecha_inicio": horario.fecha_inicio.strftime("%Y-%m-%d"),
+            "fecha_fin": horario.fecha_fin.strftime("%Y-%m-%d")
+        })
+
+    except Exception as e:
+        return HttpResponseBadRequest(str(e))
+
+
+# @login_required(login_url="signup")
+# def create_horario(request):
+#     self.object = form.save(commit=False)
+#     empleado = self.get_empleado()
+#     self.object.empleado = empleado
+#     form = HorarioForm(request.POST or None)
+#     if request.POST and form.is_valid():
+#         servicio = form.cleaned_data["servicio"]
+#         start_time = form.cleaned_data["fecha_inicio"]
+#         end_time = form.cleaned_data["fecha_fin"]
+#         Horario.objects.get_or_create(
+#             empleado=empleado,
+#             servicio=servicio,
+#             fecha_inicio=start_time,
+#             fecha_fin=end_time,
+#         )
+#     self.object.save()
+#     return HttpResponseRedirect(reverse("turnos:listarHorariosDeEmpleado", args=[pk]))
+
 
 class HorarioCreateView(CreateView):
     model = Horario
@@ -71,25 +135,19 @@ class HorarioCreateView(CreateView):
 
     def form_valid(self, form):
         """If the form is valid, save the associated model."""
-        form = self.get_form(form_class=self.get_form_class())
+        # form = self.get_form(form_class=self.get_form_class())
         self.object = form.save(commit=False)
         empleado = self.get_empleado()
         self.object.empleado = empleado
-        if request.method == "POST":
-            data = json.loads(request.body)
-            servicio_id = data.get('servicio_id')
-            fecha_inicio = data.get('fecha_inicio')
-            fecha_fin = data.get('fecha_fin')
-
-            # Crear el horario
-            servicio = Servicio.objects.get(id=servicio_id)
-            empleado = Empleado.objects.get(id=empleado.pk)
-
-            horario = Horario.objects.create(
-                servicio=servicio,
-                empleado=empleado,
-                fecha_inicio=fecha_inicio,
-                fecha_fin=fecha_fin,
+        form = HorarioForm(request.POST or None)
+        if request.POST and form.is_valid():
+            title = form.cleaned_data["servicio"]
+            start_time = form.cleaned_data["fecha_inicio"]
+            end_time = form.cleaned_data["fecha_fin"]
+            Horario.objects.get_or_create(
+                servicio=title,
+                fecha_inicio=start_time,
+                fecha_fin=end_time,
             )
         self.object.save()
         messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")

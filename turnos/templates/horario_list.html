@@ -43,7 +43,8 @@ Buscar Horario
             <div class="modal fade" id="nuevoHorarioModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <form id="formNuevoHorario">
+                        <form id="formNuevoHorario" method="post">
+                            {% csrf_token %}
                             <div class="modal-header">
                                 <h5 class="modal-title">Nuevo Horario</h5>
                             </div>
@@ -55,14 +56,17 @@ Buscar Horario
                                             <option value="{{ s.id }}">{{ s }}</option>
                                         {% endfor %}
                                     </select>
+                                    {% comment %} {{ form.servicio }} {% endcomment %}
                                 </div>
                                 <div class="mb-3">
                                     <label for="fechaInicio">Fecha de inicio:</label>
                                     <input type="date" class="form-control" id="fechaInicio" required>
+                                    {% comment %} {{ form.fecha_inicio }} {% endcomment %}
                                 </div>
                                 <div class="mb-3">
                                     <label for="fechaFin">Fecha de fin:</label>
                                     <input type="date" class="form-control" id="fechaFin" required>
+                                    {% comment %} {{ form.fecha_fin }} {% endcomment %}
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -170,8 +174,10 @@ Buscar Horario
 
                 const nuevoHorario = await response.json();
 
+                // window.location.href = "{% url 'turnos:listarHorariosDeEmpleado' empleado.pk %}";
+
                 calendar.addEvent({
-                    title: nuevoHorario.servicio_nombre,
+                    title: nuevoHorario.servicio,
                     start: nuevoHorario.fecha_inicio,
                     end: nuevoHorario.fecha_fin,
                     extendedProps: {

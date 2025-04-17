@@ -40,6 +40,37 @@ from django.http import JsonResponse
 from django.db.models import Q
 from .models import Inmueble
 
+from django.http import JsonResponse
+from core.models import Cliente
+
+from django.db.models import Q
+from django.http import JsonResponse
+from core.models import Cliente
+
+def buscar_clientes(request):
+    term = request.GET.get('term', '')
+    
+    # Búsqueda por nombre, apellido, cuil/cuit o correo
+    clientes = Cliente.objects.filter(
+        Q(nombre__icontains=term) |
+        Q(apellido__icontains=term) |
+        Q(cuil_cuit__icontains=term) |
+        Q(correo__icontains=term)
+    ).distinct()[:10]
+
+    data = {
+        "results": [
+            {
+                "id": c.id,
+                "text": f"{c.nombre} {c.apellido} - {c.cuil_cuit} - {c.correo}"
+            }
+            for c in clientes
+        ]
+    }
+
+    return JsonResponse(data)
+
+
 def buscar_inmuebles(request):
     term = request.GET.get('term', '')
 

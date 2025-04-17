@@ -48,7 +48,8 @@ from .views import (
     CategoriaListView,
     CategoriaUpdateView,
     buscar,
-    buscar_inmuebles
+    buscar_inmuebles,
+    buscar_clientes
 )
 
 
@@ -68,11 +69,14 @@ urlpatterns = [
     path('perfil/cambiar-correo/', CambiarCorreoView.as_view(), name='cambiar_correo'),
 
     # Gestion Cliente
+    path("buscar-clientes/", buscar_clientes, name="buscar_clientes"),
+
     path('cliente/', ClienteCreateView.as_view(), name="crearCliente"),
     path('clienteList/', ClienteListView.as_view(), name="listarCliente"),
     path('clienteModificar/<str:pk>', ClienteUpdateView.as_view(), name="modificarCliente"),
     
     # Gestion Inmuebles
+    
     path('buscar-inmuebles/', buscar_inmuebles, name='buscar_inmuebles'),
     path('inmuebles/', InmuebleCreateView.as_view(), name='crearInmueble'),
     path('inmuebles/cliente/<str:pk>/crear', InmuebleCreateView.as_view(), name='crearInmuebleParaCliente'),

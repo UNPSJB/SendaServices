@@ -532,64 +532,54 @@ InmuebleCustomFiltrosForm.base_fields.pop("cliente")
 
 
 def InmuebleForm(selected_client=None):  
-
-    class InmuebleForm(ModelForm):
-
-        #if not selected_client:
-            #cliente = forms.ModelChoiceField(
-            #    queryset=Cliente.objects.all(),
-            #    widget=forms.Select(attrs={'disabled':'disabled' if selected_client else False})
-            #    )
-
-        #print(selected_client is None)
-
+    class InmuebleForm(forms.ModelForm):
         class Meta:
             model = Inmueble
             fields = '__all__'
             exclude = ["cliente", ] if selected_client else []
-            #Label se refiere la descripcion que esta al lado del formulario.
             labels = { 
                 'codigo': 'Domicilio',
                 'metrosCuadrados': 'Metros Cuadrados',
                 'nroAmbientes': 'Cantidad de Ambientes',
             }
-
-            #Referencia a los estilos con los que se renderizan los campos
             widgets = {
-                'domicilio': forms.TextInput(
-                    #Permite estilizar los formularios
-                    attrs = {
-                        'class': 'form-control',
-                        'placeholder':'Ingrese el domicilio del inmueble',
-                    }
-                ),
-                'metrosCuadrados': forms.NumberInput(
-                    attrs = {
-                        'min': 0,
-                        'class': 'form-control',
-                        'placeholder':'Ingrese los metros cuadrados del inmueble',
-                    }
-                ),
-                'nroAmbientes': forms.NumberInput(
-                    attrs = {
-                        'min': 0,
-                        'class': 'form-control',
-                        'placeholder':'Ingrese la cantidad de ambientes del inmueble',
-
-                    }
-                ),
+                'domicilio': forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'placeholder':'Ingrese el domicilio del inmueble',
+                }),
+                'metrosCuadrados': forms.NumberInput(attrs={
+                    'min': 0,
+                    'class': 'form-control',
+                    'placeholder':'Ingrese los metros cuadrados del inmueble',
+                }),
+                'nroAmbientes': forms.NumberInput(attrs={
+                    'min': 0,
+                    'class': 'form-control',
+                    'placeholder':'Ingrese la cantidad de ambientes del inmueble',
+                }),
             }
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
+            
+            # Configuración de crispy
             self.helper = FormHelper()
             self.helper.form_id = 'id-inmuebleForm'
             self.helper.form_method = 'post'
-            if selected_client:
-                self.helper.form_action = reverse_lazy("crearInmuebleParaCliente", kwargs={"pk": selected_client.pk})
             self.helper.add_input(Submit('btn-submit-form', 'Guardar', css_class="btn btn-primary btn-block text-white w-100", css_id="save-inmueble"))
 
+            if selected_client:
+                self.helper.form_action = reverse_lazy("crearInmuebleParaCliente", kwargs={"pk": selected_client.pk})
+
+            # Si el campo cliente existe (solo cuando no se recibe uno fijo), activamos select2
+            if 'cliente' in self.fields:
+                self.fields['cliente'].widget.attrs.update({
+                    'class': 'select2-cliente form-select',
+                    'data-placeholder': 'Buscar cliente por nombre o DNI'
+                })
+
     return InmuebleForm
+
 
 
 class InmuebleUpdateForm(InmuebleForm()):

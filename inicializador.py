@@ -129,7 +129,7 @@ def load_tests_data():
         servicio = Servicio.objects.create(
             desde=desde,
             hasta=hasta,
-            estado=random.choice(["presupuestado", "contratado", "pagado"]),
+            estado=random.choice(["presupuestado", "en curso", "pagado","cancelado","vencido"]),
             diasSemana=random.randint(1, 6),
             ajuste=random.randint(0, 20),
             inmueble=random.choice(inmuebles),

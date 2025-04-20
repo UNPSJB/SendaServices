@@ -38,11 +38,10 @@ class TipoServicioProducto(models.Model):
 
 class TipoEstado (models.TextChoices):
     PRESUPUESTADO = "presupuestado", _("Presupuestado 👽")
-    CONTRATADO = "contratado", _("Contratado 🛸")
     VENCIDO = "vencido", _("Vencido 💀")
     CANCELADO = "cancelado", _("Cancelado 💩")
     PAGADO = "pagado", _("Pagado 🤑")
-    INICIADO = "iniciado", _("Iniciado 😊")
+    EN_CURSO = "en curso", _("curso 😊")
     FINALIZADO = "finalizado", _("Finalizado 😴")
 
 class ServicioCantidadEmpleado(models.Model):
@@ -249,16 +248,16 @@ class EstadoPresupuestado(EstadoStrategy):
 
         self.facturar(servicio, precio)
         if servicio.esEventual:
-            servicio.set_estado(TipoEstado.CONTRATADO)
+            servicio.set_estado(TipoEstado.EN_CURSO)
         else:
-            servicio.set_estado(TipoEstado.INICIADO)
+            servicio.set_estado(TipoEstado.EN_CURSO)
 
 
 
 Servicio.STRATEGIES.append(EstadoPresupuestado())
 
 class EstadoContratado(EstadoStrategy):
-    TIPO = TipoEstado.CONTRATADO
+    TIPO = TipoEstado.EN_CURSO
     def facturar(self, servicio, monto = None, *args, **kwargs):
         
         print("Facturando desde contratado")      
@@ -277,7 +276,7 @@ class EstadoContratado(EstadoStrategy):
 Servicio.STRATEGIES.append(EstadoContratado())
 
 class EstadoIniciado(EstadoStrategy):
-    TIPO = TipoEstado.INICIADO
+    TIPO = TipoEstado.EN_CURSO
     def facturar(self, servicio, monto, *args, **kwargs):
         ultima = servicio.facturas.last()
         nueva_fecha = ultima.emision + relativedelta(months=1)

@@ -8,6 +8,7 @@ Facturas
 
     {% block thextras %}
         <th colspan="">Estado</th>
+        <th colspan="">Exportar</th>
     {% endblock%}
     
     {% block tcuerpo %}
@@ -23,6 +24,16 @@ Facturas
             <td>Impaga</td>
         {% endif %}
 
+        <td>
+            <a 
+            href="{% url 'facturas:exportar_facturas_pdf' servicio.pk %}" 
+            class="bi bi-file-earmark-pdf-fill text-danger fs-5" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="top" 
+            title="Descargar PDF de la factura" 
+            target="_blank">
+        </a>
+        </td>
     </tr>
     {% empty %}
         <tr> <td> No hay turnos registrados </td> </tr>
@@ -35,6 +46,7 @@ Facturas
     <div class="d-flex justify-content-end">
         <a href="{% url 'servicios:pagarServicio' servicio.pk %}" class="btn btn-success">Pagar</a>
     </div>
+    
     {% endif %}
 {% endblock %}
 

@@ -8,6 +8,35 @@ from core.utils import ListFilterView
 from servicios.models import Servicio
 from .forms import (
     FacturasFiltrosForm,)
+from django.shortcuts import get_object_or_404
+from django.template.loader import get_template
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from .models import Factura
+
+def exportar_facturas_pdf(request, pk):
+    factura = get_object_or_404(Factura, pk=pk)
+    servicio = factura.servicio
+
+    template = get_template('pdf/factura_individual.html')
+    logo_url = request.build_absolute_uri('/static/img/senda.png')
+
+    html = template.render({
+        'factura': factura,
+        'servicio': servicio,
+        'logo_url': logo_url
+    })
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename=factura_{factura.pk}.pdf'
+
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('Error al generar el PDF', status=500)
+    return response
+
 
 
 # Create your views here.s

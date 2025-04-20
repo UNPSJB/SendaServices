@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            margin: 20px;
+            color: #212529;
+        }
+
+        .header img {
+            width: 130px;
+        }
+
+        .titulo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f5132;
+            margin-top: 10px;
+        }
+
+        .datos {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .seccion {
+            width: 45%;
+        }
+
+        .factura-info p {
+            margin: 5px 0;
+        }
+
+        .tabla {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .tabla th {
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        .tabla td {
+            border: 1px solid #dee2e6;
+            padding: 6px;
+        }
+
+        .total {
+            background-color: #0d6efd;
+            color: white;
+            padding: 8px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo -->
+    <div class="header">
+        <img src="{{ logo_url }}" alt="Logo Empresa" />
+    </div>
+
+    <hr>
+
+    <div class="titulo">Factura N° {{ factura.pk }}</div>
+
+    <!-- Datos del cliente y factura -->
+    <div class="datos">
+        <div class="seccion">
+            <p><strong>Cliente:</strong> {{ servicio.inmueble.cliente }}</p>
+            <p><strong>Email:</strong> {{ servicio.inmueble.cliente.correo }}</p>
+            <p><strong>Domicilio:</strong> {{ servicio.inmueble.domicilio }}</p>
+        </div>
+        <div class="seccion" style="text-align: right;">
+            <p><strong>Fecha Emisión:</strong> {{ factura.emision }}</p>
+            <p><strong>Estado:</strong> {% if factura.pagado %}Pagada{% else %}Impaga{% endif %}</p>
+            <p><strong>Forma de Pago:</strong> {{ factura.get_formaPago_display }}</p>
+        </div>
+    </div>
+
+    <!-- Detalles del servicio -->
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>m²</th>
+                <th>Precio x m²</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in servicio.detalles_servicio.all %}
+            <tr>
+                <td>{{ detalle.tipoServicio.descripcion }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>${{ detalle.tipoServicio.importe }}</td>
+                <td>${{ detalle.importe }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total">
+        Total: ${{ factura.total }}
+    </div>
+
+</body>
+</html>

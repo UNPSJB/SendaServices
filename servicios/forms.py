@@ -79,7 +79,7 @@ class ServiciosFiltrosForm(FiltrosForm):
             Fieldset(
                 "",
                 HTML('<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "estado", "es_eventual","desde", "hasta", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
+                "estado", "es_eventual","desde", "hasta", "totalEstimado",  # Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'),
                 Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),

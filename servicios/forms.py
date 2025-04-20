@@ -21,21 +21,34 @@ class ServiciosFiltrosForm(FiltrosForm):
         ("estado", "Estado del servicio"),
         ("desde", "Fecha Inicio"),
         ("hasta", "Fecha Fin"),
-        ("totalEstimado", "Total Estimado"),
+        ("totalEstimado", "Total"),
     ]
 
     ATTR_CHOICES = [
         ("estado", "Estado del servicio"),
         ("desde", "Fecha Inicio"),
         ("hasta", "Fecha Fin"),
-        ("totalEstimado", "Total Estimado"),
+        ("totalEstimado", "Total"),
     ]
+
+    ES_EVENTUAL_CHOICES = [
+        ("", "Todos"),  # Opción vacía para no filtrar
+        ("1", "Sí"),
+        ("0", "No"),
+    ]
+
 
     # Formulario de filtrado
     estado = forms.ChoiceField(
         label=_("Estado del servicio"),
         choices=[("", "Todos los estados")] + list(TipoEstado.choices),
         required=False
+    )
+
+    es_eventual = forms.ChoiceField(
+    label=_("Servicio Eventual"),
+    choices=ES_EVENTUAL_CHOICES,
+    required=False,
     )
 
     desde = forms.DateField(
@@ -66,12 +79,20 @@ class ServiciosFiltrosForm(FiltrosForm):
             Fieldset(
                 "",
                 HTML('<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "estado", "desde", "hasta", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
+                "estado", "es_eventual","desde", "hasta", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'),
                 Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),
                 css_class="d-grid gap-2")
         )
+
+    def get_es_eventual(self, qs, value):
+        if value == "1":
+            return qs.filter(desde=models.F("hasta"))  # Es eventual
+        elif value == "0":
+            return qs.exclude(desde=models.F("hasta"))  # No es eventual
+        return qs  # Sin filtro
+
 
     def get_estado(self, qs, value):
         q = Q(estados__timestamp=Subquery(

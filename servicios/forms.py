@@ -18,36 +18,24 @@ from turnos.models import Horario
 class ServiciosFiltrosForm(FiltrosForm):
     # Campos del modelo
     ORDEN_CHOICES = [
-        ("estado", "Estado"),
+        ("estado", "Estado del servicio"),
         ("desde", "Fecha Inicio"),
         ("hasta", "Fecha Fin"),
-        ("cantidadEstimadaEmpleados", "Empleados Estimados"),
         ("totalEstimado", "Total Estimado"),
     ]
 
     ATTR_CHOICES = [
-        ("estado", "Estado"),
+        ("estado", "Estado del servicio"),
         ("desde", "Fecha Inicio"),
         ("hasta", "Fecha Fin"),
-        ("cantidadEstimadaEmpleados", "Empleados Estimados"),
         ("totalEstimado", "Total Estimado"),
     ]
 
-    # ESTADO_CHOICES = [
-    #     ("presupuestado", _("Presupuestado 👽")),
-    #     ("contratado", _("Contratado 🛸")),
-    #     ("vencido", _("Vencido 💀")),
-    #     ("cancelado", _("Cancelado 💩")),
-    #     ("pagado", _("Pagado 🤑")),
-    #     ("iniciado", _("Iniciado 😊")),
-    #     ("finalizado", _("Finalizado 😴")),
-    # ]
-
     # Formulario de filtrado
     estado = forms.ChoiceField(
-        label=_("Estado"),
-        choices=TipoEstado.choices,
-        required=False  # Ajusta esto según tus necesidades
+        label=_("Estado del servicio"),
+        choices=[("", "Todos los estados")] + list(TipoEstado.choices),
+        required=False
     )
 
     desde = forms.DateField(
@@ -60,14 +48,6 @@ class ServiciosFiltrosForm(FiltrosForm):
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False,
         label=_("Fecha Fin")
-    )
-
-    cantidadEstimadaEmpleados = forms.DecimalField(
-        label=_("Empleados Estimados"),
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': '10000'}),
-        decimal_places=2,
-        max_digits=14
     )
 
     totalEstimado = forms.DecimalField(
@@ -86,7 +66,7 @@ class ServiciosFiltrosForm(FiltrosForm):
             Fieldset(
                 "",
                 HTML('<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "estado", "hasta", "desde", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
+                "estado", "desde", "hasta", "cantidadEstimadaEmpleados", "totalEstimado",  # Remplazar campos formulario
             ),
             Div(Submit('submit', 'Filtrar'),
                 Submit('clear', 'Borrar filtros', css_class='btn btn-secondary'),

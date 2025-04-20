@@ -1,0 +1,22 @@
+{% extends "../base_confirm_delete.html" %}
+
+{% block title %}
+ Finalizar Servicio
+ {% endblock %}
+
+{% block action %}
+ {% url "servicios:finalizarServicio" object.pk %}
+{% endblock %}
+
+{% block p %}
+    ¿Está seguro/a de querer finalizar el contrato 
+{% endblock %}
+
+{% block object %}
+    {{object}}
+{% endblock %}
+
+{% block footer %}
+    <button type="submit" class="btn btn-success">Finalizar servicio</button>
+    <button type="button" class="btn btn-danger" onclick="cerrar_modal()">Cerrar</button>
+{% endblock %}

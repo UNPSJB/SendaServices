@@ -4,7 +4,7 @@ from .views import (
     ServicioCreateView, ServicioListView,ServicioUpdateView, ServicioCancelarView, ServicioSeñarView, TipoServicioListView,
     TipoServicioCreateView,TipoServicioUpdateView,
     validar_tipo_servicio_form_en_modal,validar_servicio_form_en_modal, validar_contrato_form_en_modal,
-    contratar_servicio, pagar_servicio, facturar_servicio, cancelar_servicio, generar_presupuesto_pdf, exportar_servicios_excel, ContratarPresupuestoView)
+    contratar_servicio, pagar_servicio, facturar_servicio, cancelar_servicio, generar_presupuesto_pdf, exportar_servicios_excel, ContratarPresupuestoView, ServicioFinalizarView)
 
 app_name= "servicios"
 
@@ -19,6 +19,7 @@ urlpatterns = [
     path('servicio/validar_contrato_form/<int:pk>',validar_contrato_form_en_modal,name="validarContratoFormAjax"),
     path('servicio/contratar/<int:pk>', contratar_servicio , name="contratarServicio"),
     path('servicio/pagar/<int:pk>', pagar_servicio , name="pagarServicio"),
+    path('servicio/finalizar/<int:pk>', ServicioFinalizarView.as_view(), name='finalizarServicio'),
     path('servicio/cancelar/<int:pk>', ServicioCancelarView.as_view(), name='cancelarServicio'),
     path('servicio/señar/<int:pk>', ServicioSeñarView.as_view(), name='señarServicio'),
     #path('servicio/facturar/<int:pk>', login_required(facturar_servicio) , name="facturarServicio"),

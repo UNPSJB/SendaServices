@@ -547,12 +547,22 @@ def pagar_servicio(request, pk):
         return redirect(reverse_lazy("servicios:listarServicio"))
 
 def contratar_servicio(request, pk):
-    if request.method == "GET":
-        servicio = Servicio.objects.get(pk=pk)
+    servicio = get_object_or_404(Servicio, pk=pk)
 
+    if request.method == "GET":
         servicio.contratar()
         messages.success(request, '🤝 ¡El servicio se CONTRATÓ con éxito! 🎊')
         return redirect(reverse_lazy("servicios:listarServicio"))
+    
+    # 🚨 Aquí es donde fallaba antes
+    elif request.method == "POST":
+        servicio.contratar()
+        messages.success(request, '🤝 ¡El servicio se CONTRATÓ con éxito! 🎊')
+        return redirect(reverse_lazy("servicios:listarServicio"))
+    
+    # En caso de otros métodos no esperados (PUT, DELETE, etc.)
+    return HttpResponse("Método no permitido", status=405)
+
 
 def facturar_servicio(request, pk):
     pass
@@ -564,6 +574,8 @@ def cancelar_servicio(request, pk):
             messages.success(request, '❌ ¡El servicio se CANCELÓ con éxito! 😔')
             servicio.cancelar()
         return redirect(reverse_lazy("servicios:listarServicio"))
+    
+
 
 
 
@@ -601,6 +613,20 @@ class ServicioCancelarView(SuccessMessageMixin, DeleteView):
         if servicio:
             messages.success(request, '❌ ¡El servicio se CANCELÓ con éxito! 😔')
             servicio.cancelar()
+        return redirect(self.success_url)
+    
+class ServicioFinalizarView(SuccessMessageMixin, DeleteView):
+    model = Servicio
+    context_object_name = "servicio"
+    success_url = reverse_lazy('servicios:listarServicio')
+    success_message = "El servicio ha sido cancelado!"
+    template_name = "servicios/servicio_confirm_finalizar.html"
+
+    def post(self, request, *args, **kwargs):
+        servicio = self.get_object()  # Utiliza el método get_object para obtener el objeto Servicio
+        if servicio:
+            messages.success(request, '❌ ¡El servicio se FINALIZO con éxito! 😔')
+            servicio.finalizar()
         return redirect(self.success_url)
     
     

@@ -1,5 +1,3 @@
-
-
 {% extends "../baselist.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
@@ -42,7 +40,6 @@ Buscar Servicio
         <td>{{s.estado_actual}}</td>
         <td>{{s.desde}}</td>
         <td>{{s.hasta}}</td>
-        <td>{{s.cantidadEstimadaEmpleados}}</td>
         <td>{{s.total}}</td>
 
 
@@ -68,11 +65,8 @@ Buscar Servicio
                 target="_blank">
             </a>
 
-        
-        
-
     
-        {% elif s.estado_actual.tipo == "contratado" %}
+            {% elif s.estado_actual.tipo == "en curso" %}
 
             <a 
             href="{% url 'facturas:listarFacturasDeServicio' pk=s.pk %}" 
@@ -82,13 +76,14 @@ Buscar Servicio
             title="Facturas">
             </a>
 
-            <a 
-            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
-            class="bi bi-calendar-date text-info fs-5" 
+            <a href="#" 
+            onclick="abrir_modal('{% url "servicios:finalizarServicio" pk=s.pk %}')" 
+            class="bi bi-clipboard2-check text-warning fs-5" 
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
-            title="Añadir horarios">
+            title="Finalizar Servicio">
             </a>
+
 
             <a href="#" 
             onclick="abrir_modal('{% url "servicios:cancelarServicio" pk=s.pk %}')" 
@@ -98,7 +93,7 @@ Buscar Servicio
             title="Cancelar Servicio">
             </a>
 
-            {% elif s.estado_actual.tipo == "iniciado" %}
+            {% elif s.estado_actual.tipo == "finalizado" %}
 
             <a 
             href="{% url 'facturas:listarFacturasDeServicio' pk=s.pk %}" 
@@ -106,22 +101,6 @@ Buscar Servicio
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             title="Facturas">
-            </a>
-
-            <a 
-            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
-            class="bi bi-calendar-date text-info fs-5" 
-            data-bs-toggle="tooltip" 
-            data-bs-placement="top" 
-            title="Añadir horarios">
-            </a>
-
-            <a href="#" 
-            onclick="abrir_modal('{% url "servicios:cancelarServicio" pk=s.pk %}')" 
-            class="bi bi-x-octagon text-danger fs-5" 
-            data-bs-toggle="tooltip" 
-            data-bs-placement="top" 
-            title="Cancelar Servicio">
             </a>
 
             {% elif s.estado_actual.tipo == "pagado" %}
@@ -134,14 +113,6 @@ Buscar Servicio
             title="Facturas">
             </a>
 
-            <a 
-            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
-            class="bi bi-calendar-date text-info fs-5" 
-            data-bs-toggle="tooltip" 
-            data-bs-placement="top" 
-            title="Añadir horarios">
-            </a>
-
             {% elif s.estado_actual.tipo == "cancelado" %}
 
             <a 
@@ -150,14 +121,6 @@ Buscar Servicio
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             title="Facturas">
-            </a>
-
-            <a 
-            href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
-            class="bi bi-calendar-date text-info fs-5" 
-            data-bs-toggle="tooltip" 
-            data-bs-placement="top" 
-            title="Añadir horarios">
             </a>
 
 
@@ -193,5 +156,4 @@ function cerrar_modal() {
 }
 </script>
 {% endblock %}
-
 

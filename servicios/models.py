@@ -41,7 +41,7 @@ class TipoEstado (models.TextChoices):
     VENCIDO = "vencido", _("Vencido 💀")
     CANCELADO = "cancelado", _("Cancelado 💩")
     PAGADO = "pagado", _("Pagado 🤑")
-    EN_CURSO = "en curso", _("curso 😊")
+    EN_CURSO = "en curso", _("En curso 😊")
     FINALIZADO = "finalizado", _("Finalizado 😴")
 
 class ServicioCantidadEmpleado(models.Model):
@@ -167,6 +167,9 @@ class Servicio(models.Model):
     def contratar(self, *args, **kwargs):
         self.strategy().contratar(self, *args, **kwargs)
 
+    def finalizar(self, *args, **kwargs):
+        self.strategy().finalizar(self, *args, **kwargs)
+
     def cancelar(self, *args, **kwargs):
         self.strategy().cancelar(self, *args, **kwargs)
 
@@ -207,8 +210,11 @@ class EstadoStrategy():
     def contratar(self, servicio, *args, **kwargs):
         raise ValidationError(_("El servicio no se puede contratar en este estado"))
     
+    def finalizar(self, servicio, *args, **kwargs):
+        raise ValidationError(_("El servicio no se puede finalizar en este estado"))
+
     def cancelar(self, servicio, *args, **kwargs):
-        raise ValidationError(_("El servicio no se puede contratar en este estado"))
+        raise ValidationError(_("El servicio no se puede cancelar en este estado"))
 
 class EstadoVencido(EstadoStrategy):
     TIPO = TipoEstado.VENCIDO
@@ -252,28 +258,7 @@ class EstadoPresupuestado(EstadoStrategy):
         else:
             servicio.set_estado(TipoEstado.EN_CURSO)
 
-
-
 Servicio.STRATEGIES.append(EstadoPresupuestado())
-
-class EstadoContratado(EstadoStrategy):
-    TIPO = TipoEstado.EN_CURSO
-    def facturar(self, servicio, monto = None, *args, **kwargs):
-        
-        print("Facturando desde contratado")      
-        #controlar servicio.saldo() implementar
-
-    def pagar(self, servicio, *args, **kwargs):
-        factura = servicio.facturas.last()
-        factura.pago = timezone.now()
-        factura.save()
-        servicio.set_estado(TipoEstado.PAGADO)
-
-    def cancelar(self, servicio, monto = None):
-        servicio.set_estado(TipoEstado.CANCELADO)
-
-         
-Servicio.STRATEGIES.append(EstadoContratado())
 
 class EstadoIniciado(EstadoStrategy):
     TIPO = TipoEstado.EN_CURSO
@@ -310,11 +295,53 @@ class EstadoIniciado(EstadoStrategy):
 
             self.facturar(servicio, precio)
 
+    def finalizar(self, servicio, monto = None):
+        servicio.set_estado(TipoEstado.FINALIZADO)
+
     def cancelar(self, servicio, monto = None):
         servicio.set_estado(TipoEstado.CANCELADO)
             
 
 Servicio.STRATEGIES.append(EstadoIniciado())
+
+class EstadoIniciado(EstadoStrategy):
+    TIPO = TipoEstado.FINALIZADO
+    def facturar(self, servicio, monto, *args, **kwargs):
+        ultima = servicio.facturas.last()
+        nueva_fecha = ultima.emision + relativedelta(months=1)
+        print(nueva_fecha)
+        factura = Factura(servicio=servicio, total=monto, emision=nueva_fecha)        
+        factura.save()
+        return factura
+
+    def pagar(self, servicio, *args, **kwargs):
+        factura = servicio.facturas.last()
+        factura.pago = timezone.now()
+        factura.save()
+
+        fecha_factura = (factura.emision).month
+        fecha_servicio = (servicio.hasta).month
+
+        if fecha_factura == fecha_servicio :
+            servicio.set_estado(TipoEstado.PAGADO)
+        else:
+            # Calcula la diferencia en meses
+            meses = Decimal(relativedelta(servicio.hasta, servicio.desde).months)
+            if meses == 0 :
+                meses = 1
+            
+            if servicio.requiereSeña:
+                totalEstimado = Decimal(servicio.totalEstimado()) / 2
+            else:
+                totalEstimado = Decimal(servicio.totalEstimado()) 
+            # Calcula el precio dividiendo el totalEstimado por el número de meses
+            precio = totalEstimado / meses
+
+            self.facturar(servicio, precio)
+            
+
+Servicio.STRATEGIES.append(EstadoIniciado())
+
 
     
 

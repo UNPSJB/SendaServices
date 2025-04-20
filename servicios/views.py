@@ -28,9 +28,7 @@ from django.conf import settings
 from .models import Servicio
 from django.shortcuts import get_object_or_404
 from openpyxl import Workbook
-
-
-
+from django.core.mail import EmailMessage
 
 # --------------------- VISTA PARA GENERAR PRESUPUESTOS EN EXCEL ----------------------------
 
@@ -628,8 +626,6 @@ class ServicioFinalizarView(SuccessMessageMixin, DeleteView):
             messages.success(request, '❌ ¡El servicio se FINALIZO con éxito! 😔')
             servicio.finalizar()
         return redirect(self.success_url)
-    
-    
     
 
 class ServicioSeñarView(SuccessMessageMixin, DeleteView):

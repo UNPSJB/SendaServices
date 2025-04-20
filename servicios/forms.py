@@ -148,7 +148,7 @@ class ServicioCantidadEmpleadoFormSetHelper(FormHelper):
 class ServicioForm(forms.ModelForm):
     class Meta:
         model = Servicio
-        exclude = ('estado', 'total')
+        exclude = ('estado', 'total', 'fecha_presupuesto')
         widgets = {
             'desde': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),
             'hasta': forms.DateInput(format=('%d/%m/%Y'), attrs={'type': 'date'}),

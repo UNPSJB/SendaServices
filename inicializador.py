@@ -16,7 +16,7 @@ django.setup()
 
 from django.contrib.auth.models import User
 from core.models import Cliente, Inmueble, Producto, Categoria, Empleado
-from servicios.models import TipoServicio, Servicio, ServicioCantidadEmpleado
+from servicios.models import TipoServicio, Servicio, ServicioCantidadEmpleado, TipoEstado
 from facturas.models import Factura
 from turnos.models import Horario, Periodo
 
@@ -124,26 +124,28 @@ def load_tests_data():
 
     # Servicios y cantidades por categoría
     for _ in range(10):
-        desde = fake.date_between(start_date="-30d", end_date="today")
-        hasta = desde + timedelta(weeks=random.randint(1, 10))
-        servicio = Servicio.objects.create(
-            desde=desde,
-            hasta=hasta,
-            estado=random.choice(["presupuestado", "en curso", "pagado","cancelado","vencido"]),
-            diasSemana=random.randint(1, 6),
-            ajuste=random.randint(0, 20),
-            inmueble=random.choice(inmuebles),
-            total=round(random.uniform(8000, 30000), 2)
-        )
+            desde = fake.date_between(start_date="-30d", end_date="today")
+            hasta = desde + timedelta(weeks=random.randint(1, 10))
 
-        # Agregar de 1 a 3 cantidades por categoría (sin duplicar categoría)
-        categorias_elegidas = random.sample(categorias, k=random.randint(1, min(3, len(categorias))))
-        for categoria in categorias_elegidas:
-            ServicioCantidadEmpleado.objects.create(
-                servicio=servicio,
-                categoria=categoria,
-                cantidad=random.randint(1, 4)
+            servicio = Servicio.objects.create(
+                desde=desde,
+                hasta=hasta,
+                diasSemana=random.randint(1, 6),
+                ajuste=random.randint(0, 20),
+                inmueble=random.choice(inmuebles),
+                total=round(random.uniform(8000, 30000), 2),
+                fecha_presupuesto=desde  # Nuevo campo agregado
             )
+
+            # Agregar de 1 a 3 cantidades por categoría (sin duplicar categoría)
+            categorias_elegidas = random.sample(categorias, k=random.randint(1, min(3, len(categorias))))
+            for categoria in categorias_elegidas:
+                ServicioCantidadEmpleado.objects.create(
+                    servicio=servicio,
+                    categoria=categoria,
+                    cantidad=random.randint(1, 4)
+                )
+
 
 
     print("✅ Datos de prueba cargados exitosamente.")

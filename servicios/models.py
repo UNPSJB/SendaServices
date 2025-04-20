@@ -7,7 +7,8 @@ from django.core.validators import MinValueValidator,MaxValueValidator
 from decimal import Decimal
 from facturas.models import Factura
 from dateutil.relativedelta import relativedelta
-from django.apps import apps
+from servicios.utils import enviar_factura_por_email
+import threading
 
 # Create your models here.
 
@@ -64,6 +65,9 @@ class Servicio(models.Model):
         DETERMINADO = 2, "Por Tiempo Determinado"
 
     STRATEGIES = []
+
+    fecha_presupuesto = models.DateField("Fecha de Creación del Presupuesto", auto_now_add=True)
+
     #Fecha cuando inicia el servicio
     desde = models.DateField("Fecha Inicio",)
     #Fecha cuando finaliza el servicio
@@ -78,6 +82,12 @@ class Servicio(models.Model):
     inmueble = models.ForeignKey("core.Inmueble", on_delete=models.CASCADE)
 
     total = models.DecimalField(decimal_places=2,max_digits=100, default=0)
+
+    def cantidad_meses_estimados(self):
+        meses = relativedelta(self.hasta, self.desde).months
+        if meses == 0:
+            return 1
+        return meses
 
     def get_fecha_inicio(self):
         """Retorna la fecha de inicio del servicio."""
@@ -236,6 +246,7 @@ class EstadoPresupuestado(EstadoStrategy):
             totalEstimado = Decimal(servicio.totalEstimado())
             seña = self.facturar(servicio, totalEstimado/2)
             seña.pago = timezone.now()
+            threading.Thread(target=enviar_factura_por_email, args=(seña,)).start()
             seña.save()
 
         # Calcula la diferencia en meses
@@ -252,48 +263,48 @@ class EstadoPresupuestado(EstadoStrategy):
         # Calcula el precio dividiendo el totalEstimado por el número de meses
         precio = totalEstimado / meses
 
-        self.facturar(servicio, precio)
-        if servicio.esEventual:
-            servicio.set_estado(TipoEstado.EN_CURSO)
-        else:
-            servicio.set_estado(TipoEstado.EN_CURSO)
+        factura = self.facturar(servicio, precio)
+
+        if factura:
+            threading.Thread(target=enviar_factura_por_email, args=(factura,)).start()
+
+        servicio.set_estado(TipoEstado.EN_CURSO)
+
+        
 
 Servicio.STRATEGIES.append(EstadoPresupuestado())
 
 class EstadoIniciado(EstadoStrategy):
     TIPO = TipoEstado.EN_CURSO
+
     def facturar(self, servicio, monto, *args, **kwargs):
+        facturas_generadas = servicio.facturas.count()
+        meses_estimados = servicio.cantidad_meses_estimados()
+
+        if facturas_generadas >= meses_estimados:
+            print("⚠️ Límite de facturación alcanzado.")
+            return None
+
         ultima = servicio.facturas.last()
         nueva_fecha = ultima.emision + relativedelta(months=1)
-        print(nueva_fecha)
-        factura = Factura(servicio=servicio, total=monto, emision=nueva_fecha)        
+
+        factura = Factura(servicio=servicio, total=monto, emision=nueva_fecha)
         factura.save()
         return factura
+
 
     def pagar(self, servicio, *args, **kwargs):
         factura = servicio.facturas.last()
         factura.pago = timezone.now()
         factura.save()
 
-        fecha_factura = (factura.emision).month
-        fecha_servicio = (servicio.hasta).month
+        fecha_factura = factura.emision.month
+        fecha_servicio = servicio.hasta.month
 
-        if fecha_factura == fecha_servicio :
+        # Si es la última factura esperada → marcar como pagado
+        if fecha_factura == fecha_servicio:
             servicio.set_estado(TipoEstado.PAGADO)
-        else:
-            # Calcula la diferencia en meses
-            meses = Decimal(relativedelta(servicio.hasta, servicio.desde).months)
-            if meses == 0 :
-                meses = 1
-            
-            if servicio.requiereSeña:
-                totalEstimado = Decimal(servicio.totalEstimado()) / 2
-            else:
-                totalEstimado = Decimal(servicio.totalEstimado()) 
-            # Calcula el precio dividiendo el totalEstimado por el número de meses
-            precio = totalEstimado / meses
 
-            self.facturar(servicio, precio)
 
     def finalizar(self, servicio, monto = None):
         servicio.set_estado(TipoEstado.FINALIZADO)
@@ -304,13 +315,21 @@ class EstadoIniciado(EstadoStrategy):
 
 Servicio.STRATEGIES.append(EstadoIniciado())
 
-class EstadoIniciado(EstadoStrategy):
+class EstadoFinalizado(EstadoStrategy):
     TIPO = TipoEstado.FINALIZADO
+
     def facturar(self, servicio, monto, *args, **kwargs):
+        facturas_generadas = servicio.facturas.count()
+        meses_estimados = servicio.cantidad_meses_estimados()
+
+        if facturas_generadas >= meses_estimados:
+            print("⚠️ Límite de facturación alcanzado.")
+            return None
+
         ultima = servicio.facturas.last()
         nueva_fecha = ultima.emision + relativedelta(months=1)
-        print(nueva_fecha)
-        factura = Factura(servicio=servicio, total=monto, emision=nueva_fecha)        
+
+        factura = Factura(servicio=servicio, total=monto, emision=nueva_fecha)
         factura.save()
         return factura
 
@@ -319,28 +338,16 @@ class EstadoIniciado(EstadoStrategy):
         factura.pago = timezone.now()
         factura.save()
 
-        fecha_factura = (factura.emision).month
-        fecha_servicio = (servicio.hasta).month
+        fecha_factura = factura.emision.month
+        fecha_servicio = servicio.hasta.month
 
-        if fecha_factura == fecha_servicio :
+        # Si es la última factura esperada → marcar como pagado
+        if fecha_factura == fecha_servicio:
             servicio.set_estado(TipoEstado.PAGADO)
-        else:
-            # Calcula la diferencia en meses
-            meses = Decimal(relativedelta(servicio.hasta, servicio.desde).months)
-            if meses == 0 :
-                meses = 1
-            
-            if servicio.requiereSeña:
-                totalEstimado = Decimal(servicio.totalEstimado()) / 2
-            else:
-                totalEstimado = Decimal(servicio.totalEstimado()) 
-            # Calcula el precio dividiendo el totalEstimado por el número de meses
-            precio = totalEstimado / meses
 
-            self.facturar(servicio, precio)
             
 
-Servicio.STRATEGIES.append(EstadoIniciado())
+Servicio.STRATEGIES.append(EstadoFinalizado())
 
 
     

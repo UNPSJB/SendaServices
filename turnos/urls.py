@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import HorarioListView, HorarioCreateView, create_horario
+from .views import HorarioListView, HorarioCreateView
 
 app_name= "turnos"
 
 urlpatterns = [
-    path("horarios/<int:pk>/crear/", create_horario, name="crearHorarioParaEmpleado"),
+    path("horarios/<int:pk>/crear/",HorarioCreateView.as_view(),name="crearHorarioParaEmpleado"),
     path('horarios/<int:pk>/listar/',HorarioListView.as_view(), name='listarHorariosDeEmpleado'), #pk es el pk del empleado.
 
     path('horarios/listar/',HorarioListView.as_view(), name='listarHorarios'),

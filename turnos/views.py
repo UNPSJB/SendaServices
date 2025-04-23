@@ -4,13 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import ValidationError
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, ListView
 from core.utils import ListFilterView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, redirect, get_object_or_404, render
-from django.urls import reverse_lazy
+from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse_lazy, reverse
 from .models import Horario
 from servicios.models import Servicio
@@ -22,36 +23,7 @@ from .forms import (
     HorarioCustomFiltrosForm
   )
 
-from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
 import json
-from django.urls import reverse
-from django.core.serializers.json import DjangoJSONEncoder
-
-
-@csrf_exempt  # necesario si no estás mandando CSRF correctamente, pero mejor manejarlo con el token
-
-
-
-@login_required(login_url="signup")
-def create_horario(request, pk):
-    # self.object = form.save(commit=False)
-    empleado = get_object_or_404(Empleado, pk=pk)
-    # self.object.empleado = empleado
-
-    form = HorarioForm(request.POST or None)
-    if request.POST and form.is_valid():
-        servicio = form.cleaned_data["servicio"]
-        start_time = form.cleaned_data["fecha_inicio"]
-        end_time = form.cleaned_data["fecha_fin"]
-        Horario.objects.get_or_create(
-            empleado=empleado,
-            servicio=servicio,
-            fecha_inicio=start_time,
-            fecha_fin=end_time,
-        )
-    # self.object.save()
-    return HttpResponseRedirect(reverse("turnos:listarHorariosDeEmpleado", args=[pk]))
 
 
 class HorarioCreateView(CreateView):
@@ -103,12 +75,28 @@ class HorarioCreateView(CreateView):
     def form_valid(self, form):
         """If the form is valid, save the associated model."""
         # form = self.get_form(form_class=self.get_form_class())
-        self.object = form.save(commit=False)
+        # self.object = form.save(commit=False)
         empleado = self.get_empleado()
-        self.object.empleado = empleado
-        self.object.save()
-        messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
-        return super().form_valid(form)
+        # self.object.empleado = empleado
+        servicio = form.cleaned_data["servicio"]
+        start_time = form.cleaned_data["fecha_inicio"]
+        end_time = form.cleaned_data["fecha_fin"]
+
+        # Esto reemplaza el save() manual
+        horario, created = Horario.objects.get_or_create(
+            empleado=empleado,
+            servicio=servicio,
+            fecha_inicio=start_time,
+            fecha_fin=end_time,
+        )
+
+        # self.object = horario  # importante para que funcione el redirect automático
+        if created:
+            messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
+        else:
+            messages.info(self.request, "⚠️ Ese horario ya existía para el empleado.")
+        
+        return HttpResponseRedirect(self.get_success_url())
     
 
 # Create your views here.s

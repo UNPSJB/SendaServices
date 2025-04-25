@@ -27,7 +27,7 @@ class HorarioForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        empleado = kwargs.pop("empleado", None)  # Extraemos el servicio de los kwargs
+        kwargs.pop("empleado", None)  # Extraemos el servicio de los kwargs
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-horarioForm'
@@ -37,8 +37,6 @@ class HorarioForm(forms.ModelForm):
         self.fields['fecha_inicio'].widget.attrs.update({'id': 'fechaInicio'})
         self.fields['fecha_fin'].widget.attrs.update({'id': 'fechaFin'})
         self.fields['servicio'].widget.attrs.update({'id': 'servicioSelect'})
-        # self.fields["fecha_inicio"].input_formats = ("%Y-%m-%dT%H:%M",)
-        # self.fields["fecha_fin"].input_formats = ("%Y-%m-%dT%H:%M",)
 
 
 class HorarioFiltrosForm(FiltrosForm):
@@ -46,8 +44,7 @@ class HorarioFiltrosForm(FiltrosForm):
     ORDEN_CHOICES = [
         ("fecha_inicio", "Fecha Inicio"),
         ("fecha_fin", "Fecha Fin"),
-        ("servicio", "Servicio"),
-        
+        ("servicio", "Servicio"),  
     ]
     ATTR_CHOICES = [
         ("fecha_inicio", "Fecha Inicio"),
@@ -56,9 +53,8 @@ class HorarioFiltrosForm(FiltrosForm):
     ]
 
     #Formulario de filtrado
-
-    desde = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),required=False,label="Fecha Inicio")
-    hasta = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),required=False,label="Fecha Fin")
+    fecha_inicio = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),required=False,label="Fecha Inicio")
+    fecha_fin = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),required=False,label="Fecha Fin")
     servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Servicio')
     
 
@@ -71,10 +67,11 @@ class HorarioFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                 "desde", "hasta", "servicio",  # ✅ Campos corregidos
+                 "fecha_inicio", "fecha_fin", "servicio",  # ✅ Campos corregidos
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
+
 
 class HorarioCustomFiltrosForm(HorarioFiltrosForm):
     def __init__(self, *args, **kwargs):
@@ -84,7 +81,7 @@ class HorarioCustomFiltrosForm(HorarioFiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                 "desde", "hasta",  # ✅ Campos corregidos
+                 "fecha_inicio", "fecha_fin",  # ✅ Campos corregidos
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )

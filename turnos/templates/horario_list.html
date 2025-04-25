@@ -35,9 +35,6 @@ Buscar Horario
     <div class="col-12 col-md-9 mx-auto">
         <div class="card flex-fill border-0">
             <div class="card-body py-4 pb-2">
-                {% comment %} {% if empleado %}
-                    <a href="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
-                {% endif %} {% endcomment %}
                 <div id="calendar"></div>
             </div>
             <div class="modal fade" id="nuevoHorarioModal" tabindex="-1">
@@ -119,16 +116,6 @@ Buscar Horario
             editable: true,
             dayMaxEvents: true, // allow "more" link when too many events
             events: {{ events|safe }},
-            /*events: [
-                {% for horario in object_list %}
-                {
-                    title: "{{ horario.servicio }}",
-                    start: "{{ horario.fecha_inicio | date:'Y-m-d' }}",
-                    end: "{{ horario.fecha_fin | date:'Y-m-d' }}",
-                    //url: 'turnos/horarios/<int:pk>/listar/horarios/<int:pk>/crear/',
-                }{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ],*/
 
             dateClick: function(info) {
                 document.getElementById('fechaInicio').value = info.dateStr;
@@ -146,7 +133,6 @@ Buscar Horario
         });
         calendar.render();
 
-        // Manejo del formulario para crear nuevo evento
     });
 
 </script>

@@ -87,6 +87,7 @@ class HorarioCreateView(CreateView):
         )
 
         if horario:
+            # horario.clean()  # Validación personalizada del modelo
             messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
         else:
             messages.info(self.request, "⚠️ Ese horario ya existía para el empleado.")
@@ -113,7 +114,6 @@ class HorarioListView(ListFilterView):
     #     if pk:
     #         return get_object_or_404(Servicio, pk=pk)
     #     return None
-
         
     def get_queryset(self):
         queryset = super().get_queryset()  # o Horario.objects.all()

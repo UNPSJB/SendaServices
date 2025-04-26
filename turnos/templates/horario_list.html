@@ -113,20 +113,57 @@ Buscar Horario
             selectMirror: true,
             editable: true,
             dayMaxEvents: true, // allow "more" link when too many events
+            // validRange: {
+            //     start: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+            // },            
             events: {{ events|safe }},
 
             dateClick: function(info) {
-                document.getElementById('fechaInicio').value = info.dateStr;
-                document.getElementById('fechaFin').value = info.dateStr;
+                // document.getElementById('fechaInicio').value = info.dateStr;
+                // document.getElementById('fechaFin').value = info.dateStr;
+                const hoySinHora = new Date();
+                hoySinHora.setHours(0, 0, 0, 0);   // quitamos la hora para comparar solo la fecha
+                const fechaSinHora = new Date(info.dateStr);
+                fechaSinHora.setHours(0, 0, 0, 0); // quitamos la hora para comparar solo la fecha
+                
+                if (fechaSinHora < hoySinHora) {
+                    // No hacemos nada, solo mostramos un mensaje si querés
+                    alert("No se pueden crear horarios en fechas anteriores a hoy.");
+                    return;
+                }
+
+                const hoy = new Date().toISOString().slice(0,16); // YYYY-MM-DDTHH:MM
+                document.getElementById('fechaInicio').min = hoy;
+                document.getElementById('fechaFin').min = hoy;
+
+                const fechaSeleccionada = new Date(info.dateStr).toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+                document.getElementById('fechaInicio').value = fechaSeleccionada;
+                document.getElementById('fechaFin').value = fechaSeleccionada;
+
                 new bootstrap.Modal(document.getElementById('nuevoHorarioModal')).show();
             },
     
             eventClick: function(info) {
-                const props = info.event.extendedProps;
-                document.getElementById('detalleServicio').innerText = info.event.title;
-                document.getElementById('detalleInicio').innerText = props.fechaInicio;
-                document.getElementById('detalleFin').innerText = props.fechaFin;
+                // const props = info.event.extendedProps;
+                // document.getElementById('detalleServicio').innerText = info.event.title;
+                // document.getElementById('detalleInicio').innerText = props.fechaInicio;
+                // document.getElementById('detalleFin').innerText = props.fechaFin;
+                const evento = info.event;
+
+                // Mostrar datos en el modal
+                document.getElementById("detalleServicio").textContent = evento.title;
+
+                // Convertir fechas a formato legible
+                const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', 
+                                hour: '2-digit', minute: '2-digit' };
+
+                const fechaInicio = evento.start ? new Date(evento.start).toLocaleString('es-AR', opciones) : 'N/A';
+                const fechaFin = evento.end ? new Date(evento.end).toLocaleString('es-AR', opciones) : 'N/A';
+
+                document.getElementById("detalleInicio").textContent = fechaInicio;
+                document.getElementById("detalleFin").textContent = fechaFin;
                 new bootstrap.Modal(document.getElementById('detalleHorarioModal')).show();
+                // $('#detalleHorarioModal').modal('show');
             }
         });
         calendar.render();

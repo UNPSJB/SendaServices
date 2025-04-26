@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import ValidationError
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, ListView
@@ -163,8 +164,10 @@ class HorarioListView(ListFilterView):
         eventos = [
             {
                 "title": str(h.servicio),
-                "start": h.fecha_inicio.strftime("%Y-%m-%d"),
-                "end": h.fecha_fin.strftime("%Y-%m-%d"),
+                # "start": h.fecha_inicio.strftime("%Y-%m-%dT%H:%M"),
+                # "end": h.fecha_fin.strftime("%Y-%m-%dT%H:%M"),
+                "start": timezone.localtime(h.fecha_inicio).strftime("%Y-%m-%dT%H:%M"),
+                "end": timezone.localtime(h.fecha_fin).strftime("%Y-%m-%dT%H:%M"),
             }
             for h in horarios
         ]

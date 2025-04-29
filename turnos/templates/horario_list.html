@@ -46,21 +46,14 @@ Buscar Horario
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label for="servicioSelect">Servicio:</label>
-                                    {% comment %} <select id="servicioSelect" class="form-select" required>
-                                        {% for s in servicios %}
-                                            <option value="{{ s.id }}">{{ s }}</option>
-                                        {% endfor %}
-                                    </select> {% endcomment %}
                                     {{ form.servicio }}
                                 </div>
                                 <div class="mb-3">
                                     <label for="fechaInicio">Fecha de inicio:</label>
-                                    {% comment %} <input type="date" class="form-control" id="fechaInicio" required> {% endcomment %}
                                     {{ form.fecha_inicio }}
                                 </div>
                                 <div class="mb-3">
                                     <label for="fechaFin">Fecha de fin:</label>
-                                    {% comment %} <input type="date" class="form-control" id="fechaFin" required> {% endcomment %}
                                     {{ form.fecha_fin }}
                                 </div>
                             </div>
@@ -112,15 +105,10 @@ Buscar Horario
             selectable: true,
             selectMirror: true,
             editable: true,
-            dayMaxEvents: true, // allow "more" link when too many events
-            // validRange: {
-            //     start: new Date().toISOString().split('T')[0] // YYYY-MM-DD
-            // },            
+            dayMaxEvents: true, // allow "more" link when too many events          
             events: {{ events|safe }},
 
             dateClick: function(info) {
-                // document.getElementById('fechaInicio').value = info.dateStr;
-                // document.getElementById('fechaFin').value = info.dateStr;
                 const hoySinHora = new Date();
                 hoySinHora.setHours(0, 0, 0, 0);   // quitamos la hora para comparar solo la fecha
                 const fechaSinHora = new Date(info.dateStr);
@@ -144,10 +132,6 @@ Buscar Horario
             },
     
             eventClick: function(info) {
-                // const props = info.event.extendedProps;
-                // document.getElementById('detalleServicio').innerText = info.event.title;
-                // document.getElementById('detalleInicio').innerText = props.fechaInicio;
-                // document.getElementById('detalleFin').innerText = props.fechaFin;
                 const evento = info.event;
 
                 // Mostrar datos en el modal
@@ -163,11 +147,40 @@ Buscar Horario
                 document.getElementById("detalleInicio").textContent = fechaInicio;
                 document.getElementById("detalleFin").textContent = fechaFin;
                 new bootstrap.Modal(document.getElementById('detalleHorarioModal')).show();
-                // $('#detalleHorarioModal').modal('show');
             }
         });
         calendar.render();
 
+        const serviciosInfo = {{ servicios_info|safe }};
+        console.log("Servicios Info desde Django:", serviciosInfo);
+
+        const servicioSelect = document.getElementById("servicioSelect");
+        const fechaInicioInput = document.getElementById("fechaInicio");
+        const fechaFinInput = document.getElementById("fechaFin");
+
+        console.log("Estoy fuera del event listener (DOM ya cargado)");
+
+        if (servicioSelect) {
+            servicioSelect.addEventListener("change", function() {
+                const servicioId = this.value;
+                const info = serviciosInfo[servicioId];
+
+                if (info) {
+                    console.log("data-desde:", info.desde);
+                    console.log("data-hasta:", info.hasta);
+
+                    fechaInicioInput.min = info.desde;
+                    fechaInicioInput.max = info.hasta;
+                    fechaFinInput.min = info.desde;
+                    fechaFinInput.max = info.hasta;
+                } else {
+                    fechaInicioInput.removeAttribute("min");
+                    fechaInicioInput.removeAttribute("max");
+                    fechaFinInput.removeAttribute("min");
+                    fechaFinInput.removeAttribute("max");
+                }
+            });
+        }
     });
 
 </script>

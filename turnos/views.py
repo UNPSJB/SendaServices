@@ -20,8 +20,7 @@ from servicios.models import Servicio
 from core.models import Empleado
 from .forms import (
     HorarioForm, 
-    HorarioFiltrosForm,
-    HorarioCustomFiltrosForm
+    HorarioFiltrosForm
   )
 
 
@@ -29,13 +28,6 @@ class HorarioCreateView(CreateView):
     model = Horario
     form_class = HorarioForm
     template_name = "horario_form.html"
-
-    # def get_servicio(self):
-    #     pk = self.kwargs.get('pk')
-    #     if pk is not None:
-    #         return Servicio.objects.get(pk=pk)
-    #     else:
-    #         return None
 
     def get_empleado(self):
         pk = self.kwargs.get('pk')
@@ -72,10 +64,7 @@ class HorarioCreateView(CreateView):
 
     def form_valid(self, form):
         """If the form is valid, save the associated model."""
-        # form = self.get_form(form_class=self.get_form_class())
-        # self.object = form.save(commit=False)
         empleado = self.get_empleado()
-        # self.object.empleado = empleado
         servicio = form.cleaned_data["servicio"]
         start_time = form.cleaned_data["fecha_inicio"]
         end_time = form.cleaned_data["fecha_fin"]
@@ -88,7 +77,6 @@ class HorarioCreateView(CreateView):
         )
 
         if horario:
-            # horario.clean()  # Validación personalizada del modelo
             messages.success(self.request, "✨ ¡Éxito! El horario se ha creado exitosamente. ⏰")
         else:
             messages.info(self.request, "⚠️ Ese horario ya existía para el empleado.")
@@ -109,12 +97,6 @@ class HorarioListView(ListFilterView):
         if pk:
             return get_object_or_404(Empleado, pk=pk)
         return None
-
-    # def get_servicio(self):
-    #     pk = self.kwargs.get('servicio_pk')
-    #     if pk:
-    #         return get_object_or_404(Servicio, pk=pk)
-    #     return None
         
     def get_queryset(self):
         queryset = super().get_queryset()  # o Horario.objects.all()
@@ -137,17 +119,9 @@ class HorarioListView(ListFilterView):
 
         return queryset.order_by("id")
     
-    # def get_filtros(self, *args, **kwargs):
-    #     servicio = self.get_servicio()
-    #     if servicio:
-    #         return HorarioCustomFiltrosForm(*args, **kwargs)
-    #     else:
-    #         return HorarioFiltrosForm(*args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         empleado = self.get_empleado()
-        # servicio = self.get_servicio()
 
         # Instancia del formulario con el empleado si es necesario
         context["form"] = HorarioForm(empleado=empleado)
@@ -155,17 +129,25 @@ class HorarioListView(ListFilterView):
         if empleado:
             context['tnav'] = "Gestion de Horarios" if not empleado else f"Gestion de horarios: {empleado}"
             context["empleado"] = empleado
-        # elif servicio:
-        #     context['tnav'] = "Gestion de Horarios" if not servicio else f"Gestion de horarios: {servicio}"
-        #     context["servicio"] = servicio 
+
         context["servicios"] = Servicio.objects.all() 
+
+        servicios_info = {
+            str(servicio.id): {
+                "desde": servicio.desde.strftime("%Y-%m-%dT%H:%M"),
+                "hasta": servicio.hasta.strftime("%Y-%m-%dT%H:%M"),
+            }
+            for servicio in Servicio.objects.all()
+        }
+
+        # print("Servicios info:", servicios_info)  # <-- AGREGA ESTO
+
+        context["servicios_info"] = json.dumps(servicios_info, cls=DjangoJSONEncoder)
 
         horarios = self.get_queryset()
         eventos = [
             {
                 "title": str(h.servicio),
-                # "start": h.fecha_inicio.strftime("%Y-%m-%dT%H:%M"),
-                # "end": h.fecha_fin.strftime("%Y-%m-%dT%H:%M"),
                 "start": timezone.localtime(h.fecha_inicio).strftime("%Y-%m-%dT%H:%M"),
                 "end": timezone.localtime(h.fecha_fin).strftime("%Y-%m-%dT%H:%M"),
             }

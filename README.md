@@ -17,4 +17,15 @@ Aplicación Django para gestión de servicios de Limpieza
 
 python core/scripts/load_tests_data.py
 
+**BORRAR MIGRACIONES Y BASE DE DATOS**
+
+python borrar_migraciones.py
+
+python manage.py makemigrations
+
+python manage.py migrate
+
+python manage.py createsuperuser
+
+python manage.py runserver
 

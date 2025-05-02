@@ -12,38 +12,12 @@ Buscar Horario
     
 {% endblock %}
 
-{% comment %} {% block thextras %}
-    <th colspan="">Fecha Desde</th>
-    <th colspan="">Fecha Hasta</th> 
-{% endblock %} {% endcomment %}
-
-{% comment %} {% block tcuerpo %}
-     {% for h in horario %}
-    <tr>
-        <td>{{forloop.counter}}</td>
-        <td>{{h.empleado }}</td>
-        <td>{{h.servicio}}</td>
-        <td>{{h.diaSemana}}</td>
-        <td>{{h.turno}}</td>
-        <td>{{h.asistencia}}</td>s
-        <td>{{h.servicio.desde }}</td>
-        <td>{{h.servicio.hasta }}</td>
-    </tr>
-    {% empty %}
-        <tr> <td> No hay turnos registrados </td> </tr>
-    {% endfor %} 
-    <div id="calendar"></div>
-
-{% endblock %} {% endcomment %}
-
 {% block cmain %} 
     {% for msg in messages %}
-
-    <div class="alert {% if msg.tags != "error" %} alert-{{msg.tags}} {% else %} alert-danger {% endif %} alert-dismissible fade show" role="alert">
+    <div class="alert {% if msg.tags == 'error' %}alert-danger{% else %}alert-{{ msg.tags }}{% endif %} alert-dismissible fade show" role="alert">
         <strong>Hey!</strong> {{ msg }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-        
     {% endfor %}
 
     <!--Filtro cabecera-->
@@ -59,10 +33,52 @@ Buscar Horario
     <div class="col-12 col-md-9 mx-auto">
         <div class="card flex-fill border-0">
             <div class="card-body py-4 pb-2">
-                {% if empleado %}
-                    <a href="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}" class="bi bi-plus-circle-fill text-success fs-5"></a>
-                {% endif %}
                 <div id="calendar"></div>
+            </div>
+            <div class="modal fade" id="nuevoHorarioModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="formNuevoHorario" method="post" action="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}">
+                            {% csrf_token %}
+                            <div class="modal-header">
+                                <h5 class="modal-title">Nuevo Horario</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="servicioSelect">Servicio:</label>
+                                    {{ form.servicio }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fechaInicio">Fecha de inicio:</label>
+                                    {{ form.fecha_inicio }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fechaFin">Fecha de fin:</label>
+                                    {{ form.fecha_fin }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+              
+            <!-- Modal para ver detalles -->
+            <div class="modal fade" id="detalleHorarioModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detalle del Horario</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Servicio:</strong> <span id="detalleServicio"></span></p>
+                            <p><strong>Inicio:</strong> <span id="detalleInicio"></span></p>
+                            <p><strong>Fin:</strong> <span id="detalleFin"></span></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -74,37 +90,99 @@ Buscar Horario
 <script>
 
     document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        //initialView: 'dayGridMonth'
-        events: [
-            {% for horario in object_list %}
-                {
-                    title: "{{ horario.servicio }}",
-                    start: "{{ horario.servicio.desde | date:'Y-m-d' }}",
-                    end: "{{ horario.servicio.hasta | date:'Y-m-d' }}",
-                },
-            {% endfor %}
-        ]
-    });
-    calendar.render();
+        var calendarEl = document.getElementById('calendar');
+        var today = new Date(); 
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            initialDate: today,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,list'
+            },
+            navLinks: true, // can click day/week names to navigate views
+            selectable: true,
+            selectMirror: true,
+            editable: true,
+            dayMaxEvents: true, // allow "more" link when too many events          
+            events: {{ events|safe }},
+
+            dateClick: function(info) {
+                const hoySinHora = new Date();
+                hoySinHora.setHours(0, 0, 0, 0);   // quitamos la hora para comparar solo la fecha
+                const fechaSinHora = new Date(info.dateStr);
+                fechaSinHora.setHours(0, 0, 0, 0); // quitamos la hora para comparar solo la fecha
+                
+                if (fechaSinHora < hoySinHora) {
+                    // No hacemos nada, solo mostramos un mensaje si querés
+                    alert("No se pueden crear horarios en fechas anteriores a hoy.");
+                    return;
+                }
+
+                const hoy = new Date().toISOString().slice(0,16); // YYYY-MM-DDTHH:MM
+                document.getElementById('fechaInicio').min = hoy;
+                document.getElementById('fechaFin').min = hoy;
+
+                const fechaSeleccionada = new Date(info.dateStr).toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+                document.getElementById('fechaInicio').value = fechaSeleccionada;
+                document.getElementById('fechaFin').value = fechaSeleccionada;
+
+                new bootstrap.Modal(document.getElementById('nuevoHorarioModal')).show();
+            },
+    
+            eventClick: function(info) {
+                const evento = info.event;
+
+                // Mostrar datos en el modal
+                document.getElementById("detalleServicio").textContent = evento.title;
+
+                // Convertir fechas a formato legible
+                const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', 
+                                hour: '2-digit', minute: '2-digit' };
+
+                const fechaInicio = evento.start ? new Date(evento.start).toLocaleString('es-AR', opciones) : 'N/A';
+                const fechaFin = evento.end ? new Date(evento.end).toLocaleString('es-AR', opciones) : 'N/A';
+
+                document.getElementById("detalleInicio").textContent = fechaInicio;
+                document.getElementById("detalleFin").textContent = fechaFin;
+                new bootstrap.Modal(document.getElementById('detalleHorarioModal')).show();
+            }
+        });
+        calendar.render();
+
+        const serviciosInfo = {{ servicios_info|safe }};
+        console.log("Servicios Info desde Django:", serviciosInfo);
+
+        const servicioSelect = document.getElementById("servicioSelect");
+        const fechaInicioInput = document.getElementById("fechaInicio");
+        const fechaFinInput = document.getElementById("fechaFin");
+
+        console.log("Estoy fuera del event listener (DOM ya cargado)");
+
+        if (servicioSelect) {
+            servicioSelect.addEventListener("change", function() {
+                const servicioId = this.value;
+                const info = serviciosInfo[servicioId];
+
+                if (info) {
+                    console.log("data-desde:", info.desde);
+                    console.log("data-hasta:", info.hasta);
+
+                    fechaInicioInput.min = info.desde;
+                    fechaInicioInput.max = info.hasta;
+                    fechaFinInput.min = info.desde;
+                    fechaFinInput.max = info.hasta;
+                } else {
+                    fechaInicioInput.removeAttribute("min");
+                    fechaInicioInput.removeAttribute("max");
+                    fechaFinInput.removeAttribute("min");
+                    fechaFinInput.removeAttribute("max");
+                }
+            });
+        }
     });
 
-</script>
-
-<!--Modal-->
-<script type="text/javascript">
-var $ = jQuery.noConflict();
-function abrir_modal(url){
-    $('#modal').load(url, function(){
-        $(this).modal('show');
-        bindFormSet($('#modal'));
-    });
-}
-
-function cerrar_modal() {
-    $('#modal').modal('hide');
-}
 </script>
 
 {% endblock %}

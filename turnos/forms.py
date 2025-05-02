@@ -11,70 +11,52 @@ from datetime import datetime
 from servicios.forms import Servicio
 
 
-class HorarioForm(ModelForm):
-
+class HorarioForm(forms.ModelForm):
     class Meta:
         model = Horario
-        fields = ("turno", "diaSemana", "servicio")
-
-        #Label se refiere la descripcion que esta al lado del formulario.
-        labels = { 
-            'turno': 'Turno',
-            'diaSemana': 'Dia de la semana',
-            'servicio': 'Servicio',
-        }
-
-        #Referencia a los estilos con los que se renderizan los campos
+        fields = ['servicio', 'fecha_inicio', 'fecha_fin']
         widgets = {
-            'turno': forms.Select(
-                #Permite estilizar los formularios
-                attrs = {
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el turno del turno',
-                }
+            'fecha_inicio': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'}, 
+                format="%Y-%m-%dT%H:%M"
             ),
-            'diaSemana': forms.Select(
-                attrs = {
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el dia de la semana del turno',
-                }
+            'fecha_fin': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'}, 
+                format="%Y-%m-%dT%H:%M"
             ),
-            "servicio": forms.Select(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder':'Ingrese el dia de la semana del turno',
-                }
-            ), 
         }
 
     def __init__(self, *args, **kwargs):
-        empleado = kwargs.pop("empleado", None)  # Extraemos el servicio de los kwargs
+        kwargs.pop("empleado", None)  # Extraemos el servicio de los kwargs
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-horarioForm'
         self.helper.form_method = 'post'
         self.helper.form_tag = False
+        # En tu Form (Python)
+        self.fields['fecha_inicio'].widget.attrs.update({'id': 'fechaInicio'})
+        self.fields['fecha_fin'].widget.attrs.update({'id': 'fechaFin'})
+        self.fields['servicio'].widget.attrs.update({'id': 'servicioSelect'})
 
 
 class HorarioFiltrosForm(FiltrosForm):
     #Campos del modelo
     ORDEN_CHOICES = [
-        ("turno", "Turno"),
-        ("diaSemana", "dia de la semana"),
-        ("servicio", "Servicio"),
-        
+        ("fecha_inicio", "Fecha Inicio"),
+        ("fecha_fin", "Fecha Fin"),
+        ("servicio", "Servicio"),  
     ]
     ATTR_CHOICES = [
-
-        ("turno", "Turno"),
-        ("diaSemana", "dia de la semana"),
+        ("fecha_inicio", "Fecha Inicio"),
+        ("fecha_fin", "Fecha Fin"),
         ("servicio", "Servicio"),
     ]
 
     #Formulario de filtrado
-    turno = forms.ChoiceField(required=False, choices=Horario.Turno.choices)
-    diaSemana = forms.ChoiceField(required=False, choices=Horario.DiaSemana.choices)
+    fecha_inicio = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),required=False,label="Fecha Inicio")
+    fecha_fin = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),required=False,label="Fecha Fin")
     servicio = forms.ModelChoiceField(queryset=Servicio.objects.all(), required=False, label='Servicio')
+    
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -85,10 +67,11 @@ class HorarioFiltrosForm(FiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "turno","diaSemana","servicio",  #Remplazar campos formulario
+                 "fecha_inicio", "fecha_fin", "servicio",  # ✅ Campos corregidos
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
+
 
 class HorarioCustomFiltrosForm(HorarioFiltrosForm):
     def __init__(self, *args, **kwargs):
@@ -98,7 +81,7 @@ class HorarioCustomFiltrosForm(HorarioFiltrosForm):
                 "",
                 HTML(
                     '<i class="fas fa-filter"></i> <h4>Filtrar</h4>'),
-                "turno","diaSemana", #Remplazar campos formulario
+                 "fecha_inicio", "fecha_fin",  # ✅ Campos corregidos
             ),
             Div(Submit('submit', 'Filtrar'), css_class="d-grid gap-2")
         )
@@ -106,17 +89,3 @@ class HorarioCustomFiltrosForm(HorarioFiltrosForm):
 
 HorarioCustomFiltrosForm.base_fields.pop("servicio")
 
-
-class HorarioModForm(ModelForm):
-
-    class Meta:
-        model = Horario
-        #fields = "__all__"
-        exclude = ('turno', 'diaSemana', 'servicio',)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_id = 'id-horarioForm'
-        self.helper.form_method = 'post'
-        self.helper.form_tag = False

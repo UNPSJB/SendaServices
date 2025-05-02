@@ -12,14 +12,18 @@ Crear Turno
 {% block cform %}
 
   <form action="{% url 'turnos:crearHorarioParaEmpleado' empleado.pk %}" method="POST">
-    {% csrf_token %}
+    {% comment %} {% csrf_token %}
     {% crispy form form.helper %}
 
     <div class="d-grid gap-2">
       <button type="submit" class="btn btn-primary btn-block text-white">
         Guardar
       </button>
-    </div>
+    </div> {% endcomment %}
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-success">Guardar</button>
+    
   </form>
   
 {% endblock %}

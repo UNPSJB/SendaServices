@@ -4,10 +4,12 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.forms import ValidationError
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, ListView
 from core.utils import ListFilterView
@@ -22,6 +24,31 @@ from .forms import (
     HorarioForm, 
     HorarioFiltrosForm
   )
+
+
+# @csrf_exempt
+# def validar_superposicion(request, empleado_id):
+#     if request.method == 'POST':
+#         fecha_inicio = request.POST.get('fecha_inicio')
+#         fecha_fin = request.POST.get('fecha_fin')
+
+#         # Parseo los strings a objetos datetime
+#         fecha_inicio = parse_datetime(fecha_inicio)
+#         fecha_fin = parse_datetime(fecha_fin)
+
+#         if not (empleado_id and fecha_inicio and fecha_fin):
+#             return JsonResponse({'error': 'Datos incompletos'}, status=400)
+
+#         # Busco los horarios del mismo empleado
+#         horarios = Horario.objects.filter(empleado_id=empleado_id)
+
+#         # Verifico si hay solapamiento
+#         superpuesto = horarios.filter(
+#             fecha_inicio__lt=fecha_fin,
+#             fecha_fin__gt=fecha_inicio
+#         ).exists()
+
+#         return JsonResponse({'superposicion': superpuesto})
 
 
 class HorarioCreateView(CreateView):
@@ -68,6 +95,17 @@ class HorarioCreateView(CreateView):
         servicio = form.cleaned_data["servicio"]
         start_time = form.cleaned_data["fecha_inicio"]
         end_time = form.cleaned_data["fecha_fin"]
+
+        # Verificar solapamientos
+        solapados = Horario.objects.filter(
+            empleado=empleado
+        ).filter(
+            Q(fecha_inicio__lt=end_time) & Q(fecha_fin__gt=start_time)
+        )
+
+        if solapados.exists():
+            messages.error(self.request, "❌ El empleado ya tiene un horario en ese rango de tiempo.")
+            return self.form_invalid(form)
 
         horario = Horario.objects.get_or_create(
             empleado=empleado,

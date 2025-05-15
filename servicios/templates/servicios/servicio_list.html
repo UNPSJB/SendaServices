@@ -35,17 +35,17 @@ Buscar Servicio
 
 
         <td>
-        {% if s.estado_actual.tipo == "presupuestado" %}
+        {% comment %} {% if s.estado_actual.tipo == "presupuestado" %}
             <a 
             href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
             class="bi bi-calendar-date text-info fs-5" 
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             title="Añadir horarios">
-            </a>
+            </a> {% endcomment %}
 
     
-        {% elif s.estado_actual.tipo == "contratado" %}
+        {% if s.estado_actual.tipo == "contratado" %}
 
             <a 
             href="{% url 'facturas:listarFacturasDeServicio' pk=s.pk %}" 
@@ -55,13 +55,13 @@ Buscar Servicio
             title="Facturas">
             </a>
 
-            <a 
+            {% comment %} <a 
             href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
             class="bi bi-calendar-date text-info fs-5" 
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             title="Añadir horarios">
-            </a>
+            </a> {% endcomment %}
 
             <a href="#" 
             onclick="abrir_modal('{% url "servicios:cancelarServicio" pk=s.pk %}')" 
@@ -81,13 +81,13 @@ Buscar Servicio
             title="Facturas">
             </a>
 
-            <a 
+            {% comment %} <a 
             href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
             class="bi bi-calendar-date text-info fs-5" 
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             title="Añadir horarios">
-            </a>
+            </a> {% endcomment %}
 
             <a href="#" 
             onclick="abrir_modal('{% url "servicios:cancelarServicio" pk=s.pk %}')" 
@@ -107,13 +107,13 @@ Buscar Servicio
             title="Facturas">
             </a>
 
-            <a 
+            {% comment %} <a 
             href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
             class="bi bi-calendar-date text-info fs-5" 
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             title="Añadir horarios">
-            </a>
+            </a> {% endcomment %}
 
             {% elif s.estado_actual.tipo == "cancelado" %}
 
@@ -125,13 +125,13 @@ Buscar Servicio
             title="Facturas">
             </a>
 
-            <a 
+            {% comment %} <a 
             href="{% url 'turnos:listarHorariosDeServicio' pk=s.pk %}" 
             class="bi bi-calendar-date text-info fs-5" 
             data-bs-toggle="tooltip" 
             data-bs-placement="top" 
             title="Añadir horarios">
-            </a>
+            </a> {% endcomment %}
 
 
         {% endif %}

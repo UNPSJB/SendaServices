@@ -20,12 +20,30 @@ from django.urls import reverse_lazy, reverse
 from .models import Horario
 from servicios.models import Servicio
 from core.models import Empleado
+from django.views.decorators.http import require_http_methods
+
 from .forms import (
     HorarioForm, 
     HorarioFiltrosForm
   )
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def actualizar_asistencia(request, turno_id):
+    try:
+        data = json.loads(request.body)
+        asistencia = data.get('asistencia')
+        if asistencia is None:
+            return JsonResponse({'error': 'Campo asistencia es requerido'}, status=400)
 
+        horario = Horario.objects.get(pk=turno_id)
+        horario.asistencia = asistencia
+        horario.save()
+        return JsonResponse({'success': True, 'asistencia': horario.asistencia})
+    except Horario.DoesNotExist:
+        return JsonResponse({'error': 'Horario no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 # @csrf_exempt
 # def validar_superposicion(request, empleado_id):
 #     if request.method == 'POST':
@@ -184,11 +202,12 @@ class HorarioListView(ListFilterView):
 
         horarios = self.get_queryset()
         eventos = [
-            {
-                "title": str(h.servicio),
-                "start": timezone.localtime(h.fecha_inicio).strftime("%Y-%m-%dT%H:%M"),
-                "end": timezone.localtime(h.fecha_fin).strftime("%Y-%m-%dT%H:%M"),
-            }
+               {
+                    "id": h.id,  
+                    "title": str(h.servicio),
+                    "start": timezone.localtime(h.fecha_inicio).strftime("%Y-%m-%dT%H:%M"),
+                    "end": timezone.localtime(h.fecha_fin).strftime("%Y-%m-%dT%H:%M"),
+                }
             for h in horarios
         ]
         context['events'] = json.dumps(eventos, cls=DjangoJSONEncoder)  

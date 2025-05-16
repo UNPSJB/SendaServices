@@ -77,9 +77,24 @@ Buscar Horario
                             <p><strong>Servicio:</strong> <span id="detalleServicio"></span></p>
                             <p><strong>Inicio:</strong> <span id="detalleInicio"></span></p>
                             <p><strong>Fin:</strong> <span id="detalleFin"></span></p>
+
+                            <!-- Checkbox de asistencia -->
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" id="checkboxAsistencia">
+                                <label class="form-check-label" for="checkboxAsistencia">
+                                    Asistencia
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Botón para guardar asistencia -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="btnGuardarAsistencia">Guardar asistencia</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>
@@ -89,6 +104,7 @@ Buscar Horario
 {% block extrajs %}
 
 <script>
+    let idTurnoSeleccionado = null;
 
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
@@ -102,54 +118,63 @@ Buscar Horario
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay,list'
             },
-            navLinks: true, // can click day/week names to navigate views
+            navLinks: true,
             selectable: true,
             selectMirror: true,
             editable: true,
-            dayMaxEvents: true, // allow "more" link when too many events          
+            dayMaxEvents: true,
             events: {{ events|safe }},
 
             dateClick: function(info) {
                 const hoySinHora = new Date();
-                hoySinHora.setHours(0, 0, 0, 0);   // quitamos la hora para comparar solo la fecha
+                hoySinHora.setHours(0, 0, 0, 0);
                 const fechaSinHora = new Date(info.dateStr);
-                fechaSinHora.setHours(0, 0, 0, 0); // quitamos la hora para comparar solo la fecha
-                
+                fechaSinHora.setHours(0, 0, 0, 0);
+
                 if (fechaSinHora < hoySinHora) {
-                    // No hacemos nada, solo mostramos un mensaje si querés
                     alert("No se pueden crear horarios en fechas anteriores a hoy.");
                     return;
                 }
 
-                const hoy = new Date().toISOString().slice(0,16); // YYYY-MM-DDTHH:MM
+                const hoy = new Date().toISOString().slice(0,16);
                 document.getElementById('fechaInicio').min = hoy;
                 document.getElementById('fechaFin').min = hoy;
 
-                const fechaSeleccionada = new Date(info.dateStr).toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+                const fechaSeleccionada = new Date(info.dateStr).toISOString().slice(0, 16);
                 document.getElementById('fechaInicio').value = fechaSeleccionada;
                 document.getElementById('fechaFin').value = fechaSeleccionada;
 
                 new bootstrap.Modal(document.getElementById('nuevoHorarioModal')).show();
             },
-    
+
             eventClick: function(info) {
                 const evento = info.event;
 
-                // Mostrar datos en el modal
+                idTurnoSeleccionado = evento.id;
+
                 document.getElementById("detalleServicio").textContent = evento.title;
 
-                // Convertir fechas a formato legible
-                const opciones = { year: 'numeric', month: '2-digit', day: '2-digit', 
-                                hour: '2-digit', minute: '2-digit' };
+                const opciones = {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
 
                 const fechaInicio = evento.start ? new Date(evento.start).toLocaleString('es-AR', opciones) : 'N/A';
                 const fechaFin = evento.end ? new Date(evento.end).toLocaleString('es-AR', opciones) : 'N/A';
+                const asistencia = evento.extendedProps.asistencia;
 
                 document.getElementById("detalleInicio").textContent = fechaInicio;
                 document.getElementById("detalleFin").textContent = fechaFin;
+
+                document.getElementById("checkboxAsistencia").checked = !!asistencia;
+
                 new bootstrap.Modal(document.getElementById('detalleHorarioModal')).show();
             }
         });
+
         calendar.render();
 
         const serviciosInfo = {{ servicios_info|safe }};
@@ -159,17 +184,12 @@ Buscar Horario
         const fechaInicioInput = document.getElementById("fechaInicio");
         const fechaFinInput = document.getElementById("fechaFin");
 
-        console.log("Estoy fuera del event listener (DOM ya cargado)");
-
         if (servicioSelect) {
             servicioSelect.addEventListener("change", function() {
                 const servicioId = this.value;
                 const info = serviciosInfo[servicioId];
 
                 if (info) {
-                    console.log("data-desde:", info.desde);
-                    console.log("data-hasta:", info.hasta);
-
                     fechaInicioInput.min = info.desde;
                     fechaInicioInput.max = info.hasta;
                     fechaFinInput.min = info.desde;
@@ -182,8 +202,55 @@ Buscar Horario
                 }
             });
         }
-    });
 
+        // Guardar asistencia al presionar el botón
+        document.getElementById("btnGuardarAsistencia").addEventListener("click", function () {
+            const asistencia = document.getElementById("checkboxAsistencia").checked;
+
+        fetch(`/turnos/api/turnos/${idTurnoSeleccionado}/asistencia/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ asistencia: asistencia })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Asistencia actualizada correctamente.");
+            if (data.asistencia !== undefined) {
+                document.getElementById("checkboxAsistencia").checked = data.asistencia;
+            }
+            const event = calendar.getEventById(idTurnoSeleccionado);
+            if (event) {
+                event.setExtendedProp('asistencia', data.asistencia);
+            }
+            bootstrap.Modal.getInstance(document.getElementById('detalleHorarioModal')).hide();
+            calendar.refetchEvents();  
+        })
+        .catch(error => {
+            console.error(error);
+            alert("Error al guardar la asistencia.");
+        });
+        });
+
+        // obtengo el CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
 </script>
+
 
 {% endblock %}

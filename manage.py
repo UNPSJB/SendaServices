@@ -16,7 +16,7 @@ def run_crons():
     while True:
         print("⏱ Ejecutando crons en segundo plano...")
         call_command("runcrons")
-        time.sleep(60)
+        time.sleep(86400)
 
 
 def main():

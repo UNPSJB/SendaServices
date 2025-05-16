@@ -1,20 +1,13 @@
 from django.urls import path
-from .views import HorarioCreateView,HorarioListView,HorarioUpdateView,PeriodoListView
+from .views import HorarioListView, HorarioCreateView
 
 app_name= "turnos"
 
 urlpatterns = [
-    path('horarios/crear/',HorarioCreateView.as_view(),name='crearHorario'),
+    path("horarios/empleado/<int:pk>/crear/",HorarioCreateView.as_view(),name="crearHorarioParaEmpleado"),
+    path('horarios/empleado/<int:pk>/listar/',HorarioListView.as_view(), name='listarHorariosDeEmpleado'), # pk es el pk del empleado.
+    
+    # urls que quedaron viejas, pero las dejo momentaneamente solo para que no rompan otras partes del sistema
     path('horarios/listar/',HorarioListView.as_view(), name='listarHorarios'),
-    #path('horarios/modificar/<int:pk>/',HorarioUpdateView.as_view(), name='modificarHorario'),
-
-    path('periodos/listar/',PeriodoListView.as_view(), name='listarPeriodos'),
-
-    path('periodos/<int:empleado_pk>/listar/',PeriodoListView.as_view(), name='listarPeriodosDeEmpleado'), #pk es el pk del empleado.
-
-    path('horarios/<int:pk>/listar/',HorarioListView.as_view(), name='listarHorariosDeServicio'), #pk es el pk del servicio.
-    path('horarios/<int:pk>/crear/',HorarioCreateView.as_view(),name='crearHorarioParaServicio'),
-    path('horarios/<int:pk>/modificar/', HorarioUpdateView.as_view(),name='modificarHorarioParaServicio'),
+    path('horarios/crear/',HorarioCreateView.as_view(),name='crearHorario'),
 ]
-
-#print("Llegue a las urls")

@@ -45,6 +45,13 @@ Buscar Empleados
                 data-bs-placement="top" 
                 title="Eliminar"></i></a>
                 
+                <a
+                href="{% url 'turnos:listarHorariosDeEmpleado' pk=e.pk %}" 
+                class="bi bi-calendar-date text-info fs-5" 
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="Añadir horarios">
+                </a>
             </td>
 
         </tr>

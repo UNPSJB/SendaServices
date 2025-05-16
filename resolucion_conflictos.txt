@@ -1,2 +1,1 @@
-
-
+CONFLICT (modify/delete): facturas/templates/facturas/facturas_list.html deleted in turnos and modified in HEAD.  Version HEAD of facturas/templates/facturas/facturas_list.html left in tree.

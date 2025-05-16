@@ -13,10 +13,6 @@ Aplicación Django para gestión de servicios de Limpieza
 - Gonzalez Alejo 
 - Skarkloff Lautaro 
 
-**ELIMINACION DE MIGRACIONES Y BASE DE DATOS, CREACION DE NUEVAS MIGRACIONES, CARGA DE DATOS Y CREACION DE SUPERUSUARIO**
-
-python inicializador.py
-
 **INSTALACION DE DEPENDENCIAS E INCLUSION EN EL REQUIREMENTS**
 
 pip install django-cron
@@ -36,3 +32,7 @@ pip freeze > requirements.txt
 **Y SOLO POR LAS DUDAS**
 
 pip install -r requirements.txt
+
+**ELIMINACION DE MIGRACIONES Y BASE DE DATOS, CREACION DE NUEVAS MIGRACIONES, CARGA DE DATOS Y CREACION DE SUPERUSUARIO**
+
+python inicializador.py

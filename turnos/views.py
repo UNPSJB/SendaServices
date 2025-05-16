@@ -26,31 +26,6 @@ from .forms import (
   )
 
 
-# @csrf_exempt
-# def validar_superposicion(request, empleado_id):
-#     if request.method == 'POST':
-#         fecha_inicio = request.POST.get('fecha_inicio')
-#         fecha_fin = request.POST.get('fecha_fin')
-
-#         # Parseo los strings a objetos datetime
-#         fecha_inicio = parse_datetime(fecha_inicio)
-#         fecha_fin = parse_datetime(fecha_fin)
-
-#         if not (empleado_id and fecha_inicio and fecha_fin):
-#             return JsonResponse({'error': 'Datos incompletos'}, status=400)
-
-#         # Busco los horarios del mismo empleado
-#         horarios = Horario.objects.filter(empleado_id=empleado_id)
-
-#         # Verifico si hay solapamiento
-#         superpuesto = horarios.filter(
-#             fecha_inicio__lt=fecha_fin,
-#             fecha_fin__gt=fecha_inicio
-#         ).exists()
-
-#         return JsonResponse({'superposicion': superpuesto})
-
-
 class HorarioCreateView(CreateView):
     model = Horario
     form_class = HorarioForm

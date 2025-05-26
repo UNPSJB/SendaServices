@@ -112,5 +112,7 @@ urlpatterns = [
 
     #Gestion Facturas
     path('facturas/', include('facturas.urls',namespace='facturas')),
+
+    path("select2/", include("django_select2.urls")),  # 👈 necesario para Select2Widget
     
 ]

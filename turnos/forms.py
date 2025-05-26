@@ -8,6 +8,7 @@ from core.utils import FiltrosForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Div, HTML
 from datetime import datetime
+from django_select2.forms import Select2Widget
 from servicios.forms import Servicio
 
 
@@ -36,7 +37,29 @@ class HorarioForm(forms.ModelForm):
         # En tu Form (Python)
         self.fields['fecha_inicio'].widget.attrs.update({'id': 'fechaInicio'})
         self.fields['fecha_fin'].widget.attrs.update({'id': 'fechaFin'})
-        self.fields['servicio'].widget.attrs.update({'id': 'servicioSelect'})
+
+        # Si el campo servicio existe (solo cuando no se recibe uno fijo), activamos select2
+        self.fields['servicio'].widget.attrs.update({
+            'id': 'servicioSelect',
+            'class': 'w-100',
+            # 'class': 'servicioSelect form-select w-100',
+            'data-placeholder': 'Buscar servicio...'
+        })
+
+        # self.fields['servicio'].widget.attrs.update({
+        #     'id': 'servicioSelect',
+        #     'class': 'form-select w-100',
+        #     'data-placeholder': 'Buscar servicio...',
+        #     'data-url': reverse_lazy('turnos:ajax_servicios'),
+        # })
+
+        # self.fields['servicio'].widget = Select2Widget(
+        #     attrs={
+        #         'data-url': reverse_lazy('turnos:ajax_servicios'),
+        #         'data-placeholder': 'Buscar servicio...',
+        #         'class': 'form-select w-100'
+        #     }
+        # )
 
 
 class HorarioFiltrosForm(FiltrosForm):

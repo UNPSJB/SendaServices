@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import HorarioListView, HorarioCreateView
-from .views import actualizar_asistencia, borrar_horario
+from .views import HorarioListView, HorarioCreateView #, ServicioAjaxListView
+from .views import actualizar_asistencia, borrar_horario, buscar_servicio, obtener_fechas_servicio
 
 app_name= "turnos"
 
@@ -14,5 +14,9 @@ urlpatterns = [
     
     path('api/turnos/<int:turno_id>/asistencia/',actualizar_asistencia, name='actualizar_asistencia'),
     path('api/turnos/<int:turno_id>/',borrar_horario,name='borrarHorario'),
+    path('ajax/servicios/', buscar_servicio, name='ajax_servicios'),
+    path("servicios/<int:servicio_id>/fechas/", obtener_fechas_servicio, name="obtener_fechas_servicio")
+    # path('ajax/servicios/', ServicioAjaxListView.as_view(), name='ajax_servicios'),
+
 
 ]

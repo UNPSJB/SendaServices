@@ -57,6 +57,46 @@ def borrar_horario(request, turno_id):
         return JsonResponse({'error': 'Horario no encontrado'}, status=404)
 
 
+# @csrf_exempt
+# @require_http_methods(["GET"])
+def buscar_servicio(request):
+    # q = request.GET.get("q", "")
+    # servicios = Servicio.objects.filter(servicio__inmueble__icontains=q)[:10]
+    
+    term = request.GET.get('term', '')
+
+    servicios = Servicio.objects.filter(
+        Q(desde__icontains=term) |
+        Q(inmueble__domicilio__icontains=term) |
+        Q(inmueble__cliente__nombre__icontains=term) |
+        Q(inmueble__cliente__apellido__icontains=term)
+        # Q(inmueble__cliente__icontains=term)
+    )[:10]
+
+    results = [
+        {
+            "id": s.id, 
+            # "text": s.inmueble
+            "text": f"{s.desde} - {s.inmueble} - {s.inmueble.cliente}"
+        } 
+        for s in servicios
+    ]
+    return JsonResponse({"results": results})
+
+
+# @csrf_exempt
+# @require_http_methods(["GET"])
+def obtener_fechas_servicio(request, servicio_id):
+    try:
+        servicio = Servicio.objects.get(pk=servicio_id)
+        return JsonResponse({
+            "desde": servicio.desde.strftime("%Y-%m-%dT%H:%M"),
+            "hasta": servicio.hasta.strftime("%Y-%m-%dT%H:%M") if servicio.hasta else "",
+        })
+    except Servicio.DoesNotExist:
+        return JsonResponse({"error": "Servicio no encontrado."}, status=404)
+
+
 class HorarioCreateView(CreateView):
     model = Horario
     form_class = HorarioForm
@@ -174,19 +214,19 @@ class HorarioListView(ListFilterView):
             context['tnav'] = "Gestion de Horarios" if not empleado else f"Gestion de horarios: {empleado}"
             context["empleado"] = empleado
 
-        context["servicios"] = Servicio.objects.all() 
+        # context["servicios"] = Servicio.objects.all() 
 
-        servicios_info = {
-            str(servicio.id): {
-                "desde": servicio.desde.strftime("%Y-%m-%dT%H:%M"),
-                "hasta": servicio.hasta.strftime("%Y-%m-%dT%H:%M"),
-            }
-            for servicio in Servicio.objects.all()
-        }
+        # servicios_info = {
+        #     str(servicio.id): {
+        #         "desde": servicio.desde.strftime("%Y-%m-%dT%H:%M"),
+        #         "hasta": servicio.hasta.strftime("%Y-%m-%dT%H:%M"),
+        #     }
+        #     for servicio in Servicio.objects.all()
+        # }
 
-        # print("Servicios info:", servicios_info)  # <-- AGREGA ESTO
+        # # print("Servicios info:", servicios_info)  # <-- AGREGA ESTO
 
-        context["servicios_info"] = json.dumps(servicios_info, cls=DjangoJSONEncoder)
+        # context["servicios_info"] = json.dumps(servicios_info, cls=DjangoJSONEncoder)
 
         horarios = self.get_queryset()
         eventos = [
@@ -203,4 +243,3 @@ class HorarioListView(ListFilterView):
         ]
         context['events'] = json.dumps(eventos, cls=DjangoJSONEncoder)  
         return context
-

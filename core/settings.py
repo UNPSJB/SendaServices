@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_cron',
+    'django_select2',
     'core',
     'servicios',
     'facturas',

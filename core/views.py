@@ -130,10 +130,30 @@ def buscar(request):
         'empleados': resultados_empleados,
         'inmuebles': resultados_inmuebles,
     })
+
+from django.shortcuts import render
+from datetime import datetime, timedelta
+from turnos.models import Horario
+from .models import Empleado
+from django.utils.timezone import localtime, now
+from django.contrib.auth.decorators import login_required
+
+def horarios_usuario_hoy(user):
+    empleado = Empleado.objects.get(usuario=user)
+
+    hoy = localtime(now()).date()
+    horarios = Horario.objects.filter(
+        empleado=empleado,
+        fecha_inicio__date=hoy
+    ).order_by('fecha_inicio')
+
+    return horarios
+
+
 from collections import defaultdict
 from django.db.models import Sum, Count, OuterRef, Subquery
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
@@ -246,6 +266,13 @@ def index(request):
 
     promedio_mensual = total_año / max(1, facturas.values("emision__month").distinct().count())
 
+    # Codigo para los usuarios empleados
+    user = request.user
+    horarios_hoy = []
+    
+    if Empleado.objects.filter(usuario=user).exists():
+        horarios_hoy = horarios_usuario_hoy(user)
+
     context = {
         "promedio_mensual": promedio_mensual,
         "servicios_por_tipo": json.dumps(list(servicios_por_tipo)),"labels_servicios_tipo" : json.dumps(labels_servicios_tipo),
@@ -273,6 +300,7 @@ def index(request):
         "empleados_sin_asignar": Servicio.objects.filter(estado=TipoEstado.PRESUPUESTADO).count(),
         "labels_tipos_servicio_mes": json.dumps(labels_tipos_servicio),
         "datasets_tipo_servicio_mes": json.dumps(datasets_por_mes),
+        "horarios_hoy": horarios_hoy
     }
 
     return render(request, "home.html", context)
@@ -511,6 +539,7 @@ class InmuebleListView(ListFilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['tnav'] = "Gestion de Inmuebles"
         context["cliente"] = self.get_cliente()
         return context    
 
@@ -550,6 +579,7 @@ class InmuebleCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['tnav'] = "Gestion de Inmuebles"
         return context
     
     #Este form, es para cuando se muestre el mensaje de inmueble creado en list

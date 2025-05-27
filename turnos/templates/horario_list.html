@@ -189,6 +189,9 @@ Buscar Horario
 
         calendar.render();
 
+        let EMPLEADO_ID = {{ empleado.id }};
+        console.log("Empleado Id:", EMPLEADO_ID);
+
         // $(document).ready(function() {
         //    console.log($('#servicioSelect').length);  // Debe devolver 1
         $('#nuevoHorarioModal').on('shown.bs.modal', function () {
@@ -207,7 +210,8 @@ Buscar Horario
                     delay: 250,
                     data: function (params) {
                         return {
-                            term: params.term  // término de búsqueda
+                            term: params.term,  // término de búsqueda
+                            empleado_id: EMPLEADO_ID  
                         };
                     },
                     processResults: function (data) {

@@ -1,0 +1,167 @@
+{% extends 'baselist.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+Buscar Horario
+{% endblock %}
+
+{% block tlista %} Listado de Turnos para Empleado {% endblock %}
+
+{% block tExtras %}     
+    
+{% endblock %}
+
+{% block cmain %} 
+
+    <!-- Filtros -->
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="mb-3">
+                        <label for="servicio" class="form-label">Servicio</label>
+                        <select name="servicio" id="servicio" class="form-select select2">
+                            <option value="">Todos</option>
+                            {% for s in servicios %}
+                                <option value="{{ s.id }}" {% if s.id|stringformat:"s" == servicio_seleccionado %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fecha_inicio" class="form-label">Desde</label>
+                        <input type="datetime-local" name="fecha_inicio" id="fecha_inicio" class="form-control" value="{{ fecha_inicio }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fecha_fin" class="form-label">Hasta</label>
+                        <input type="datetime-local" name="fecha_fin" id="fecha_fin" class="form-control" value="{{ fecha_fin }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-2">Buscar</button>
+                    <a href="{% url 'turnos:horarios_usuario' %}" class="btn btn-secondary w-100">Limpiar filtros</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-9 mx-auto">
+        <div class="card flex-fill border-0">
+            <div class="card-body py-4 pb-2">
+                <div id="calendar"></div>
+            </div>
+              
+            <!-- Modal para ver detalles -->
+            <div class="modal fade" id="detalleHorarioModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detalle del Horario</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Servicio:</strong> <span id="detalleServicio"></span></p>
+                            <p><strong>Inicio:</strong> <span id="detalleInicio"></span></p>
+                            <p><strong>Fin:</strong> <span id="detalleFin"></span></p>
+
+                            <!-- Checkbox de asistencia -->
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" id="checkboxAsistencia" disabled {{ evento.extendedProps.asistencia|yesno:"checked," }}>
+                                <label class="form-check-label" for="checkboxAsistencia">
+                                    Asistencia
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Botón para guardar asistencia -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+{% endblock %}
+
+
+{% block extrajs %}
+
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- jQuery y Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+<!-- FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<script>
+    let idTurnoSeleccionado = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var today = new Date(); 
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            initialDate: today,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            },
+            navLinks: true,
+            selectable: true,
+            selectMirror: true,
+            editable: true,
+            dayMaxEvents: true,
+            events: {{ events|safe }},
+
+            eventClick: function(info) {
+                const evento = info.event;
+
+                idTurnoSeleccionado = evento.id;
+
+                document.getElementById("detalleServicio").textContent = evento.title;
+
+                const opciones = {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+
+                const fechaInicio = evento.start ? new Date(evento.start).toLocaleString('es-AR', opciones) : 'N/A';
+                const fechaFin = evento.end ? new Date(evento.end).toLocaleString('es-AR', opciones) : 'N/A';
+                const asistencia = evento.extendedProps.asistencia;
+
+                document.getElementById("detalleInicio").textContent = fechaInicio;
+                document.getElementById("detalleFin").textContent = fechaFin;
+
+                document.getElementById("checkboxAsistencia").checked = !!asistencia;
+
+                new bootstrap.Modal(document.getElementById('detalleHorarioModal')).show();
+            }
+        });
+
+        calendar.render();
+    });
+
+    $(document).ready(function() {
+        $('select').select2({
+            width: '100%',
+            placeholder: 'Seleccione una opción',
+            allowClear: true
+        });
+    });
+</script>
+
+
+{% endblock %}

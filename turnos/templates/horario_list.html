@@ -122,6 +122,15 @@ Buscar Horario
         var calendarEl = document.getElementById('calendar');
         var today = new Date(); 
 
+        function getLocalDateTimeString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             initialDate: today,
@@ -140,24 +149,35 @@ Buscar Horario
             dateClick: function(info) {
                 const hoySinHora = new Date();
                 hoySinHora.setHours(0, 0, 0, 0);
-                const fechaSinHora = new Date(info.dateStr);
-                fechaSinHora.setHours(0, 0, 0, 0);
-
-                if (fechaSinHora < hoySinHora) {
+            
+                const partes = info.dateStr.split('-'); // '2025-05-27'
+                const fechaLocal = new Date(partes[0], partes[1] - 1, partes[2]); // Año, Mes (0-indexado), Día
+                fechaLocal.setHours(0, 0, 0, 0);
+            
+                if (fechaLocal < hoySinHora) {
                     alert("No se pueden crear horarios en fechas anteriores a hoy.");
                     return;
                 }
+            
+                const ahora = new Date();
+                // ahora.setHours(ahora.getHours() - 3);
 
-                const hoy = new Date().toISOString().slice(0,16);
+                const hoy = ahora.toISOString().slice(0, 16);
+                // const hoy = getLocalDateTimeString(new Date());
+            
                 document.getElementById('fechaInicio').min = hoy;
                 document.getElementById('fechaFin').min = hoy;
-
-                const fechaSeleccionada = new Date(info.dateStr).toISOString().slice(0, 16);
+            
+                const fechaSeleccionada = new Date(
+                    partes[0], partes[1] - 1, partes[2],
+                    ahora.getHours(), ahora.getMinutes()
+                ).toISOString().slice(0, 16);
+            
                 document.getElementById('fechaInicio').value = fechaSeleccionada;
                 document.getElementById('fechaFin').value = fechaSeleccionada;
-
+            
                 new bootstrap.Modal(document.getElementById('nuevoHorarioModal')).show();
-            },
+            },            
 
             eventClick: function(info) {
                 const evento = info.event;

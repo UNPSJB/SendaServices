@@ -132,7 +132,7 @@ def buscar(request):
     })
 
 from django.shortcuts import render
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from turnos.models import Horario
 from .models import Empleado
 from django.utils.timezone import localtime, now
@@ -142,10 +142,19 @@ def horarios_usuario_hoy(user):
     empleado = Empleado.objects.get(usuario=user)
 
     hoy = localtime(now()).date()
+
+    desde = datetime.combine(hoy, time.min).astimezone()
+    hasta = datetime.combine(hoy, time.max).astimezone()
+
     horarios = Horario.objects.filter(
         empleado=empleado,
-        fecha_inicio__date=hoy
+        fecha_inicio__range=(desde, hasta)
     ).order_by('fecha_inicio')
+
+    # horarios = Horario.objects.filter(
+    #     empleado=empleado,
+    #     fecha_inicio__date=hoy
+    # ).order_by('fecha_inicio')
 
     return horarios
 

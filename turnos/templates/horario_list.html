@@ -122,15 +122,6 @@ Buscar Horario
         var calendarEl = document.getElementById('calendar');
         var today = new Date(); 
 
-        function getLocalDateTimeString(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
-        }
-
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             initialDate: today,
@@ -160,10 +151,7 @@ Buscar Horario
                 }
             
                 const ahora = new Date();
-                // ahora.setHours(ahora.getHours() - 3);
-
                 const hoy = ahora.toISOString().slice(0, 16);
-                // const hoy = getLocalDateTimeString(new Date());
             
                 document.getElementById('fechaInicio').min = hoy;
                 document.getElementById('fechaFin').min = hoy;
@@ -212,8 +200,6 @@ Buscar Horario
         let EMPLEADO_ID = {{ empleado.id }};
         console.log("Empleado Id:", EMPLEADO_ID);
 
-        // $(document).ready(function() {
-        //    console.log($('#servicioSelect').length);  // Debe devolver 1
         $('#nuevoHorarioModal').on('shown.bs.modal', function () {
             $('#servicioSelect').select2({
                 width: '100%',
@@ -246,9 +232,6 @@ Buscar Horario
             });
         });
 
-        // const serviciosInfo = {{ servicios_info|safe }};
-        // console.log("Servicios Info desde Django:", serviciosInfo);
-
         const servicioSelect = document.getElementById("servicioSelect");
         const fechaInicioInput = document.getElementById("fechaInicio");
         const fechaFinInput = document.getElementById("fechaFin");
@@ -256,13 +239,8 @@ Buscar Horario
 
         console.log("Select de Servicio:", servicioSelect);
 
-        // if (servicioSelect) {
-        //     console.log("Entre al if:", servicioSelect);
-        //     servicioSelect.addEventListener("change", function() {
         $('#servicioSelect').on('select2:select', function (e) {
             const servicioId = e.params.data.id;
-            // const servicioId = this.value;
-            // const info = serviciosInfo[servicioId];
 
             console.log("Servicio Id:", servicioId);
 
@@ -290,7 +268,14 @@ Buscar Horario
                     console.log("desde:", desde);
                     console.log("hasta:", hasta);
 
-                    if(desde < fechaHoy){
+                    if (desde.split("T")[0] === hasta.split("T")[0]) {
+                        // Servicio de un solo día
+                        const dia = desde.split("T")[0];
+                        fechaInicioInput.min = `${dia}T00:00`;
+                        fechaInicioInput.max = `${dia}T23:59`;
+                        fechaFinInput.min = `${dia}T00:00`;
+                        fechaFinInput.max = `${dia}T23:59`;
+                    } else if(desde < fechaHoy){
                         fechaInicioInput.min = fechaHoy;
                         fechaInicioInput.max = hasta;
                         fechaFinInput.min = fechaHoy;
@@ -298,12 +283,12 @@ Buscar Horario
                         if(hasta < fechaHoy){
                             fechaInicioInput.max = fechaHoy;
                             fechaFinInput.max = fechaHoy;
+                        } else {
+                            fechaInicioInput.min = desde;
+                            fechaInicioInput.max = hasta;
+                            fechaFinInput.min = desde;
+                            fechaFinInput.max = hasta;
                         }
-                    } else {
-                        fechaInicioInput.min = desde;
-                        fechaInicioInput.max = hasta;
-                        fechaFinInput.min = desde;
-                        fechaFinInput.max = hasta;
                     }
                     
                 })

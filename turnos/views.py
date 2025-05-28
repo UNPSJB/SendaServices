@@ -245,20 +245,6 @@ class HorarioListView(ListFilterView):
             context['tnav'] = "Gestion de Horarios" if not empleado else f"Gestion de horarios: {empleado}"
             context["empleado"] = empleado
 
-        # context["servicios"] = Servicio.objects.all() 
-
-        # servicios_info = {
-        #     str(servicio.id): {
-        #         "desde": servicio.desde.strftime("%Y-%m-%dT%H:%M"),
-        #         "hasta": servicio.hasta.strftime("%Y-%m-%dT%H:%M"),
-        #     }
-        #     for servicio in Servicio.objects.all()
-        # }
-
-        # # print("Servicios info:", servicios_info)  # <-- AGREGA ESTO
-
-        # context["servicios_info"] = json.dumps(servicios_info, cls=DjangoJSONEncoder)
-
         horarios = self.get_queryset()
         eventos = [
                {
@@ -296,14 +282,6 @@ def horarios_usuario(request):
         horarios = horarios.filter(fecha_fin__lte=fecha_fin_dt)
 
     servicios_disponibles = Servicio.objects.all()
-
-    # categoria_empleado = empleado.categoria
-    # servicios_disponibles = []
-    # for servicio in Servicio.objects.filter(estado__in=[TipoEstado.EN_CURSO, TipoEstado.PAGADO]):
-    #     requiere_categoria = servicio.cantidades_empleados.filter(categoria=categoria_empleado).exists()
-    #     if not requiere_categoria:
-    #         continue  # este servicio no necesita la categoría del empleado, lo saltamos
-    #     servicios_disponibles.append(servicio.id)
 
     eventos = [
             {

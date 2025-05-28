@@ -131,30 +131,28 @@ def buscar(request):
         'inmuebles': resultados_inmuebles,
     })
 
-from django.shortcuts import render
-from datetime import datetime, timedelta, time
+from django.utils.timezone import now, make_aware
+from datetime import datetime, time
 from turnos.models import Horario
 from .models import Empleado
-from django.utils.timezone import localtime, now
-from django.contrib.auth.decorators import login_required
 
 def horarios_usuario_hoy(user):
     empleado = Empleado.objects.get(usuario=user)
 
-    hoy = localtime(now()).date()
+    hoy = now().date()
 
-    desde = datetime.combine(hoy, time.min).astimezone()
-    hasta = datetime.combine(hoy, time.max).astimezone()
+    desde = make_aware(datetime.combine(hoy, time.min))
+    hasta = make_aware(datetime.combine(hoy, time.max))
 
     horarios = Horario.objects.filter(
         empleado=empleado,
         fecha_inicio__range=(desde, hasta)
     ).order_by('fecha_inicio')
 
-    # horarios = Horario.objects.filter(
-    #     empleado=empleado,
-    #     fecha_inicio__date=hoy
-    # ).order_by('fecha_inicio')
+    # for h in horarios:
+    #     print("Horario:", h.servicio)
+    #     print("Fecha desde:", h.fecha_inicio)
+    #     print("Fecha hasta:", h.fecha_fin)
 
     return horarios
 
@@ -281,6 +279,7 @@ def index(request):
     
     if Empleado.objects.filter(usuario=user).exists():
         horarios_hoy = horarios_usuario_hoy(user)
+        # print("Horarios de hoy previo al context:", horarios_hoy)
 
     context = {
         "promedio_mensual": promedio_mensual,

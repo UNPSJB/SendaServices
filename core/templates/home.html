@@ -251,10 +251,10 @@
       <h4 class="fw-bold">
         Bienvenido, {{ user.first_name }} {{ user.last_name }}
       </h4>
-      {% if horarios %}
+      {% if horarios_hoy %}
         <h5 class="mt-3">Tus servicios para hoy:</h5>
         <ul class="list-group mt-2">
-          {% for horario in horarios %}
+          {% for horario in horarios_hoy %}
             <li class="list-group-item">
               <strong>Servicio:</strong> {{ horario.servicio }}<br>
               <strong>Desde:</strong> {{ horario.fecha_inicio|date:"H:i" }}<br>

@@ -182,7 +182,7 @@ class HorarioCreateView(CreateView):
 
         if solapados.exists():
             messages.error(self.request, "❌ El empleado ya tiene un horario en ese rango de tiempo.")
-            return self.form_invalid(form)
+            return HttpResponseRedirect(self.get_success_url())
 
         horario = Horario.objects.get_or_create(
             empleado=empleado,

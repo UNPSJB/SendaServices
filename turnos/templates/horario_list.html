@@ -283,14 +283,13 @@ Buscar Horario
                         if(hasta < fechaHoy){
                             fechaInicioInput.max = fechaHoy;
                             fechaFinInput.max = fechaHoy;
-                        } else {
-                            fechaInicioInput.min = desde;
-                            fechaInicioInput.max = hasta;
-                            fechaFinInput.min = desde;
-                            fechaFinInput.max = hasta;
                         }
+                    } else {
+                        fechaInicioInput.min = desde;
+                        fechaInicioInput.max = hasta;
+                        fechaFinInput.min = desde;
+                        fechaFinInput.max = hasta;
                     }
-                    
                 })
                 .catch(error => {
                     console.error("Error en la petición:", error);

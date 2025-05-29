@@ -142,16 +142,17 @@
         {% endblock %}
 
         <div class="d-flex align-items-center ms-auto gap-3">
+          {% if user.groups.all.0.name != "Empleado" %}
           <form class="d-flex align-items-center" method="get" action="{% url 'buscar' %}">
             <input class="form-control me-2" type="search" name="q" placeholder="Buscar..." aria-label="Buscar">
             <button type="submit"
             class="btn d-flex align-items-center justify-content-center"
             style="width: 42px; height: 42px; border-radius: 50%; background: none; border: none;"
             data-bs-toggle="tooltip" data-bs-placement="top" title="Filtrar">
-      <i class="bi bi-search fs-5 text-primary"></i>
-    </button>
-    
+            <i class="bi bi-search fs-5 text-primary"></i>
+            </button>
           </form>
+          {% endif %}
           
 
           <div class="dropdown">

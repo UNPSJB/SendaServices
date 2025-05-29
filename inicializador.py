@@ -122,28 +122,28 @@ def load_tests_data():
         tipos_servicio.append(tipo)
 
     # Servicios y cantidades por categoría
-    for _ in range(10):
-            desde = fake.date_between(start_date="-30d", end_date="today")
-            hasta = desde + timedelta(weeks=random.randint(1, 10))
+    # for _ in range(10):
+    #         desde = fake.date_between(start_date="-30d", end_date="today")
+    #         hasta = desde + timedelta(weeks=random.randint(1, 10))
 
-            servicio = Servicio.objects.create(
-                desde=desde,
-                hasta=hasta,
-                diasSemana=random.randint(1, 6),
-                ajuste=random.randint(0, 20),
-                inmueble=random.choice(inmuebles),
-                total=round(random.uniform(8000, 30000), 2),
-                fecha_presupuesto=desde  # Nuevo campo agregado
-            )
+    #         servicio = Servicio.objects.create(
+    #             desde=desde,
+    #             hasta=hasta,
+    #             diasSemana=random.randint(1, 6),
+    #             ajuste=random.randint(0, 20),
+    #             inmueble=random.choice(inmuebles),
+    #             total=round(random.uniform(8000, 30000), 2),
+    #             fecha_presupuesto=desde  # Nuevo campo agregado
+    #         )
 
-            # Agregar de 1 a 3 cantidades por categoría (sin duplicar categoría)
-            categorias_elegidas = random.sample(categorias, k=random.randint(1, min(3, len(categorias))))
-            for categoria in categorias_elegidas:
-                ServicioCantidadEmpleado.objects.create(
-                    servicio=servicio,
-                    categoria=categoria,
-                    cantidad=random.randint(1, 4)
-                )
+    #         # Agregar de 1 a 3 cantidades por categoría (sin duplicar categoría)
+    #         categorias_elegidas = random.sample(categorias, k=random.randint(1, min(3, len(categorias))))
+    #         for categoria in categorias_elegidas:
+    #             ServicioCantidadEmpleado.objects.create(
+    #                 servicio=servicio,
+    #                 categoria=categoria,
+    #                 cantidad=random.randint(1, 4)
+    #             )
 
 
 

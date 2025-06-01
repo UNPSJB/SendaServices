@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG")
 #DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -133,9 +133,6 @@ MIDDLEWARE = [
     'core.middlewares.EmpleadoRestringidoMiddleware',
 ]
 
-
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -154,8 +151,10 @@ USE_TZ = True
 # Ruta a los archivos estáticos
 STATIC_URL = '/static/'
 
-# Ruta al directorio donde se encuentran los archivos estáticos de tu aplicación
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
